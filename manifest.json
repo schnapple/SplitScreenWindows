@@ -1,16 +1,11 @@
 {
-  "manifest_version": 2,
-
-  "name": "Getting started example",
-  "description": "This extension shows a Google Image search result for the current page",
+  "name": "Find Extend",
   "version": "1.0",
-
+  "manifest_version": 2,
+  "description": "",
   "browser_action": {
     "default_icon": "icon.png",
     "default_popup": "popup.html"
   },
-  "permissions": [
-    "activeTab",
-    "https://ajax.googleapis.com/"
-  ]
+  "permissions": ["tabs", "<all_urls>"]
 }

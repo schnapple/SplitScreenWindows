@@ -1,12 +1,24 @@
 <!DOCTYPE html>
 <html style=''>
 <head>
-  <link rel="stylesheet" href="css/foundation.css">
-  <script src="js/vendor/modernizr.js"></script>
-<script src='popup.js'></script>
+<link rel="stylesheet" type="text/css" href="styles.css">
+<script src="jquery-1.11.3.js"></script>
+<!--<script type = "text/javascript" src = "popup.js">-->
+</script>
 </head>
-<body style="width:600px; background-color: slategray; border-color: slategray;">
-  <div style = "height:50px">SEARCHBAR</div>
-  <div id='message'></div>
+<body style="width:600px; height:550px; background-color: slategray; border-color: slategray;">
+
+<form style= "text-align: center;" id = "search_entered">
+<div>
+<input style = "width:525px;"type="text" name="sterm" value="" id = "sbox">
+<input type="submit" id = "subbtn"></input>
+<script type="text/javascript" src="popup.js"></script>
+</div>
+<div>
+  
+</div>
+</form>
+  
+<div><table style = "align:center;" id = "message"></table></div>
 </body>
 </html>

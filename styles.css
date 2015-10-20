@@ -1,0 +1,34 @@
+button:focus {outline:0;}
+input:focus {outline:0;}
+
+.buttons a:active{
+    background-color:#FFFBFA;
+    color:#FFFBFA;
+    border: none;
+}
+
+/*button.positive, .buttons a.positive{
+    color:#FFFBFA;
+}
+.buttons a.positive:hover, button.positive:hover{
+    background-color:#BDF2E9;
+    border:1px solid #BDF2E9;
+    color:#BDF2E9;
+}
+.buttons a.positive:active{
+    background-color:#FFFBFA;
+    border:1px solid #FFFBFA;
+    color:#FFFBFA;
+}.buttons a.negative, button.negative{
+    color:#FFFBFA;
+}
+.buttons a.negative:hover, button.negative:hover{
+    background:#BDF2E9;
+    border:1px solid #BDF2E9;
+    color:#BDF2E9;
+}
+.buttons a.negative:active{
+    background-color:#FFFBFA;
+    border:1px solid #FFFBFA;
+    color:#FFFBFA;
+}*/

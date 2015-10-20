@@ -75,3 +75,9 @@ function procHtml() {
   loadMainHtml();
 }
 window.onload = procHtml;
+
+
+function countOccur(body,term){
+    var check = body.split("term");
+    return check.length - 1;
+}

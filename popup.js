@@ -1,24 +1,27 @@
-function readURL(theURL,theNAME,xmlString,document_root,message) {
-    //xmlString = new XMLHttpRequest();
+function countOccur(body,term){
+    var check = body.split(term);
+    return check.length - 1;
+}
+
+
+
+
+function readURL(theURL,theNAME,xmlString,document_root,message,term) {
     xmlString.responseType = "text";
     xmlString.onreadystatechange=function()
     {
-        //console.log("WAITING");
-        //console.log(xmlString.readyState);
+        
         if (xmlString.readyState==4 && xmlString.status==200)
         {
-            message.innerHTML += "<tr><td>"+theNAME+"</td></tr>"
-            console.log(theNAME);
-            var elem = document_root.getElementById("message");//.write(theNAME);
-            elem.innerHtml = theNAME;
-            //file_info.strings.push([theNAME,xmlString.responseText]);
+            message.innerHTML += "<tr><td><a target=\"_blank\" href=\""+theURL +"\">"+ theNAME +"</a></td><td>"+countOccur(xmlString.responseText,term)+"</td></tr>";
+            
         }
     }
     xmlString.open("GET", theURL, true);
     xmlString.send(); 
 }
 
-function AnalyseLinks(link_lis,document_root,message) {
+function AnalyseLinks(link_lis,document_root,message,term) {
     var next_lis = [];
     for (var x = 0; x < link_lis.length; x++){
         if (link_lis[x][0].indexOf(".txt") > -1){
@@ -27,7 +30,7 @@ function AnalyseLinks(link_lis,document_root,message) {
         }
     }
     for (x = 0; x < next_lis.length; x++){
-        readURL(next_lis[x][0],next_lis[x][2],next_lis[x][1],document_root,message);
+        readURL(next_lis[x][0],next_lis[x][2],next_lis[x][1],document_root,message,term);
     }
     //return tex;
     //message.innerHtml = "hello";
@@ -40,41 +43,85 @@ function AnalyseLinks(link_lis,document_root,message) {
 
 
 
-
+var page_html = {term_array: []};
 
 chrome.runtime.onMessage.addListener(function(request, sender) {
   if (request.action == "getSource") {
-    var temp = request.source;
+    for (var x = 0; x < request.source.length; x++) {
+        page_html.term_array.push(request.source[x]);
+    }
+    //console.log(page_html);
     //message.innerHTML = "<table>";
-    AnalyseLinks(temp,document,message);
+    //AnalyseLinks(temp,document,message);
     //= request.source;
     //message.innerText += "HELLO";
   }
 });
 
 
-function listenForInp() {
 
-    //onWindowLoad();
+
+function listenForInp() {
+    $("#search_entered").submit(function(e) {
+    e.preventDefault();
+    });
+    var message = document.getElementById('message');
     var search = document.getElementById('subbtn');
-    //console.log(search);
+    var term = document.getElementById('sbox');
+    if (search){ //&& term.value != ''){
+            search.onclick = function () {
+                //console.log(message);
+                message.innerHTML = "";
+                AnalyseLinks(page_html.term_array,document,message,term.value);
+            };
+    }
+    //console.log("Working");
+    //console.log(page_html.term_array);
+    //onWindowLoad();
+    /*var search = document.getElementById('subbtn');
+    var searched = false;
     if (search){
         search.onclick = function () {
-            console.log("HELLO");
-            onWindowLoad();
+            var term = document.getElementById('sbox');
+            console.log(term.value);
+            searched = true;
+
         }
     }
+    if (searched){
+        console.log("WHYFAIL");
+        //searched = false;
+        onWindowLoad();
+    }*/
+    //onWindowLoad;
 }
 
 function onWindowLoad() {
-    var message = document.querySelector('#message');
     chrome.tabs.executeScript(null, {
-    file: "scanPage.js"
-    }, function() {
-    if (chrome.runtime.lastError) {
-      message.innerText = 'There was an error injecting script : \n' + chrome.runtime.lastError.message;
-    }
+        file: "scanPage.js"
+        }, function() {
+        if (chrome.runtime.lastError) {
+          message.innerText = 'There was an error injecting script : \n' + chrome.runtime.lastError.message;
+        }
     });
+
+
+    /*$("#search_entered").submit(function(e) {
+    e.preventDefault();
+    });
+    var search = document.getElementById('subbtn');
+    var message = document.querySelector('#message');
+    if (search){
+            search.onclick = function () {
+                chrome.tabs.executeScript(null, {
+                file: "scanPage.js"
+                }, function() {
+                if (chrome.runtime.lastError) {
+                  message.innerText = 'There was an error injecting script : \n' + chrome.runtime.lastError.message;
+                }
+                });
+        }
+    }
     /*var search = document.getElementById('subbtn');
     search.onclick = function () {
         //location.reload();
@@ -90,13 +137,15 @@ function onWindowLoad() {
     }*/
 }
 
+//var load_page_html;
+
 //var x = document.getElementById("subbtn");
 
 //console.log(x);
 
-window.onload = listenForInp();
+window.onload = onWindowLoad();
 
-
+listenForInp();
 
 
 

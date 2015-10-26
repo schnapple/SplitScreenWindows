@@ -1,28 +1,32 @@
-function getPDFtext(theURL){
+final_s = {info: ""};
+
+function getPDFtext(theURL,theNAME,message,term){
     //console.log(theURL);
     
-
+    var record;
     PDFJS.getDocument(theURL).then(function(pdf) {
-        var layers = {info: ""};
+    var layers = {info: ""};
     var total = pdf.numPages;
     var fin_str = "";
     for (var i = 1; i <= total; i++){
-        fin_str += pdf.getPage(i).then( function(page){
+        pdf.getPage(i).then( function(page){
             //console.log(page);
         page.getTextContent().then( function(textContent) {
             //console.log(textContent.items);
             var t_str = "";
             for (var x = 0; x < textContent.items.length; x++){
                 //console.log(textContent.items[x].str);
-                t_str += textContent.items[x].str;
+                final_s.info += textContent.items[x].str;
             }
-            //console.log(t_str[0]);
-            return t_str;
+            console.log(final_s.info.length);
+            //message.innerHTML += "<tr><td><a target=\"_blank\" href=\""+theURL +"\">"+ theNAME +"</a></td><td>"+countOccur(layers.info,term)+"</td></tr>";
+            //console.log(layers.info)
             
         });
     });
     
 }
+//console.log(layers);
 });
 
 }
@@ -53,17 +57,27 @@ function readURL(theURL,theNAME,xmlString,document_root,message,term) {
 
 function AnalyseLinks(link_lis,document_root,message,term) {
     var next_lis = [];
+    var arr_info = [];
     for (var x = 0; x < link_lis.length; x++){
         if (link_lis[x][0].indexOf(".txt") > -1){
             next_lis.push([link_lis[x][0],new XMLHttpRequest(),link_lis[x][1]]);
             
         }
         else if (link_lis[x][0].indexOf(".pdf") > -1){
-            getPDFtext(link_lis[x][0], term);
+            //getPDFtext(link_lis[x][0]);
+            next_lis.push([link_lis[x][0],link_lis[x][1]]);
         }
     }
+    //var final_s = {info: ""};
     for (x = 0; x < next_lis.length; x++){
-        readURL(next_lis[x][0],next_lis[x][2],next_lis[x][1],document_root,message,term);
+        if (next_lis[x].length == 3){
+            readURL(next_lis[x][0],next_lis[x][2],next_lis[x][1],document_root,message,term);
+        }
+        else {
+            //final_s.info = "";
+            getPDFtext(next_lis[x][0],next_lis[x][1],message,term,final_s);
+            console.log(final_s);
+        }
     }
     //return tex;
     //message.innerHtml = "hello";

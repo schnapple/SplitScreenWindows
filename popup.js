@@ -1,3 +1,33 @@
+function getPDFtext(theURL){
+    //console.log(theURL);
+    
+
+    PDFJS.getDocument(theURL).then(function(pdf) {
+        var layers = {info: ""};
+    var total = pdf.numPages;
+    var fin_str = "";
+    for (var i = 1; i <= total; i++){
+        fin_str += pdf.getPage(i).then( function(page){
+            //console.log(page);
+        page.getTextContent().then( function(textContent) {
+            //console.log(textContent.items);
+            var t_str = "";
+            for (var x = 0; x < textContent.items.length; x++){
+                //console.log(textContent.items[x].str);
+                t_str += textContent.items[x].str;
+            }
+            //console.log(t_str[0]);
+            return t_str;
+            
+        });
+    });
+    
+}
+});
+
+}
+
+
 function countOccur(body,term){
     var check = body.split(term);
     return check.length - 1;
@@ -27,6 +57,9 @@ function AnalyseLinks(link_lis,document_root,message,term) {
         if (link_lis[x][0].indexOf(".txt") > -1){
             next_lis.push([link_lis[x][0],new XMLHttpRequest(),link_lis[x][1]]);
             
+        }
+        else if (link_lis[x][0].indexOf(".pdf") > -1){
+            getPDFtext(link_lis[x][0], term);
         }
     }
     for (x = 0; x < next_lis.length; x++){

@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Timers;
 using System.Windows.Forms;
+using System.Windows.Input;
 
 
 namespace WindowsFormsApplication1
@@ -11,13 +12,19 @@ namespace WindowsFormsApplication1
 
     public partial class Form1 : Form
     {
-        //[DllImport("user32.dll", EntryPoint = "SetWindowPos")]
+        [DllImport("user32.dll", EntryPoint = "SetWindowPos")]
+        public static extern IntPtr SetWindowPos(IntPtr hWnd, int hWndInsertAfter, int x, int Y, int cx, int cy, int wFlags);
+        //Sam's [DllImport(@"C:\GitProjects\SplitScreenWindows\HookDll\HookDLL.dll")]
+
+
+        [DllImport(@"C:\Users\plaga\Documents\GitHub\SplitScreenWindows\HookDll")]
+        private static extern bool installHook();
 
         private static int x;
         private static int y;
         private static System.Timers.Timer aTimer;
         private static System.Timers.Timer bTimer;
-        //public static extern IntPtr SetWindowPos(IntPtr hWnd, int hWndInsertAfter, int x, int Y, int cx, int cy, int wFlags);
+        
        // private int _mouseChange;
 
 
@@ -32,8 +39,8 @@ namespace WindowsFormsApplication1
             aTimer = new System.Timers.Timer(100);
             aTimer.Elapsed += GrabMousePos;
 
-            //bTimer = new System.Timers.Timer(100);
-            //bTimer.Elapsed += WindowInPos;
+            bTimer = new System.Timers.Timer(1000);
+            bTimer.Elapsed += WindowInPos;
 
 
 
@@ -42,6 +49,10 @@ namespace WindowsFormsApplication1
             {
                 aTimer.AutoReset = true;
                 aTimer.Enabled = true;
+
+                bTimer.AutoReset = true;
+                bTimer.Enabled = true;
+
                 button1.Text = "Stop";
                 //while (true)
                 //{
@@ -57,43 +68,52 @@ namespace WindowsFormsApplication1
             {
                 aTimer.AutoReset = false;
                 aTimer.Enabled = false;
+                aTimer.AutoReset = false;
+                aTimer.Enabled = false;
                 button1.Text = "Run";
                 
 
             }
-            //const short swp_nosize = 1;
-            //const short swp_nomove = 0x2;
-            //const short swp_nozorder = 0x4;
-            //const int swp_showwindow = 0x0040;
 
-            //process[] processes = process.getprocesses();
+            //
 
-            //foreach (var process in processes)
-            //{
-            //    console.writeline("process name: ", process.processname);
 
-            //    intptr handle = process.mainwindowhandle;
-            //    if (handle != intptr.zero)
-            //    {
-            //        setwindowpos(handle, 0, 0, 0, 0, 0, swp_nozorder | swp_nosize | swp_showwindow);
-            //    }
-
-            //}
 
         }
 
         private void WindowInPos(object sender, ElapsedEventArgs e)
         {
-            throw new NotImplementedException();
+                        
+            const short SWP_NOSIZE = 1;
+           // const short SWP_NOMOVE = 0x2;
+            const short SWP_NOZORDER = 0x4;
+            const int SWP_SHOWWINDOW = 0x0040;
+            
+            Process[] processes = Process.GetProcesses();
+            foreach (var process in processes)
+            {
+                Console.WriteLine( process.ProcessName);
+
+                IntPtr handle = process.MainWindowHandle;
+
+                if (handle != IntPtr.Zero && x == 0)
+                {
+                    SetWindowPos(handle, 0, 0, 0, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_SHOWWINDOW);
+                }
+
+            }
+
+
+
         }
 
 
 
         private void GrabMousePos(object sender, ElapsedEventArgs e)
         {
-        Point mousePoint = MousePosition;
+            Point mousePoint = MousePosition;
             Debug.Print("{0} and {1}" , mousePoint.X, mousePoint.Y);
-            
+            //console.writeline("process name: ", process.processname);
             x = mousePoint.X;
             y = mousePoint.Y;
             //this.textBox1.Text = x + "  " + y;

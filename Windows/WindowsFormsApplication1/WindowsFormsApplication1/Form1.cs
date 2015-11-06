@@ -17,8 +17,12 @@ namespace WindowsFormsApplication1
 
         //NOTE: DllImport attributes must be applied for each function, one for each function.
         // Sam's file path [DllImport(@"C:\GitProjects\SplitScreenWindows\HookDll\HookDLL.dll")]
-        //[DllImport(@"C:\Users\plaga\Documents\GitHub\SplitScreenWindows\HookDll")]
 
+
+        [DllImport(@"C:\Users\plaga\Documents\GitHub\SplitScreenWindows\HookDll")]
+        private static extern bool installHook();
+
+        /**
         [DllImport(@"C:\GitProjects\SplitScreenWindows\HookDll\HookDLL.dll")]
             private static extern bool installHook();
         [DllImport(@"C:\GitProjects\SplitScreenWindows\HookDll\HookDLL.dll")]
@@ -27,12 +31,15 @@ namespace WindowsFormsApplication1
         [DllImport(@"C:\GitProjects\SplitScreenWindows\HookDll\HookDLL.dll")]
             private static extern int getX();
         [DllImport(@"C:\GitProjects\SplitScreenWindows\HookDll\HookDLL.dll")]
-            private static extern int getY();
+            private static extern int getY()
+        */
 
         private static int x;
         private static int y;
         private static System.Timers.Timer aTimer;
         private static System.Timers.Timer bTimer;
+        private MouseButtons mouseButton;
+        private static bool isMousePress = false;
         private static bool hookCreated = false;
         
        // private int _mouseChange;
@@ -46,13 +53,17 @@ namespace WindowsFormsApplication1
 
         private void button1_Click(object sender, EventArgs e)
         {
+            //mouseButton = new MouseButton();
+
             aTimer = new System.Timers.Timer(100);
             aTimer.Elapsed += GrabMousePos;
 
             bTimer = new System.Timers.Timer(1000);
             bTimer.Elapsed += WindowInPos;
-
-            if (!hookCreated)
+            //Control.MouseDown();
+           // mouseButton.MouseDown += mousePressed;
+           // mouseButton.MouseDown += mouseReleased;
+            /**if (!hookCreated)
             {
                 if (installHook())
                 {
@@ -60,9 +71,9 @@ namespace WindowsFormsApplication1
                     Console.WriteLine("Hooks installed successfully\n");
                 }
             }
+        */
 
-
-            //this.Cursor = new Cursor(Cursor.Current.Handle);
+           // Cursor = new Cursor(Cursor.Current.Handle);
             if (this.button1.Text == "Run")
             {
                 aTimer.AutoReset = true;
@@ -72,15 +83,6 @@ namespace WindowsFormsApplication1
                 bTimer.Enabled = true;
 
                 button1.Text = "Stop";
-                //while (true)
-                //{
-                //Point mousePoint = MousePosition;
-                //int x = mousePoint.X;
-                //int y = mousePoint.Y;
-                ////    Console.WriteLine(x + "   " + y);
-                ////    Console.Out.WriteLine(x + "   " + y);
-                //this.button1.Text = x + "   " + y;
-                // }
             }
             else
             {
@@ -90,13 +92,19 @@ namespace WindowsFormsApplication1
                 aTimer.Enabled = false;
                 button1.Text = "Run";
                 
-
             }
 
-            //
+        }
 
+        private void mouseReleased(object sender, MouseEventArgs e)
+        {
+            isMousePress = false;
+        }
 
-
+        private void mousePressed(object sender, MouseEventArgs e)
+        {
+            isMousePress = true;
+            Debug.Print("hereerher");
         }
 
         private void WindowInPos(object sender, ElapsedEventArgs e)
@@ -113,16 +121,13 @@ namespace WindowsFormsApplication1
                 //Console.WriteLine( process.ProcessName);
 
                 IntPtr handle = process.MainWindowHandle;
+                //MouseEventArgs = 
 
-                if (handle != IntPtr.Zero && x == 0)
+                if (handle != IntPtr.Zero && x == 0 && isMousePress)
                 {
                     SetWindowPos(handle, 0, 0, 0, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_SHOWWINDOW);
                 }
-
             }
-
-
-
         }
 
 

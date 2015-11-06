@@ -14,16 +14,26 @@ namespace WindowsFormsApplication1
     {
         [DllImport("user32.dll", EntryPoint = "SetWindowPos")]
         public static extern IntPtr SetWindowPos(IntPtr hWnd, int hWndInsertAfter, int x, int Y, int cx, int cy, int wFlags);
-        //Sam's [DllImport(@"C:\GitProjects\SplitScreenWindows\HookDll\HookDLL.dll")]
 
+        //NOTE: DllImport attributes must be applied for each function, one for each function.
+        // Sam's file path [DllImport(@"C:\GitProjects\SplitScreenWindows\HookDll\HookDLL.dll")]
+        //[DllImport(@"C:\Users\plaga\Documents\GitHub\SplitScreenWindows\HookDll")]
 
-        [DllImport(@"C:\Users\plaga\Documents\GitHub\SplitScreenWindows\HookDll")]
-        private static extern bool installHook();
+        [DllImport(@"C:\GitProjects\SplitScreenWindows\HookDll\HookDLL.dll")]
+            private static extern bool installHook();
+        [DllImport(@"C:\GitProjects\SplitScreenWindows\HookDll\HookDLL.dll")]
+            private static extern bool getMoving();
+        // getX and getY  not functional at the moment. Will always return 0.
+        [DllImport(@"C:\GitProjects\SplitScreenWindows\HookDll\HookDLL.dll")]
+            private static extern int getX();
+        [DllImport(@"C:\GitProjects\SplitScreenWindows\HookDll\HookDLL.dll")]
+            private static extern int getY();
 
         private static int x;
         private static int y;
         private static System.Timers.Timer aTimer;
         private static System.Timers.Timer bTimer;
+        private static bool hookCreated = false;
         
        // private int _mouseChange;
 
@@ -42,7 +52,14 @@ namespace WindowsFormsApplication1
             bTimer = new System.Timers.Timer(1000);
             bTimer.Elapsed += WindowInPos;
 
-
+            if (!hookCreated)
+            {
+                if (installHook())
+                {
+                    hookCreated = true;
+                    Console.WriteLine("Hook installed successfully\n");
+                }
+            }
 
             //this.Cursor = new Cursor(Cursor.Current.Handle);
             if (this.button1.Text == "Run")
@@ -92,7 +109,7 @@ namespace WindowsFormsApplication1
             Process[] processes = Process.GetProcesses();
             foreach (var process in processes)
             {
-                Console.WriteLine( process.ProcessName);
+                //Console.WriteLine( process.ProcessName);
 
                 IntPtr handle = process.MainWindowHandle;
 
@@ -113,7 +130,7 @@ namespace WindowsFormsApplication1
         {
             Point mousePoint = MousePosition;
             Debug.Print("{0} and {1}" , mousePoint.X, mousePoint.Y);
-            //console.writeline("process name: ", process.processname);
+            console.writeline("process name: ", process.processname);
             x = mousePoint.X;
             y = mousePoint.Y;
             //this.textBox1.Text = x + "  " + y;

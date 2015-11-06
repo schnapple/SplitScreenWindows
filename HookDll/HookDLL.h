@@ -11,6 +11,9 @@ extern "C" {
 #define DLLSPEC __declspec(dllimport)
 #endif //DLLDEF
 	DLLSPEC bool installHook();
+	DLLSPEC bool getMoving();
+	DLLSPEC int getX();
+	DLLSPEC int getY();
 #undef DLLSPEC
 #ifdef __cplusplus
 }

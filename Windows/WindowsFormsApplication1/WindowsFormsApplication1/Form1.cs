@@ -57,9 +57,10 @@ namespace WindowsFormsApplication1
                 if (installHook())
                 {
                     hookCreated = true;
-                    Console.WriteLine("Hook installed successfully\n");
+                    Console.WriteLine("Hooks installed successfully\n");
                 }
             }
+
 
             //this.Cursor = new Cursor(Cursor.Current.Handle);
             if (this.button1.Text == "Run")
@@ -129,8 +130,8 @@ namespace WindowsFormsApplication1
         private void GrabMousePos(object sender, ElapsedEventArgs e)
         {
             Point mousePoint = MousePosition;
-            Debug.Print("{0} and {1}" , mousePoint.X, mousePoint.Y);
-            console.writeline("process name: ", process.processname);
+            //Debug.Print("{0} and {1}" , mousePoint.X, mousePoint.Y);
+            //console.writeline("process name: ", process.processname);
             x = mousePoint.X;
             y = mousePoint.Y;
             //this.textBox1.Text = x + "  " + y;

@@ -38,10 +38,16 @@ namespace WindowsFormsApplication1
         private static int y;
         private static System.Timers.Timer aTimer;
         private static System.Timers.Timer bTimer;
-        private MouseButtons mouseButton;
+       // private MouseButtons mouseButton;
         private static bool isMousePress = false;
         private static bool hookCreated = false;
-        
+        private static LowLevelMouseProc _proc = HookCallback;
+        private static IntPtr _hookID = IntPtr.Zero;
+        static IntPtr hHook = IntPtr.Zero;
+        private static IntPtr currentHandle;
+
+        private delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
+
        // private int _mouseChange;
 
 
@@ -61,8 +67,8 @@ namespace WindowsFormsApplication1
             bTimer = new System.Timers.Timer(1000);
             bTimer.Elapsed += WindowInPos;
             //Control.MouseDown();
-           // mouseButton.MouseDown += mousePressed;
-           // mouseButton.MouseDown += mouseReleased;
+            // mouseButton.MouseDown += mousePressed;
+            // mouseButton.MouseDown += mouseReleased;
             /**if (!hookCreated)
             {
                 if (installHook())
@@ -72,8 +78,16 @@ namespace WindowsFormsApplication1
                 }
             }
         */
+            if (IntPtr.Zero == hHook)
+            {
+                using (Process curProcess = Process.GetCurrentProcess())
+                using (ProcessModule curModule = curProcess.MainModule)
+                {
+                    hHook = SetWindowsHookEx(WH_Mouse_LL, _proc, GetModuleHandle(curModule.ModuleName), 0);
+                }
+            }
 
-           // Cursor = new Cursor(Cursor.Current.Handle);
+            // Cursor = new Cursor(Cursor.Current.Handle);
             if (this.button1.Text == "Run")
             {
                 aTimer.AutoReset = true;
@@ -96,16 +110,82 @@ namespace WindowsFormsApplication1
 
         }
 
-        private void mouseReleased(object sender, MouseEventArgs e)
+        private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
-            isMousePress = false;
+            if(nCode >= 0 && MouseMessages.WM_LBUTTONDOWN == (MouseMessages)wParam)
+            {
+                POINT cusorPoint;
+                bool ret = GetCursorPos(out cusorPoint);
+
+                IntPtr winHandle = WindowFromPoint(cusorPoint);
+
+                currentHandle = winHandle;
+                UnhookWindowsHookEx(hHook);
+                hHook = IntPtr.Zero;
+            }
+            return CallNextHookEx(_hookID, nCode, wParam, lParam);
         }
 
-        private void mousePressed(object sender, MouseEventArgs e)
+        private const int WH_Mouse_LL = 14;
+
+        private enum MouseMessages
         {
-            isMousePress = true;
-            Debug.Print("hereerher");
+            WM_LBUTTONDOWN = 0x0201,
+            WM_LBUTTONUP = 0x0202,
+            WM_MOUSEMOVE = 0x0200,
+            WM_MOUSEWHEEL = 0x020A,
+            WM_RBUTTONDOWN = 0x0204,
+            WM_RBUTTONUP = 0x0205
         }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct POINT
+        {
+            public int x;
+            public int y;
+        }
+
+        private struct MSLLHOOKSTRUCT
+        {
+            public POINT pt;
+            public uint mouseData;
+            public uint flags;
+            public uint time;
+            public IntPtr dwExtraInfo;
+        }
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr SetWindowsHookEx(int idHook,
+            LowLevelMouseProc Ipfn, IntPtr hMod, uint dwThreadId);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool UnhookWindowsHookEx(IntPtr hhk);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode,
+            IntPtr wParam, IntPtr lParam);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr GetModuleHandle(string lpModuleName);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool GetCursorPos(out POINT lpPoint);
+
+        [DllImport("user32.dll")]
+        static extern IntPtr WindowFromPoint(POINT Point);
+
+        //private void mouseReleased(object sender, MouseEventArgs e)
+        //{
+        //    isMousePress = false;
+        //}
+
+        //private void mousePressed(object sender, MouseEventArgs e)
+        //{
+        //    isMousePress = true;
+        //    Debug.Print("hereerher");
+        //}
 
         private void WindowInPos(object sender, ElapsedEventArgs e)
         {
@@ -123,7 +203,7 @@ namespace WindowsFormsApplication1
                 IntPtr handle = process.MainWindowHandle;
                 //MouseEventArgs = 
 
-                if (handle != IntPtr.Zero && x == 0 && isMousePress)
+                if (handle != IntPtr.Zero && x == 0 && handle == currentHandle)
                 {
                     SetWindowPos(handle, 0, 0, 0, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_SHOWWINDOW);
                 }
@@ -135,7 +215,7 @@ namespace WindowsFormsApplication1
         private void GrabMousePos(object sender, ElapsedEventArgs e)
         {
             Point mousePoint = MousePosition;
-            //Debug.Print("{0} and {1}" , mousePoint.X, mousePoint.Y);
+            Debug.Print("{0} and {1}" , mousePoint.X, mousePoint.Y);
             //console.writeline("process name: ", process.processname);
             x = mousePoint.X;
             y = mousePoint.Y;

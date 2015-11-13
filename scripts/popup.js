@@ -1,33 +1,56 @@
+function sendToPopup(message,fin_lis){
+    fin_lis.sort(function(a,b){
+        if (a[0] > b[0]){
+            return 1;
+        }
+        else if (a[0] < b[0]){
+            return -1;
+        }
+        else
+            return 0;
+    });
+    message.innerHTML = "";
+    for (var x = fin_lis.length -1; x >= 0;x--){
+        if (fin_lis[x][0] > 0){
+            message.innerHTML += fin_lis[x][1];
+        }
+    }
 
-final_s = {};
+}
 
-function getPDFtext(theURL,theNAME,message,term){
+final_s = [];
+
+function getPDFtext(theURL,theNAME,message,term,total_len){
     var record;
     var t_str = "";
     var in_obj = {name: theNAME, count: 0}
     PDFJS.getDocument(theURL).then(function(pdf) {
-    var layers = {info: ""};
-    var total = pdf.numPages;
-    var fin_str = {info: ""};
-    var checked = 0;
-    for (var i = 1; i <= total; i++){
-        var pnum = i;
-        pdf.getPage(i).then(function(page){
-        page.getTextContent().then( function(textContent){
-            //console.log(textContent.items);
-            var t_str = "";
-            for (var x = 0; x < textContent.items.length; x++){
-                t_str += textContent.items[x].str;
-            }
-            in_obj.count += countOccur(t_str,term);
-            checked += 1;
-            if (checked == total){
-                message.innerHTML += "<tr><td><a target=\"_blank\" href=\""+theURL +"\">"+ theNAME +"</a></td><td>"+in_obj.count+"</td></tr>";
-            }
+        var layers = {info: ""};
+        var total = pdf.numPages;
+        var fin_str = {info: ""};
+        var checked = 0;
+        for (var i = 1; i <= total; i++){
+            var pnum = i;
+            pdf.getPage(i).then(function(page){
+            page.getTextContent().then( function(textContent){
+                var t_str = "";
+                for (var x = 0; x < textContent.items.length; x++){
+                    t_str += textContent.items[x].str;
+                }
+                in_obj.count += countOccur(t_str,term);
+                checked += 1;
+                if (checked == total){
+                    //message.innerHTML += "<tr><td><a target=\"_blank\" href=\""+theURL +"\">"+ theNAME +"</a></td><td>"+in_obj.count+"</td></tr>";
+                    final_s.push([in_obj.count,"<tr><td><a target=\"_blank\" href=\""+theURL +"\">"+ theNAME +"</a></td><td>"+in_obj.count+"</td></tr>"]);
+                    console.log("LENGTH",final_s.length,total_len);
+                    if (final_s.length == total_len){
+                        sendToPopup(message,final_s);
+                    }
+                }
+            });
         });
-    });
-    
-}
+        
+        }
 });
 
 }
@@ -41,15 +64,19 @@ function countOccur(body,term){
 
 
 
-function readURL(theURL,theNAME,xmlString,document_root,message,term) {
+function readURL(theURL,theNAME,xmlString,document_root,message,term,total_len) {
     xmlString.responseType = "text";
     xmlString.onreadystatechange=function()
     {
         
         if (xmlString.readyState==4 && xmlString.status==200)
         {
-            message.innerHTML += "<tr><td><a target=\"_blank\" href=\""+theURL +"\">"+ theNAME +"</a></td><td>"+countOccur(xmlString.responseText,term)+"</td></tr>";
-            
+            //message.innerHTML += "<tr><td><a target=\"_blank\" href=\""+theURL +"\">"+ theNAME +"</a></td><td>"+countOccur(xmlString.responseText,term)+"</td></tr>";
+            final_s.push([countOccur(xmlString.responseText,term),"<tr><td><a target=\"_blank\" href=\""+theURL +"\">"+ theNAME +"</a></td><td>"+countOccur(xmlString.responseText,term)+"</td></tr>"]);
+            console.log("LENGTH",final_s.length);
+            if (final_s.length == total_len.length){
+                sendToPopup(message,final_s);
+            }
         }
     }
     xmlString.open("GET", theURL, true);
@@ -57,6 +84,7 @@ function readURL(theURL,theNAME,xmlString,document_root,message,term) {
 }
 
 function AnalyseLinks(link_lis,document_root,message,term) {
+    console.log("THIS MANY LINKS",link_lis.length);
     var next_lis = [];
     var arr_info = [];
     for (var x = 0; x < link_lis.length; x++){
@@ -69,22 +97,15 @@ function AnalyseLinks(link_lis,document_root,message,term) {
             next_lis.push([link_lis[x][0],link_lis[x][1]]);
         }
     }
-    //var final_s = {info: ""};
+    var goal_size = next_lis.length;
     for (x = 0; x < next_lis.length; x++){
         if (next_lis[x].length == 3){
-            readURL(next_lis[x][0],next_lis[x][2],next_lis[x][1],document_root,message,term);
+            readURL(next_lis[x][0],next_lis[x][2],next_lis[x][1],document_root,message,term,goal_size);
         }
         else {
-
-            //final_s.info = "";
-            
-            getPDFtext(next_lis[x][0],next_lis[x][1],message,term,final_s);
-            //pdftry2(next_lis[x][0]);
-            //console.log(final_s);
+            getPDFtext(next_lis[x][0],next_lis[x][1],message,term,goal_size);
         }
     }
-    //return tex;
-    //message.innerHtml = "hello";
 }
 
 
@@ -118,71 +139,24 @@ function listenForInp() {
     var term = document.getElementById('sbox');
     if (search){ //&& term.value != ''){
             search.onclick = function () {
+                final_s = [];
                 //console.log(message);
-                message.innerHTML = "";
+                message.innerHTML = "<img align = \"middle\" src=\"loader.gif\">";
                 AnalyseLinks(page_html.term_array,document,message,term.value);
             };
     }
-    //console.log("Working");
-    //console.log(page_html.term_array);
-    //onWindowLoad();
-    /*var search = document.getElementById('subbtn');
-    var searched = false;
-    if (search){
-        search.onclick = function () {
-            var term = document.getElementById('sbox');
-            console.log(term.value);
-            searched = true;
-
-        }
-    }
-    if (searched){
-        console.log("WHYFAIL");
-        //searched = false;
-        onWindowLoad();
-    }*/
-    //onWindowLoad;
+    
+    
 }
 
 function onWindowLoad() {
     chrome.tabs.executeScript(null, {
         file: "scripts/scanPage.js"
         }, function() {
-        //if (chrome.runtime.lastError) {
-        //  message.innerText = 'There was an error injecting script : \n' + chrome.runtime.lastError.message;
-        //}
-    });
-
-
-    /*$("#search_entered").submit(function(e) {
-    e.preventDefault();
-    });
-    var search = document.getElementById('subbtn');
-    var message = document.querySelector('#message');
-    if (search){
-            search.onclick = function () {
-                chrome.tabs.executeScript(null, {
-                file: "scanPage.js"
-                }, function() {
-                if (chrome.runtime.lastError) {
-                  message.innerText = 'There was an error injecting script : \n' + chrome.runtime.lastError.message;
-                }
-                });
-        }
-    }
-    /*var search = document.getElementById('subbtn');
-    search.onclick = function () {
-        //location.reload();
-        //console.log("HELLO");
-        var message = document.querySelector('#message');
-        chrome.tabs.executeScript(null, {
-        file: "scanPage.js"
-        }, function() {
         if (chrome.runtime.lastError) {
           message.innerText = 'There was an error injecting script : \n' + chrome.runtime.lastError.message;
         }
-        });
-    }*/
+    });
 }
 
 //var load_page_html;

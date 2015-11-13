@@ -1,10 +1,17 @@
+<!--
+This is the html file for the chrome popup. It contains the basic search bar,
+and the div with id="message" is written to by popup.js in order to add the 
+proper content here.
+
+-->
 <!DOCTYPE html>
 <html style=''>
 <head>
 <link rel="stylesheet" type="text/css" href="styles.css">
-<script src="jquery-1.11.3.js"></script>
-<!--<script type = "text/javascript" src = "popup.js">-->
+<script src="scripts/jquery-1.11.3.js"></script>
+<script src="scripts/require.js">
 </script>
+
 </head>
 <body style="width:200px; background-color: #BDEFF2; border-color: #BDEFF2;">
 
@@ -18,10 +25,8 @@
   
 </div>
 </form>
-  
 <div><table style = "align:center;" id = "message"></table></div>
 </body>
-<script type="text/javascript" src="popup.js"></script>
+<script type="text/javascript" src="scripts/popup.js"></script>
 <script type="text/javascript" src="build/pdf.js"></script>
-
 </html>

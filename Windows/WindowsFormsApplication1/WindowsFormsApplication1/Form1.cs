@@ -132,10 +132,13 @@ namespace WindowsFormsApplication1
             }
             else
             {
+                Debug.Print("Stopped");
                 aTimer.AutoReset = false;
                 aTimer.Enabled = false;
-                aTimer.AutoReset = false;
-                aTimer.Enabled = false;
+
+                bTimer.AutoReset = false;
+                bTimer.Enabled = false;
+
                 cTimer.AutoReset = false;
                 cTimer.Enabled = false;
                 button1.Text = "Run";
@@ -221,13 +224,39 @@ namespace WindowsFormsApplication1
                 //Console.WriteLine( process.ProcessName);
 
                 IntPtr handle = process.MainWindowHandle;
-                
 
-                if (handle != IntPtr.Zero && x == 0 && handle == currentHandle)
+
+                if (x == 0 && y == 0 && handle == currentHandle)
                 {
-                    SetWindowPos(handle, 0, 0, 0, 0, 0, 
-                        SWP_NOZORDER | SWP_NOSIZE | SWP_SHOWWINDOW);
+                    SetWindowPos(handle, 0, 0, 0, 960, 540,
+                        SWP_NOZORDER | SWP_SHOWWINDOW);
                 }
+                else if (x >= 1919 && y == 0 && handle == currentHandle)
+                {
+                    SetWindowPos(handle, 0, 960, 0, 960, 540,
+                        SWP_NOZORDER | SWP_SHOWWINDOW);
+                }
+                else if (x >= 1919 && y >= 1036 && handle == currentHandle)
+                {
+                    SetWindowPos(handle, 0, 960, 540, 960, 540,
+                        SWP_NOZORDER | SWP_SHOWWINDOW);
+                }
+                else if (x <= 2 && y >= 1036 && handle == currentHandle)
+                {
+                    SetWindowPos(handle, 0, 0, 540, 960, 540,
+                        SWP_NOZORDER | SWP_SHOWWINDOW);
+                }
+                else if (x <= 2 && handle == currentHandle)
+                {
+                    SetWindowPos(handle, 0, 0, 0, 960, 1030,
+                        SWP_NOZORDER | SWP_SHOWWINDOW);
+                }
+                else if (x >= 1919 && handle == currentHandle)
+                {
+                    SetWindowPos(handle, 0, 960, 0, 960, 1030,
+                        SWP_NOZORDER | SWP_SHOWWINDOW);
+                }
+
             }
         }
 

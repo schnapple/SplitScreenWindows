@@ -48,9 +48,8 @@ function getPDFtext(theURL,theNAME,message,term,total_len){
                     }
                 }
             });
-        });
-        
-        }
+        }); 
+    }
 });
 
 }
@@ -63,7 +62,9 @@ function countOccur(body,term){
 
 
 
-
+// ****************
+// *   Read URL   *
+// ****************
 function readURL(theURL,theNAME,xmlString,document_root,message,term,total_len) {
     xmlString.responseType = "text";
     xmlString.onreadystatechange=function()
@@ -83,36 +84,38 @@ function readURL(theURL,theNAME,xmlString,document_root,message,term,total_len) 
     xmlString.send(); 
 }
 
+
+// *******************
+// *  Analyse Links  *
+// *******************
 function AnalyseLinks(link_lis,document_root,message,term) {
     console.log("THIS MANY LINKS",link_lis.length);
     var next_lis = [];
     var arr_info = [];
     for (var x = 0; x < link_lis.length; x++){
+        // determine if the current link is a .txt file
         if (link_lis[x][0].indexOf(".txt") > -1){
             next_lis.push([link_lis[x][0],new XMLHttpRequest(),link_lis[x][1]]);
+            //console.log(link_lis[x][1]);
             
         }
+        // determine if the current link is a .pdf file
         else if (link_lis[x][0].indexOf(".pdf") > -1){
-            //getPDFtext(link_lis[x][0]);
             next_lis.push([link_lis[x][0],link_lis[x][1]]);
         }
     }
     var goal_size = next_lis.length;
     for (x = 0; x < next_lis.length; x++){
+        // run for .txt files
         if (next_lis[x].length == 3){
             readURL(next_lis[x][0],next_lis[x][2],next_lis[x][1],document_root,message,term,goal_size);
         }
+        // run for .pdf files
         else {
             getPDFtext(next_lis[x][0],next_lis[x][1],message,term,goal_size);
         }
     }
 }
-
-
-
-
-
-
 
 
 var page_html = {term_array: []};
@@ -129,18 +132,24 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
 
 
 
+// *********************
+// *  Listen for Inp   *
+// *********************
 function listenForInp() {
     $("#search_entered").submit(function(e) {
     e.preventDefault();
     });
     
+    // message: the textBox that holds the links containing the value
     var message = document.getElementById('message');
+    // search: the submit button
     var search = document.getElementById('subbtn');
+    // term: the input text box
     var term = document.getElementById('sbox');
+
     if (search){ //&& term.value != ''){
             search.onclick = function () {
                 final_s = [];
-                //console.log(message);
                 message.innerHTML = "<img align = \"middle\" src=\"loader.gif\">";
                 AnalyseLinks(page_html.term_array,document,message,term.value);
             };

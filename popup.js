@@ -1,4 +1,4 @@
-function sendToPopup(message,fin_lis){
+hfunction sendToPopup(message,fin_lis){
     fin_lis.sort(function(a,b){
         if (a[0] > b[0]){
             return 1;
@@ -146,6 +146,7 @@ function listenForInp() {
     var search = document.getElementById('subbtn');
     // term: the input text box
     var term = document.getElementById('sbox');
+    term.select();
 
     if (search){ //&& term.value != ''){
             search.onclick = function () {
@@ -178,17 +179,22 @@ function onWindowLoad() {
 
 
 window.onload = onWindowLoad();
-var myCustomKey = 88; // Shift + x
-window.addEventListener('keyup', keyboardNavigation, false);
-function keyboardNavigation(e) {
-    switch(e.which) {
-    case myCustomKey:
-    if (e.altKey) {
-        console.log("Clicked Shift X");
-    }
-    break;
-  }
-}
+//document.getElementById('sbox').select();
+// var myCustomKey = 13; // Enter
+// window.addEventListener('keyup', keyboardNavigation, false);
+// function keyboardNavigation(e) {
+//     switch(e.which) {
+//     case myCustomKey:
+//     if (e.Enter) {
+//         search.onclick = function () {
+//         final_s = [];
+//         message.innerHTML = "<img align = \"middle\" src=\"loader.gif\">";
+//         AnalyseLinks(page_html.term_array,document,message,term.value);
+//         };
+//     }
+//     break;
+//   }
+// }
 
 listenForInp();
 

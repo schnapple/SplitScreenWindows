@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Timers;
 using System.Windows.Forms;
+using Microsoft.Win32;
 
 
 namespace WindowsFormsApplication1
@@ -56,8 +57,11 @@ namespace WindowsFormsApplication1
             private static extern int getY()
         */
 
-        private static int x;
-        private static int y;
+        private static string pathWallpaper;
+        private static int x; // mouse x position
+        private static int y; // mouse y position
+        private static double height; // screen height resolution
+        private static double width;  // screen width resolution
         private static System.Timers.Timer aTimer;
         private static System.Timers.Timer bTimer;
         private static System.Timers.Timer cTimer;
@@ -68,6 +72,7 @@ namespace WindowsFormsApplication1
         private static IntPtr _hookID = IntPtr.Zero;
         static IntPtr hHook = IntPtr.Zero;
         private static IntPtr currentHandle;
+     
 
         private delegate IntPtr LowLevelMouseProc(int nCode,
             IntPtr wParam, IntPtr lParam);
@@ -78,19 +83,28 @@ namespace WindowsFormsApplication1
         public Form1()
         {
             InitializeComponent();
+            Rectangle rect = Screen.PrimaryScreen.WorkingArea;
+            height = rect.Height;
+            width = rect.Width;
+            Debug.Print("{0} y {1}", height, width);
+            aTimer = new System.Timers.Timer(100);
+            bTimer = new System.Timers.Timer(1000);
+            cTimer = new System.Timers.Timer(100);
+            GetPathOfWallpaper();
+            if(pathWallpaper != null)
+                this.pictureBox1.ImageLocation = pathWallpaper;
+            this.pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
+            //Debug.Print("here {0}", pathWallpaper);
+            
             
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
 
-            aTimer = new System.Timers.Timer(100);
+
             aTimer.Elapsed += GrabMousePos;
-
-            bTimer = new System.Timers.Timer(1000);
             bTimer.Elapsed += WindowInPos;
-
-            cTimer = new System.Timers.Timer(100);
             cTimer.Elapsed += hookTimer;
 
 
@@ -213,7 +227,7 @@ namespace WindowsFormsApplication1
         private void WindowInPos(object sender, ElapsedEventArgs e)
         {
                         
-            const short SWP_NOSIZE = 1;
+           // const short SWP_NOSIZE = 1;
            // const short SWP_NOMOVE = 0x2;
             const short SWP_NOZORDER = 0x4;
             const int SWP_SHOWWINDOW = 0x0040;
@@ -271,6 +285,18 @@ namespace WindowsFormsApplication1
             y = mousePoint.Y;
             //this.textBox1.Text = x + "  " + y;
             //throw new NotImplementedException();
+        }
+
+        private void GetPathOfWallpaper()
+        {
+            pathWallpaper = "";
+            RegistryKey regKey = Registry.CurrentUser.OpenSubKey("Control Panel\\Desktop", false);
+            
+            if(regKey != null)
+            {
+                pathWallpaper = regKey.GetValue("WallPaper").ToString();
+                regKey.Close();
+            }
         }
 
     }

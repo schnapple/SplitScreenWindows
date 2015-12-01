@@ -6,6 +6,11 @@ using System.Timers;
 using System.Windows.Forms;
 using Microsoft.Win32;
 
+/**
+    Philip LaGambino
+    SplitScreen
+*/
+
 
 namespace WindowsFormsApplication1
 {
@@ -60,8 +65,9 @@ namespace WindowsFormsApplication1
         private static string pathWallpaper;
         private static int x; // mouse x position
         private static int y; // mouse y position
-        private static double height; // screen height resolution
-        private static double width;  // screen width resolution
+        private static int height; // screen height resolution
+        private static int width;  // screen width resolution
+        private static string template;
         private static System.Timers.Timer aTimer;
         private static System.Timers.Timer bTimer;
         private static System.Timers.Timer cTimer;
@@ -80,6 +86,10 @@ namespace WindowsFormsApplication1
        // private int _mouseChange;
 
 
+        
+        /**
+        
+        */
         public Form1()
         {
             InitializeComponent();
@@ -87,6 +97,8 @@ namespace WindowsFormsApplication1
             height = rect.Height;
             width = rect.Width;
             Debug.Print("{0} y {1}", height, width);
+            this.pictureBox1.Height = height/3;
+            this.pictureBox1.Width = width/3;
             aTimer = new System.Timers.Timer(100);
             bTimer = new System.Timers.Timer(1000);
             cTimer = new System.Timers.Timer(100);
@@ -94,15 +106,15 @@ namespace WindowsFormsApplication1
             if(pathWallpaper != null)
                 this.pictureBox1.ImageLocation = pathWallpaper;
             this.pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
-            //Debug.Print("here {0}", pathWallpaper);
+            //this.pictureBox1.
             
             
         }
 
+
+
         private void button1_Click(object sender, EventArgs e)
         {
-
-
             aTimer.Elapsed += GrabMousePos;
             bTimer.Elapsed += WindowInPos;
             cTimer.Elapsed += hookTimer;
@@ -126,8 +138,6 @@ namespace WindowsFormsApplication1
             //            GetModuleHandle(curModule.ModuleName), 0);
             //    }
             //}
-
-
 
             // Cursor = new Cursor(Cursor.Current.Handle);
             if (this.button1.Text == "Run")
@@ -299,5 +309,20 @@ namespace WindowsFormsApplication1
             }
         }
 
+        private void button2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            this.textBox1.Text = listBox1.SelectedItem.ToString();
+            template = listBox1.SelectedItem.ToString();
+        }
     }
 }

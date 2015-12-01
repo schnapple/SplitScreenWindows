@@ -38,19 +38,6 @@ namespace WindowsFormsApplication1
             Console.ReadLine();
             //MousePos mp = new MousePos();
         }
-
-
-        private static void GrabMousePos(object source, ElapsedEventArgs e)
-        {
-            Console.WriteLine("The Elapsed event was raised at {0:HH:mm:ss.fff}", e.SignalTime);
-            //Debug.WriteLine("run");
-            //Console.ReadLine();
-            //Point mousepoint = Control.MousePosition;
-            //Form1.button1.Text = mousepoint.Y + "   " + mousepoint.X;
-            
-        }
-
-
     }
 
 }

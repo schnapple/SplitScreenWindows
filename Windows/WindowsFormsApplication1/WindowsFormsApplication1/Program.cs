@@ -31,10 +31,6 @@ namespace WindowsFormsApplication1
             Application.SetCompatibleTextRenderingDefault(false);
             Point mousepoint = Control.MousePosition;
             Application.Run(new Form1());
-            //aTimer = new System.Timers.Timer(1000);
-            //aTimer.Elapsed += GrabMousePos;
-            //aTimer.AutoReset = true;
-            //aTimer.Enabled = true;
             Console.ReadLine();
             //MousePos mp = new MousePos();
         }

@@ -1,10 +1,13 @@
 ﻿using System;
+using System.IO;
 using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Timers;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 
 /**
     Philip LaGambino
@@ -67,6 +70,9 @@ namespace WindowsFormsApplication1
         private static int y; // mouse y position
         private static int height; // screen height resolution
         private static int width;  // screen width resolution
+        private bool draw;
+        private Image origImage;
+        private Image drawnImage;
         private static string template;
         private static System.Timers.Timer aTimer;
         private static System.Timers.Timer bTimer;
@@ -93,22 +99,65 @@ namespace WindowsFormsApplication1
         public Form1()
         {
             InitializeComponent();
+            string path = Directory.GetCurrentDirectory() + "\\templates.txt";
+            Debug.Print("{0}", Directory.GetCurrentDirectory());
+            StreamReader sr = new StreamReader(path);
+            String line = sr.ReadLine();
+            String name;
+            int lineAt;
+            while (line != null)
+            {
+                Debug.Print("{0}", line);
+                lineAt = line.IndexOf('|');
+                name = line.Substring(0, lineAt);
+                if(line != null)
+                    this.listBox1.Items.Add(name);
+                line = sr.ReadLine();
+                
+            }
+
             Rectangle rect = Screen.PrimaryScreen.WorkingArea;
             height = rect.Height;
             width = rect.Width;
-            Debug.Print("{0} y {1}", height, width);
+            Debug.Print("{0} y {1}", width, height);
             this.pictureBox1.Height = height/3;
             this.pictureBox1.Width = width/3;
             aTimer = new System.Timers.Timer(100);
             bTimer = new System.Timers.Timer(1000);
             cTimer = new System.Timers.Timer(100);
             GetPathOfWallpaper();
-            if(pathWallpaper != null)
-                this.pictureBox1.ImageLocation = pathWallpaper;
-            this.pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
+            //if(pathWallpaper != null)
+            //    this.pictureBox1.ImageLocation = pathWallpaper;
+            //this.pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
+            origImage = Image.FromFile(pathWallpaper);
+            origImage = ResizeImage(origImage, width/3, height/3);
+            this.pictureBox1.Image = origImage;
             //this.pictureBox1.
-            
-            
+        }
+
+        public static Bitmap ResizeImage(Image image, int width, int height)
+        {
+            var destRect = new Rectangle(0, 0, width, height);
+            var destImage = new Bitmap(width, height);
+
+            destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+
+            using (var graphics = Graphics.FromImage(destImage))
+            {
+                graphics.CompositingMode = CompositingMode.SourceCopy;
+                graphics.CompositingQuality = CompositingQuality.HighQuality;
+                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                graphics.SmoothingMode = SmoothingMode.HighQuality;
+                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+
+                using (var wrapMode = new ImageAttributes())
+                {
+                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+                    graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
+                }
+            }
+
+            return destImage;
         }
 
 
@@ -118,9 +167,8 @@ namespace WindowsFormsApplication1
             aTimer.Elapsed += GrabMousePos;
             bTimer.Elapsed += WindowInPos;
             cTimer.Elapsed += hookTimer;
-
-
-            /**if (!hookCreated)
+            /*
+            if (!hookCreated)
             {
                 if (installHook())
                 {
@@ -128,18 +176,20 @@ namespace WindowsFormsApplication1
                     Console.WriteLine("Hooks installed successfully\n");
                 }
             }
-        */
-            //if (IntPtr.Zero == hHook)
-            //{
-            //    using (Process curProcess = Process.GetCurrentProcess())
-            //    using (ProcessModule curModule = curProcess.MainModule)
-            //    {
-            //        hHook = SetWindowsHookEx(WH_Mouse_LL, _proc,
-            //            GetModuleHandle(curModule.ModuleName), 0);
-            //    }
-            //}
+            if (IntPtr.Zero == hHook)
+            {
+                using (Process curProcess = Process.GetCurrentProcess())
+                using (ProcessModule curModule = curProcess.MainModule)
+                {
+                    hHook = SetWindowsHookEx(WH_Mouse_LL, _proc,
+                        GetModuleHandle(curModule.ModuleName), 0);
+                }
+            }
 
-            // Cursor = new Cursor(Cursor.Current.Handle);
+            Cursor = new Cursor(Cursor.Current.Handle);
+            */
+
+
             if (this.button1.Text == "Run")
             {
 
@@ -174,11 +224,10 @@ namespace WindowsFormsApplication1
         {
            // if(nCode >= 0 && MouseMessages.WM_LBUTTONDOWN == (MouseMessages)wParam)
            // {
+           
                 POINT cusorPoint;
                 bool ret = GetCursorPos(out cusorPoint);
-
                 IntPtr winHandle = WindowFromPoint(cusorPoint);
-
                 currentHandle = winHandle;
 
                 //UnhookWindowsHookEx(hHook);
@@ -316,7 +365,47 @@ namespace WindowsFormsApplication1
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            this.pictureBox1.ContextMenu = new ContextMenu();
+            this.pictureBox1.MouseDown += new MouseEventHandler(pictureBox1_MouseDown);
+            this.pictureBox1.MouseMove += new MouseEventHandler(pictureBox1_MouseMove);
+            this.pictureBox1.MouseUp += new MouseEventHandler(pictureBox1_MouseUp);
+        }
 
+        private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
+        {
+            Debug.Print("mouse is down on picture box");
+           
+            Graphics g;
+           
+                //Debug.Print("on picture box");
+                draw = true;
+                g = Graphics.FromImage(pictureBox1.Image);
+                Pen pen1 = new Pen(Color.Red, 20);
+                Debug.Print("{0} and {1}", e.X*3, e.Y*3);
+                g.DrawRectangle(pen1, e.X, e.Y, 20, 20);
+                g.Save();
+                pictureBox1.Image = origImage;
+            
+        }
+
+        private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
+        {
+            draw = false;
+        }
+
+
+
+        private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (draw)
+            {
+                Debug.Print("mouse is down and moving on picture box");
+                Graphics g = Graphics.FromImage(origImage);
+                SolidBrush brush = new SolidBrush(Color.Red);
+                g.FillRectangle(brush, e.X, e.Y, 20, 20);
+                g.Save();
+                pictureBox1.Image = origImage;
+            }
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)

@@ -61,9 +61,9 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(381, 113);
+            this.pictureBox1.Location = new System.Drawing.Point(381, 135);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(630, 363);
+            this.pictureBox1.Size = new System.Drawing.Size(737, 341);
             this.pictureBox1.TabIndex = 2;
             this.pictureBox1.TabStop = false;
             // 
@@ -85,10 +85,6 @@
             this.listBox1.Font = new System.Drawing.Font("Segoe Print", 26F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.listBox1.FormattingEnabled = true;
             this.listBox1.ItemHeight = 61;
-            this.listBox1.Items.AddRange(new object[] {
-            "Default",
-            "Template 1",
-            "Template 2"});
             this.listBox1.Location = new System.Drawing.Point(55, 167);
             this.listBox1.Name = "listBox1";
             this.listBox1.Size = new System.Drawing.Size(298, 309);
@@ -99,7 +95,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1045, 512);
+            this.ClientSize = new System.Drawing.Size(1176, 521);
             this.Controls.Add(this.listBox1);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.pictureBox1);

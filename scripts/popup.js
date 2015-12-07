@@ -178,17 +178,18 @@ function onWindowLoad() {
 
 
 window.onload = onWindowLoad();
-var myCustomKey = 88; // Shift + x
-window.addEventListener('keyup', keyboardNavigation, false);
-function keyboardNavigation(e) {
-    switch(e.which) {
-    case myCustomKey:
-    if (e.altKey) {
-        console.log("Clicked Shift X");
-    }
-    break;
-  }
-}
+//document.getElementById('sbox').select();
+// var myCustomKey = 88; // Shift + x
+// window.addEventListener('keyup', keyboardNavigation, false);
+// function keyboardNavigation(e) {
+//     switch(e.which) {
+//     case myCustomKey:
+//     if (e.altKey) {
+//         console.log("Clicked Shift X");
+//     }
+//     break;
+//   }
+// }
 
 listenForInp();
 

@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Microsoft.Win32;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.Collections.Generic;
 
 /**
     Philip LaGambino
@@ -17,6 +18,34 @@ using System.Drawing.Imaging;
 
 namespace WindowsFormsApplication1
 {
+
+    public struct TemplateParse
+    {
+
+        private int id;
+        private int topX;
+        private int topY;
+        private int botX;
+        private int botY;
+        public TemplateParse(int iD, int tX, int tY, int bX, int bY)
+        {
+            id = iD;
+            topX = tX;
+            topY = tY;
+            botX = bX;
+            botY = bY;
+        }
+
+        public void move()
+        {
+
+        }
+
+        public void resize()
+        {
+
+        }
+    }
 
     public partial class Form1 : Form
     {
@@ -84,6 +113,8 @@ namespace WindowsFormsApplication1
         private static IntPtr _hookID = IntPtr.Zero;
         static IntPtr hHook = IntPtr.Zero;
         private static IntPtr currentHandle;
+        private List<TemplateParse> tempParseArr = new List<TemplateParse>();
+        private int tempParseId;
      
 
         private delegate IntPtr LowLevelMouseProc(int nCode,
@@ -105,6 +136,7 @@ namespace WindowsFormsApplication1
             String line = sr.ReadLine();
             String name;
             int lineAt;
+            tempParseId = 0; // *************************** THIS LINE IS TEMPORARY  *************************
             while (line != null)
             {
                 Debug.Print("{0}", line);
@@ -188,8 +220,6 @@ namespace WindowsFormsApplication1
 
             Cursor = new Cursor(Cursor.Current.Handle);
             */
-
-
             if (this.button1.Text == "Run")
             {
 
@@ -378,13 +408,15 @@ namespace WindowsFormsApplication1
             Graphics g;
            
                 //Debug.Print("on picture box");
-                draw = true;
-                g = Graphics.FromImage(pictureBox1.Image);
-                Pen pen1 = new Pen(Color.Red, 20);
-                Debug.Print("{0} and {1}", e.X*3, e.Y*3);
-                g.DrawRectangle(pen1, e.X, e.Y, 20, 20);
-                g.Save();
-                pictureBox1.Image = origImage;
+            draw = true;
+            tempParseArr.Add(new TemplateParse(tempParseId, e.X*3, e.Y*3, e.X*3 + 120, e.Y*3 + 120));
+            tempParseId++;
+            g = Graphics.FromImage(pictureBox1.Image);
+            Pen pen1 = new Pen(Color.Red, 5);
+            Debug.Print("{0} and {1}", e.X*3, e.Y*3);
+            g.DrawRectangle(pen1, e.X, e.Y, 40, 40);
+            g.Save();
+            pictureBox1.Image = origImage;
             
         }
 
@@ -397,15 +429,21 @@ namespace WindowsFormsApplication1
 
         private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
         {
-            if (draw)
+            
+            foreach (TemplateParse currentTemp in tempParseArr)
             {
-                Debug.Print("mouse is down and moving on picture box");
-                Graphics g = Graphics.FromImage(origImage);
-                SolidBrush brush = new SolidBrush(Color.Red);
-                g.FillRectangle(brush, e.X, e.Y, 20, 20);
-                g.Save();
-                pictureBox1.Image = origImage;
+
             }
+            
+            //if (draw)
+            //{
+            //    Debug.Print("mouse is down and moving on picture box");
+            //    Graphics g = Graphics.FromImage(origImage);
+            //    SolidBrush brush = new SolidBrush(Color.Red);
+            //    g.FillRectangle(brush, e.X, e.Y, 20, 20);
+            //    g.Save();
+            //    pictureBox1.Image = origImage;
+            //}
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)

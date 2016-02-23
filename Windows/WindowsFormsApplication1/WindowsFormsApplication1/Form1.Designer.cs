@@ -28,83 +28,142 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.button1 = new System.Windows.Forms.Button();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.button2 = new System.Windows.Forms.Button();
-            this.listBox1 = new System.Windows.Forms.ListBox();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.snappingButton = new System.Windows.Forms.Button();
+            this.positioningText = new System.Windows.Forms.TextBox();
+            this.wallpaperImage = new System.Windows.Forms.PictureBox();
+            this.customizationButton = new System.Windows.Forms.Button();
+            this.templateList = new System.Windows.Forms.ListBox();
+            this.positionText = new System.Windows.Forms.TextBox();
+            this.firstXCoorScroller = new System.Windows.Forms.NumericUpDown();
+            this.firstYCoorScroller = new System.Windows.Forms.NumericUpDown();
+            this.secondXCoorScroller = new System.Windows.Forms.NumericUpDown();
+            this.secondYCoorScroller = new System.Windows.Forms.NumericUpDown();
+            ((System.ComponentModel.ISupportInitialize)(this.wallpaperImage)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.firstXCoorScroller)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.firstYCoorScroller)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.secondXCoorScroller)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.secondYCoorScroller)).BeginInit();
             this.SuspendLayout();
             // 
-            // button1
+            // snappingButton
             // 
-            this.button1.BackColor = System.Drawing.SystemColors.MenuHighlight;
-            this.button1.Font = new System.Drawing.Font("Arial", 26F);
-            this.button1.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.button1.Location = new System.Drawing.Point(410, 26);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(243, 59);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Templates";
-            this.button1.UseVisualStyleBackColor = false;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.snappingButton.BackColor = System.Drawing.SystemColors.MenuHighlight;
+            this.snappingButton.Font = new System.Drawing.Font("Arial", 26F);
+            this.snappingButton.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.snappingButton.Location = new System.Drawing.Point(12, 87);
+            this.snappingButton.Name = "snappingButton";
+            this.snappingButton.Size = new System.Drawing.Size(243, 59);
+            this.snappingButton.TabIndex = 0;
+            this.snappingButton.Text = "Run";
+            this.snappingButton.UseVisualStyleBackColor = false;
+            this.snappingButton.Click += new System.EventHandler(this.button1_Click);
             // 
-            // textBox1
+            // positioningText
             // 
-            this.textBox1.BackColor = System.Drawing.Color.Fuchsia;
-            this.textBox1.Font = new System.Drawing.Font("PT Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox1.Location = new System.Drawing.Point(55, 26);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(154, 43);
-            this.textBox1.TabIndex = 1;
-            this.textBox1.Text = "Split Screen";
+            this.positioningText.BackColor = System.Drawing.Color.Fuchsia;
+            this.positioningText.Font = new System.Drawing.Font("PT Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.positioningText.Location = new System.Drawing.Point(12, 26);
+            this.positioningText.Name = "positioningText";
+            this.positioningText.Size = new System.Drawing.Size(154, 43);
+            this.positioningText.TabIndex = 1;
+            this.positioningText.Text = "Positioning";
             // 
-            // pictureBox1
+            // wallpaperImage
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(381, 135);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(737, 341);
-            this.pictureBox1.TabIndex = 2;
-            this.pictureBox1.TabStop = false;
+            this.wallpaperImage.Location = new System.Drawing.Point(381, 164);
+            this.wallpaperImage.Name = "wallpaperImage";
+            this.wallpaperImage.Size = new System.Drawing.Size(737, 341);
+            this.wallpaperImage.TabIndex = 2;
+            this.wallpaperImage.TabStop = false;
+            this.wallpaperImage.Visible = false;
             // 
-            // button2
+            // customizationButton
             // 
-            this.button2.BackColor = System.Drawing.SystemColors.MenuHighlight;
-            this.button2.Font = new System.Drawing.Font("Arial", 26F);
-            this.button2.Location = new System.Drawing.Point(729, 26);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(243, 59);
-            this.button2.TabIndex = 3;
-            this.button2.Text = "Customize";
-            this.button2.UseVisualStyleBackColor = false;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.customizationButton.BackColor = System.Drawing.SystemColors.MenuHighlight;
+            this.customizationButton.Font = new System.Drawing.Font("Arial", 26F);
+            this.customizationButton.Location = new System.Drawing.Point(281, 10);
+            this.customizationButton.Name = "customizationButton";
+            this.customizationButton.Size = new System.Drawing.Size(243, 59);
+            this.customizationButton.TabIndex = 3;
+            this.customizationButton.Text = "Customize";
+            this.customizationButton.UseVisualStyleBackColor = false;
+            this.customizationButton.Click += new System.EventHandler(this.button2_Click);
             // 
-            // listBox1
+            // templateList
             // 
-            this.listBox1.BackColor = System.Drawing.Color.GhostWhite;
-            this.listBox1.Font = new System.Drawing.Font("Segoe Print", 26F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.ItemHeight = 61;
-            this.listBox1.Location = new System.Drawing.Point(55, 167);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(298, 309);
-            this.listBox1.TabIndex = 4;
-            this.listBox1.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
+            this.templateList.BackColor = System.Drawing.Color.GhostWhite;
+            this.templateList.Font = new System.Drawing.Font("Segoe Print", 26F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.templateList.FormattingEnabled = true;
+            this.templateList.ItemHeight = 61;
+            this.templateList.Location = new System.Drawing.Point(12, 200);
+            this.templateList.Name = "templateList";
+            this.templateList.Size = new System.Drawing.Size(298, 309);
+            this.templateList.TabIndex = 4;
+            this.templateList.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
+            // 
+            // positionText
+            // 
+            this.positionText.Location = new System.Drawing.Point(12, 164);
+            this.positionText.Name = "positionText";
+            this.positionText.Size = new System.Drawing.Size(220, 20);
+            this.positionText.TabIndex = 5;
+            // 
+            // firstXCoorScroller
+            // 
+            this.firstXCoorScroller.Location = new System.Drawing.Point(381, 87);
+            this.firstXCoorScroller.Name = "firstXCoorScroller";
+            this.firstXCoorScroller.Size = new System.Drawing.Size(120, 20);
+            this.firstXCoorScroller.TabIndex = 6;
+            this.firstYCoorScroller.Maximum = 2000;
+            // 
+            // firstYCoorScroller
+            // 
+            this.firstYCoorScroller.Location = new System.Drawing.Point(381, 115);
+            this.firstYCoorScroller.Name = "firstYCoorScroller";
+            this.firstYCoorScroller.Size = new System.Drawing.Size(120, 20);
+            this.firstYCoorScroller.TabIndex = 7;
+            this.firstXCoorScroller.Maximum = 2000;
+            // 
+            // numericUpDown1
+            // 
+            this.secondXCoorScroller.Location = new System.Drawing.Point(557, 87);
+            this.secondXCoorScroller.Name = "secondXCoorScroller";
+            this.secondXCoorScroller.Size = new System.Drawing.Size(120, 20);
+            this.secondXCoorScroller.TabIndex = 8;
+            this.secondXCoorScroller.Maximum = 2000;
+            // 
+            // numericUpDown2
+            // 
+            this.secondYCoorScroller.Location = new System.Drawing.Point(557, 114);
+            this.secondYCoorScroller.Name = "secondYCoorScroller";
+            this.secondYCoorScroller.Size = new System.Drawing.Size(120, 20);
+            this.secondYCoorScroller.TabIndex = 9;
+            this.secondYCoorScroller.Maximum = 2000;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1176, 521);
-            this.Controls.Add(this.listBox1);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.pictureBox1);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.secondYCoorScroller);
+            this.Controls.Add(this.secondXCoorScroller);
+            this.Controls.Add(this.firstYCoorScroller);
+            this.Controls.Add(this.firstXCoorScroller);
+            this.Controls.Add(this.positionText);
+            this.Controls.Add(this.templateList);
+            this.Controls.Add(this.customizationButton);
+            this.Controls.Add(this.wallpaperImage);
+            this.Controls.Add(this.positioningText);
+            this.Controls.Add(this.snappingButton);
             this.Name = "Form1";
+            this.ShowIcon = false;
             this.Text = "SplitScreen";
             this.Load += new System.EventHandler(this.Form1_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.wallpaperImage)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.firstXCoorScroller)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.firstYCoorScroller)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.secondXCoorScroller)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.secondYCoorScroller)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -112,11 +171,16 @@
 
         #endregion
 
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.ListBox listBox1;
+        private System.Windows.Forms.Button snappingButton;
+        private System.Windows.Forms.TextBox positioningText;
+        private System.Windows.Forms.PictureBox wallpaperImage;
+        private System.Windows.Forms.Button customizationButton;
+        private System.Windows.Forms.ListBox templateList;
+        private System.Windows.Forms.TextBox positionText;
+        private System.Windows.Forms.NumericUpDown firstXCoorScroller;
+        private System.Windows.Forms.NumericUpDown firstYCoorScroller;
+        private System.Windows.Forms.NumericUpDown secondXCoorScroller;
+        private System.Windows.Forms.NumericUpDown secondYCoorScroller;
     }
 }
 

@@ -30,7 +30,7 @@
         {
             this.snappingButton = new System.Windows.Forms.Button();
             this.positioningText = new System.Windows.Forms.TextBox();
-            this.wallpaperImage = new System.Windows.Forms.PictureBox();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.customizationButton = new System.Windows.Forms.Button();
             this.templateList = new System.Windows.Forms.ListBox();
             this.positionText = new System.Windows.Forms.TextBox();
@@ -38,7 +38,8 @@
             this.firstYCoorScroller = new System.Windows.Forms.NumericUpDown();
             this.secondXCoorScroller = new System.Windows.Forms.NumericUpDown();
             this.secondYCoorScroller = new System.Windows.Forms.NumericUpDown();
-            ((System.ComponentModel.ISupportInitialize)(this.wallpaperImage)).BeginInit();
+            this.confirmationButton = new System.Windows.Forms.Button();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.firstXCoorScroller)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.firstYCoorScroller)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.secondXCoorScroller)).BeginInit();
@@ -62,26 +63,26 @@
             // 
             this.positioningText.BackColor = System.Drawing.Color.Fuchsia;
             this.positioningText.Font = new System.Drawing.Font("PT Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.positioningText.Location = new System.Drawing.Point(12, 26);
+            this.positioningText.Location = new System.Drawing.Point(12, 151);
             this.positioningText.Name = "positioningText";
             this.positioningText.Size = new System.Drawing.Size(154, 43);
             this.positioningText.TabIndex = 1;
             this.positioningText.Text = "Positioning";
             // 
-            // wallpaperImage
+            // pictureBox1
             // 
-            this.wallpaperImage.Location = new System.Drawing.Point(381, 164);
-            this.wallpaperImage.Name = "wallpaperImage";
-            this.wallpaperImage.Size = new System.Drawing.Size(737, 341);
-            this.wallpaperImage.TabIndex = 2;
-            this.wallpaperImage.TabStop = false;
-            this.wallpaperImage.Visible = false;
+            this.pictureBox1.Location = new System.Drawing.Point(381, 164);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(737, 341);
+            this.pictureBox1.TabIndex = 2;
+            this.pictureBox1.TabStop = false;
+            this.pictureBox1.Visible = false;
             // 
             // customizationButton
             // 
             this.customizationButton.BackColor = System.Drawing.SystemColors.MenuHighlight;
             this.customizationButton.Font = new System.Drawing.Font("Arial", 26F);
-            this.customizationButton.Location = new System.Drawing.Point(281, 10);
+            this.customizationButton.Location = new System.Drawing.Point(12, 12);
             this.customizationButton.Name = "customizationButton";
             this.customizationButton.Size = new System.Drawing.Size(243, 59);
             this.customizationButton.TabIndex = 3;
@@ -103,7 +104,7 @@
             // 
             // positionText
             // 
-            this.positionText.Location = new System.Drawing.Point(12, 164);
+            this.positionText.Location = new System.Drawing.Point(913, 12);
             this.positionText.Name = "positionText";
             this.positionText.Size = new System.Drawing.Size(220, 20);
             this.positionText.TabIndex = 5;
@@ -111,40 +112,71 @@
             // firstXCoorScroller
             // 
             this.firstXCoorScroller.Location = new System.Drawing.Point(381, 87);
+            this.firstXCoorScroller.Maximum = new decimal(new int[] {
+            2000,
+            0,
+            0,
+            0});
             this.firstXCoorScroller.Name = "firstXCoorScroller";
             this.firstXCoorScroller.Size = new System.Drawing.Size(120, 20);
             this.firstXCoorScroller.TabIndex = 6;
-            this.firstYCoorScroller.Maximum = 2000;
+            this.firstXCoorScroller.ValueChanged += new System.EventHandler(this.firstXCoorScroller_ValueChanged);
             // 
             // firstYCoorScroller
             // 
             this.firstYCoorScroller.Location = new System.Drawing.Point(381, 115);
+            this.firstYCoorScroller.Maximum = new decimal(new int[] {
+            2000,
+            0,
+            0,
+            0});
             this.firstYCoorScroller.Name = "firstYCoorScroller";
             this.firstYCoorScroller.Size = new System.Drawing.Size(120, 20);
             this.firstYCoorScroller.TabIndex = 7;
-            this.firstXCoorScroller.Maximum = 2000;
+            this.firstYCoorScroller.ValueChanged += new System.EventHandler(this.firstYCoorScroller_ValueChanged);
             // 
-            // numericUpDown1
+            // secondXCoorScroller
             // 
             this.secondXCoorScroller.Location = new System.Drawing.Point(557, 87);
+            this.secondXCoorScroller.Maximum = new decimal(new int[] {
+            2000,
+            0,
+            0,
+            0});
             this.secondXCoorScroller.Name = "secondXCoorScroller";
             this.secondXCoorScroller.Size = new System.Drawing.Size(120, 20);
             this.secondXCoorScroller.TabIndex = 8;
-            this.secondXCoorScroller.Maximum = 2000;
+            this.secondXCoorScroller.ValueChanged += new System.EventHandler(this.secondXCoorScroller_ValueChanged);
             // 
-            // numericUpDown2
+            // secondYCoorScroller
             // 
             this.secondYCoorScroller.Location = new System.Drawing.Point(557, 114);
+            this.secondYCoorScroller.Maximum = new decimal(new int[] {
+            2000,
+            0,
+            0,
+            0});
             this.secondYCoorScroller.Name = "secondYCoorScroller";
             this.secondYCoorScroller.Size = new System.Drawing.Size(120, 20);
             this.secondYCoorScroller.TabIndex = 9;
-            this.secondYCoorScroller.Maximum = 2000;
+            this.secondYCoorScroller.ValueChanged += new System.EventHandler(this.secondYCoorScroller_ValueChanged);
+            // 
+            // confirmationButton
+            // 
+            this.confirmationButton.Location = new System.Drawing.Point(711, 84);
+            this.confirmationButton.Name = "confirmationButton";
+            this.confirmationButton.Size = new System.Drawing.Size(147, 50);
+            this.confirmationButton.TabIndex = 10;
+            this.confirmationButton.Text = "Confirmation Button";
+            this.confirmationButton.UseVisualStyleBackColor = true;
+            this.confirmationButton.Click += new System.EventHandler(this.confirmationButton_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1176, 521);
+            this.Controls.Add(this.confirmationButton);
             this.Controls.Add(this.secondYCoorScroller);
             this.Controls.Add(this.secondXCoorScroller);
             this.Controls.Add(this.firstYCoorScroller);
@@ -152,14 +184,14 @@
             this.Controls.Add(this.positionText);
             this.Controls.Add(this.templateList);
             this.Controls.Add(this.customizationButton);
-            this.Controls.Add(this.wallpaperImage);
+            this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.positioningText);
             this.Controls.Add(this.snappingButton);
             this.Name = "Form1";
             this.ShowIcon = false;
             this.Text = "SplitScreen";
             this.Load += new System.EventHandler(this.Form1_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.wallpaperImage)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.firstXCoorScroller)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.firstYCoorScroller)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.secondXCoorScroller)).EndInit();
@@ -169,11 +201,16 @@
 
         }
 
+        private void PictureBox1_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
+        {
+            throw new System.NotImplementedException();
+        }
+
         #endregion
 
         private System.Windows.Forms.Button snappingButton;
         private System.Windows.Forms.TextBox positioningText;
-        private System.Windows.Forms.PictureBox wallpaperImage;
+        private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Button customizationButton;
         private System.Windows.Forms.ListBox templateList;
         private System.Windows.Forms.TextBox positionText;
@@ -181,6 +218,7 @@
         private System.Windows.Forms.NumericUpDown firstYCoorScroller;
         private System.Windows.Forms.NumericUpDown secondXCoorScroller;
         private System.Windows.Forms.NumericUpDown secondYCoorScroller;
+        private System.Windows.Forms.Button confirmationButton;
     }
 }
 

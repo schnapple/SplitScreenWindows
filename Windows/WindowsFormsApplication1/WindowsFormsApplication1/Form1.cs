@@ -46,6 +46,26 @@ namespace WindowsFormsApplication1
             botX = bX;
             botY = bY;
         }
+
+        public int getTopX()
+        {
+            return topX;
+        }
+
+        public int getTopY()
+        {
+            return topY;
+        }
+
+        public int getBotX()
+        {
+            return botX;
+        }
+
+        public int getBotY()
+        {
+            return botY;
+        }
     }
 
 
@@ -106,7 +126,11 @@ namespace WindowsFormsApplication1
         private static int height; // screen height resolution
         private static int width;  // screen width resolution
         private bool draw;
+        private Image[] imageList;
+        private int imageListIndex;
+        private Image currentImage;
         private Image origImage;
+        private Bitmap currBit;
         //private Image drawnImage;
         private static string template;
         private static System.Timers.Timer aTimer;
@@ -162,24 +186,33 @@ namespace WindowsFormsApplication1
                 
             }
 
+            imageList = new Image[20];
+            imageListIndex = 0;
             Rectangle rect = Screen.PrimaryScreen.WorkingArea;
             height = rect.Height;
             width = rect.Width;
             Debug.Print("{0} y {1}", width, height);
-            this.wallpaperImage.Height = height/3;
-            this.wallpaperImage.Width = width/3;
+            this.pictureBox1.Height = height/3;
+            this.pictureBox1.Width = width/3;
             aTimer = new System.Timers.Timer(100);
             bTimer = new System.Timers.Timer(1000);
             cTimer = new System.Timers.Timer(100);
             GetPathOfWallpaper();
             //if(pathWallpaper != null)
-            //    this.wallpaperImage.ImageLocation = pathWallpaper;
-            //this.wallpaperImage.SizeMode = PictureBoxSizeMode.StretchImage;
+            //    this.pictureBox1.ImageLocation = pathWallpaper;
+            //this.pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
+            currentImage = Image.FromFile(pathWallpaper);
+            currentImage = ResizeImage(currentImage, width/3, height/3);
+           // pictureBox1.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox1_Paint);
+            
             origImage = Image.FromFile(pathWallpaper);
-            origImage = ResizeImage(origImage, width/3, height/3);
-            this.wallpaperImage.Image = origImage;
-            //this.wallpaperImage.
+            origImage = ResizeImage(currentImage, width / 3, height / 3);
+            this.pictureBox1.Image = currentImage;
+            imageList[imageListIndex] = currentImage;
+            //this.pictureBox1.
         }
+
+
 
         public static Bitmap ResizeImage(Image image, int width, int height)
         {
@@ -245,10 +278,14 @@ namespace WindowsFormsApplication1
 
         }
 
+
+
         private void button2_Click(object sender, EventArgs e)
         {
-            this.wallpaperImage.Visible = true;
+            this.pictureBox1.Visible = true;
         }
+
+
 
         private void hookTimer(object sender, ElapsedEventArgs e)
         {
@@ -282,6 +319,7 @@ namespace WindowsFormsApplication1
             }
             return CallNextHookEx(_hookID, nCode, wParam, lParam);
         }
+
 
 
         private const int WH_Mouse_LL = 14;
@@ -394,10 +432,11 @@ namespace WindowsFormsApplication1
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            this.wallpaperImage.ContextMenu = new ContextMenu();
-            this.wallpaperImage.MouseDown += new MouseEventHandler(pictureBox1_MouseDown);
-            this.wallpaperImage.MouseMove += new MouseEventHandler(pictureBox1_MouseMove);
-            this.wallpaperImage.MouseUp += new MouseEventHandler(pictureBox1_MouseUp);
+            this.pictureBox1.ContextMenu = new ContextMenu();
+            this.pictureBox1.MouseDown += new MouseEventHandler(pictureBox1_MouseDown);
+            this.pictureBox1.MouseMove += new MouseEventHandler(pictureBox1_MouseMove);
+            this.pictureBox1.MouseUp += new MouseEventHandler(pictureBox1_MouseUp);
+            this.pictureBox1.Paint += new PaintEventHandler(this.pictureBox1_Paint);
         }
 
 
@@ -417,7 +456,7 @@ namespace WindowsFormsApplication1
             Debug.Print("mouse is down on picture box");
 
 
-            //Debug.Print("on picture box");
+            // for the first click
             if (customizeValOne == null)
             {
                 customizeValOne = e.X * 3 + "," + e.Y * 3;
@@ -426,7 +465,12 @@ namespace WindowsFormsApplication1
                 positionText.Text = customizeValOne;
                 firstXCoorScroller.Value = customizeValOneX * 3;
                 firstYCoorScroller.Value = customizeValOneY * 3;
+                //customizeValTwoX = 0;
+                //customizeValTwoY = 0;
+                //secondXCoorScroller.Value = 0;
+                //secondYCoorScroller.Value = 0;
             }
+            // for the second click
             else if(customizeValTwo == null)
             {
                 customizeValTwo = e.X * 3 + "," + e.Y * 3;
@@ -435,15 +479,26 @@ namespace WindowsFormsApplication1
                 positionText.Text = customizeValOne + " and " + customizeValTwo;
                 secondXCoorScroller.Value = customizeValTwoX * 3;
                 secondYCoorScroller.Value = customizeValTwoY * 3;
+                pictureBox1.Refresh();
+                // draw the box on the current
 
-                draw = true;
-                tempParseArr.Add(new TemplateParse(tempParseId, customizeValOneX, customizeValOneY, customizeValTwoX, customizeValTwoY));
-                gNew = Graphics.FromImage(origImage);
-                Pen pen1 = new Pen(Color.Red, 5);
-                Debug.Print("{0} and {1}", e.X * 3, e.Y * 3);
-                gNew.DrawRectangle(pen1, customizeValOneX, customizeValOneY, customizeValTwoX-customizeValOneX, customizeValTwoY-customizeValOneY);
-                gNew.Save();
-                wallpaperImage.Image = origImage;
+                //if (imageListIndex < 20)
+                //{
+                //    imageListIndex++;
+                //    Debug.Print(imageListIndex.ToString());
+                //}
+
+                //draw = true;
+                //tempParseArr.Add(new TemplateParse(tempParseId, customizeValOneX, customizeValOneY, customizeValTwoX, customizeValTwoY));
+                //gNew = Graphics.FromImage(currentImage);
+                //Pen pen1 = new Pen(Color.Red, 1);
+                //Debug.Print("{0} and {1}", e.X * 3, e.Y * 3);
+                //gNew.DrawRectangle(pen1, customizeValOneX, customizeValOneY, customizeValTwoX - customizeValOneX, customizeValTwoY - customizeValOneY);
+                ////gNew.Save();
+                //pictureBox1.Image = currentImage;
+                //imageList[imageListIndex] = currentImage;
+
+                
 
             }
             else
@@ -457,7 +512,7 @@ namespace WindowsFormsApplication1
                 secondXCoorScroller.Value = 0;
                 secondYCoorScroller.Value = 0;
                 positionText.Text = customizeValOne;
-            }    
+            }
         }
 
 
@@ -468,30 +523,110 @@ namespace WindowsFormsApplication1
         }
 
 
-
+        /**
+        This method is currently not being used
+        */
         private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
         {
-            
-            foreach (TemplateParse currentTemp in tempParseArr)
-            {
-
-            }
-            
-            //if (draw)
-            //{
-            //    Debug.Print("mouse is down and moving on picture box");
-            //    Graphics g = Graphics.FromImage(origImage);
-            //    SolidBrush brush = new SolidBrush(Color.Red);
-            //    g.FillRectangle(brush, e.X, e.Y, 20, 20);
-            //    g.Save();
-            //    wallpaperImage.Image = origImage;
-            //}
         }
+
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             this.positioningText.Text = templateList.SelectedItem.ToString();
             template = templateList.SelectedItem.ToString();
+        }
+
+
+        private void firstXCoorScroller_ValueChanged(object sender, EventArgs e)
+        {
+            customizeValOneX = Decimal.ToInt32(firstXCoorScroller.Value) / 3;
+            pictureBox1.Update();
+            pictureBox1.Refresh();
+
+        }
+
+
+        private void firstYCoorScroller_ValueChanged(object sender, EventArgs e)
+        {
+            customizeValOneY = Decimal.ToInt32(firstYCoorScroller.Value) / 3;
+            pictureBox1.Update();
+            pictureBox1.Refresh();
+        }
+
+
+        private void secondXCoorScroller_ValueChanged(object sender, EventArgs e)
+        {
+            customizeValTwoX = Decimal.ToInt32(secondXCoorScroller.Value) / 3;
+            pictureBox1.Update();
+            pictureBox1.Refresh();
+        }
+
+
+        private void secondYCoorScroller_ValueChanged(object sender, EventArgs e)
+        {
+            customizeValTwoY = Decimal.ToInt32(secondYCoorScroller.Value) / 3;
+            pictureBox1.Update();
+            pictureBox1.Refresh();
+        }
+
+
+
+
+        private void pictureBox1_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
+        {
+            if (tempParseArr.Count == 0)
+            {
+                Graphics gCur = e.Graphics;
+                draw = true;
+                //tempParseArr.Add(new TemplateParse(tempParseId, customizeValOneX, customizeValOneY, customizeValTwoX, customizeValTwoY));
+                //gNew = Graphics.FromImage(currentImage);
+                Pen pen1 = new Pen(Color.Red, 1);
+                //Debug.Print("{0} and {1}", e.X * 3, e.Y * 3);
+                gCur.DrawRectangle(pen1, customizeValOneX, customizeValOneY, customizeValTwoX - customizeValOneX, customizeValTwoY - customizeValOneY);
+                gCur.Save();
+            }
+            else
+            {
+                Graphics gCur;
+                Pen pen1;
+                SolidBrush brush1;
+                if(tempParseArr != null) {
+                    //foreach (TemplateParse template in tempParseArr)
+                    for (int i = 0; i < tempParseArr.Count; i++ )
+                    {
+                        gCur = e.Graphics;
+                        draw = true;
+                        //tempParseArr.Add(new TemplateParse(tempParseId, customizeValOneX, customizeValOneY, customizeValTwoX, customizeValTwoY));
+                        //gNew = Graphics.FromImage(currentImage);
+                        pen1 = new Pen(Color.Red, 5);
+                        //Debug.Print("{0} and {1}", e.X * 3, e.Y * 3);
+                        gCur.DrawRectangle(pen1, (tempParseArr[i]).getTopX(), (tempParseArr[i]).getTopY(), (tempParseArr[i]).getBotX() - (tempParseArr[i]).getTopX(), (tempParseArr[i]).getBotY() - (tempParseArr[i]).getTopY());
+                        gCur.Save();
+                        pen1 = new Pen(Color.Green, 5);
+                        brush1 = new SolidBrush(Color.Green);
+                        //gCur.DrawRectangle(pen1, (tempParseArr[i]).getBotX() - 50, (tempParseArr[i]).getBotY() - 50, 50, 50);
+                        gCur.FillRectangle(brush1, (tempParseArr[i]).getBotX() - 20, (tempParseArr[i]).getBotY() - 20, 20, 20);
+                    }
+                }
+                gCur = e.Graphics;
+                draw = true;
+                //tempParseArr.Add(new TemplateParse(tempParseId, customizeValOneX, customizeValOneY, customizeValTwoX, customizeValTwoY));
+                //gNew = Graphics.FromImage(currentImage);
+                pen1 = new Pen(Color.Red, 1);
+                //Debug.Print("{0} and {1}", e.X * 3, e.Y * 3);
+                gCur.DrawRectangle(pen1, customizeValOneX, customizeValOneY, customizeValTwoX - customizeValOneX, customizeValTwoY - customizeValOneY);
+                gCur.Save();
+            }
+            //gNew.Save();
+            //pictureBox1.Image = currentImage;
+            //imageList[imageListIndex] = currentImage;
+        }
+
+        private void confirmationButton_Click(object sender, EventArgs e)
+        {
+            tempParseArr.Add(new TemplateParse(tempParseId, customizeValOneX, customizeValOneY, customizeValTwoX, customizeValTwoY));
+
         }
     }
 }

@@ -129,8 +129,8 @@ namespace WindowsFormsApplication1
         private Image[] imageList;
         private int imageListIndex;
         private Image currentImage;
-        private Image origImage;
-        private Bitmap currBit;
+        //private Image origImage;
+        //private Bitmap currBit;
         //private Image drawnImage;
         private static string template;
         private static System.Timers.Timer aTimer;
@@ -151,7 +151,7 @@ namespace WindowsFormsApplication1
         private static int customizeValTwoX; // the value for the first point's x position
         private static int customizeValTwoY; //  the value for the first point's y position
         private int tempParseId; // the current template parse ID
-        private Graphics gNew; // the newest graphics
+       // private Graphics gNew; // the newest graphics
         private List<Graphics> listGraphics;
 
 
@@ -205,8 +205,8 @@ namespace WindowsFormsApplication1
             currentImage = ResizeImage(currentImage, width/3, height/3);
            // pictureBox1.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox1_Paint);
             
-            origImage = Image.FromFile(pathWallpaper);
-            origImage = ResizeImage(currentImage, width / 3, height / 3);
+           // origImage = Image.FromFile(pathWallpaper);
+           // origImage = ResizeImage(currentImage, width / 3, height / 3);
             this.pictureBox1.Image = currentImage;
             imageList[imageListIndex] = currentImage;
             //this.pictureBox1.
@@ -366,37 +366,47 @@ namespace WindowsFormsApplication1
 
                 IntPtr handle = process.MainWindowHandle;
 
+                for (int i = 0; i < tempParseArr.Count; i++)
+                {
+                    if(x > tempParseArr[i].getBotX() * 3 - 100 && y > tempParseArr[i].getBotY() * 3 - 100 && x < tempParseArr[i].getBotX()*3 && y < tempParseArr[i].getBotY()*3 && handle == currentHandle)
+                    {
+                        SetWindowPos(handle, 0, tempParseArr[i].getTopX() * 3, tempParseArr[i].getTopY() * 3, tempParseArr[i].getBotX() * 3, tempParseArr[i].getBotY() * 3,
+                            SWP_NOZORDER | SWP_SHOWWINDOW);
+                    }
+                }
 
-                if (x == 0 && y == 0 && handle == currentHandle)
-                {
-                    SetWindowPos(handle, 0, 0, 0, 960, 540,
-                        SWP_NOZORDER | SWP_SHOWWINDOW);
-                }
-                else if (x >= 1919 && y == 0 && handle == currentHandle)
-                {
-                    SetWindowPos(handle, 0, 960, 0, 960, 540,
-                        SWP_NOZORDER | SWP_SHOWWINDOW);
-                }
-                else if (x >= 1919 && y >= 1036 && handle == currentHandle)
-                {
-                    SetWindowPos(handle, 0, 960, 540, 960, 540,
-                        SWP_NOZORDER | SWP_SHOWWINDOW);
-                }
-                else if (x <= 2 && y >= 1036 && handle == currentHandle)
-                {
-                    SetWindowPos(handle, 0, 0, 540, 960, 540,
-                        SWP_NOZORDER | SWP_SHOWWINDOW);
-                }
-                else if (x <= 2 && handle == currentHandle)
-                {
-                    SetWindowPos(handle, 0, 0, 0, 960, 1030,
-                        SWP_NOZORDER | SWP_SHOWWINDOW);
-                }
-                else if (x >= 1919 && handle == currentHandle)
-                {
-                    SetWindowPos(handle, 0, 960, 0, 960, 1030,
-                        SWP_NOZORDER | SWP_SHOWWINDOW);
-                }
+
+
+                //if (x == 0 && y == 0 && handle == currentHandle)
+                //{
+                //    SetWindowPos(handle, 0, 0, 0, 960, 540,
+                //        SWP_NOZORDER | SWP_SHOWWINDOW);
+                //}
+                //else if (x >= 1919 && y == 0 && handle == currentHandle)
+                //{
+                //    SetWindowPos(handle, 0, 960, 0, 960, 540,
+                //        SWP_NOZORDER | SWP_SHOWWINDOW);
+                //}
+                //else if (x >= 1919 && y >= 1036 && handle == currentHandle)
+                //{
+                //    SetWindowPos(handle, 0, 960, 540, 960, 540,
+                //        SWP_NOZORDER | SWP_SHOWWINDOW);
+                //}
+                //else if (x <= 2 && y >= 1036 && handle == currentHandle)
+                //{
+                //    SetWindowPos(handle, 0, 0, 540, 960, 540,
+                //        SWP_NOZORDER | SWP_SHOWWINDOW);
+                //}
+                //else if (x <= 2 && handle == currentHandle)
+                //{
+                //    SetWindowPos(handle, 0, 0, 0, 960, 1030,
+                //        SWP_NOZORDER | SWP_SHOWWINDOW);
+                //}
+                //else if (x >= 1919 && handle == currentHandle)
+                //{
+                //    SetWindowPos(handle, 0, 960, 0, 960, 1030,
+                //        SWP_NOZORDER | SWP_SHOWWINDOW);
+                //}
 
             }
         }
@@ -626,6 +636,9 @@ namespace WindowsFormsApplication1
         private void confirmationButton_Click(object sender, EventArgs e)
         {
             tempParseArr.Add(new TemplateParse(tempParseId, customizeValOneX, customizeValOneY, customizeValTwoX, customizeValTwoY));
+
+            pictureBox1.Refresh();
+            pictureBox1.Update();
 
         }
     }

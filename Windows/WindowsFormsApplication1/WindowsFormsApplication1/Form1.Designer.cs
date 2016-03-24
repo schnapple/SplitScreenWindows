@@ -39,6 +39,7 @@
             this.secondXCoorScroller = new System.Windows.Forms.NumericUpDown();
             this.secondYCoorScroller = new System.Windows.Forms.NumericUpDown();
             this.confirmationButton = new System.Windows.Forms.Button();
+            this.templateConfirmationButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.firstXCoorScroller)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.firstYCoorScroller)).BeginInit();
@@ -88,7 +89,7 @@
             this.customizationButton.TabIndex = 3;
             this.customizationButton.Text = "Customize";
             this.customizationButton.UseVisualStyleBackColor = false;
-            this.customizationButton.Click += new System.EventHandler(this.button2_Click);
+            this.customizationButton.Click += new System.EventHandler(this.customizationButtonClick);
             // 
             // templateList
             // 
@@ -100,7 +101,7 @@
             this.templateList.Name = "templateList";
             this.templateList.Size = new System.Drawing.Size(298, 309);
             this.templateList.TabIndex = 4;
-            this.templateList.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
+            this.templateList.SelectedIndexChanged += new System.EventHandler(this.templateListSelectedIndexChanged);
             // 
             // positionText
             // 
@@ -171,11 +172,22 @@
             this.confirmationButton.UseVisualStyleBackColor = true;
             this.confirmationButton.Click += new System.EventHandler(this.confirmationButton_Click);
             // 
+            // templateConfirmationButton
+            // 
+            this.templateConfirmationButton.Location = new System.Drawing.Point(896, 84);
+            this.templateConfirmationButton.Name = "templateConfirmationButton";
+            this.templateConfirmationButton.Size = new System.Drawing.Size(160, 50);
+            this.templateConfirmationButton.TabIndex = 11;
+            this.templateConfirmationButton.Text = "templateConfirmationButton";
+            this.templateConfirmationButton.UseVisualStyleBackColor = true;
+            this.templateConfirmationButton.Click += new System.EventHandler(this.templateConfirmationButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1176, 521);
+            this.Controls.Add(this.templateConfirmationButton);
             this.Controls.Add(this.confirmationButton);
             this.Controls.Add(this.secondYCoorScroller);
             this.Controls.Add(this.secondXCoorScroller);
@@ -219,6 +231,7 @@
         private System.Windows.Forms.NumericUpDown secondXCoorScroller;
         private System.Windows.Forms.NumericUpDown secondYCoorScroller;
         private System.Windows.Forms.Button confirmationButton;
+        private System.Windows.Forms.Button templateConfirmationButton;
     }
 }
 

@@ -24,14 +24,12 @@ namespace WindowsFormsApplication1
     public struct TemplateParse
     {
 
-        private int id;
         private int topX;
         private int topY;
         private int botX;
         private int botY;
-        public TemplateParse(int iD, int tX, int tY, int bX, int bY)
+        public TemplateParse(int tX, int tY, int bX, int bY)
         {
-            id = iD;
             topX = tX;
             topY = tY;
             botX = bX;
@@ -66,7 +64,37 @@ namespace WindowsFormsApplication1
         {
             return botY;
         }
+
+        public String toString()
+        {
+            String val = topX.ToString() + ',' + topY.ToString();
+            return val;
+        }
     }
+
+    public struct Template
+    {
+        private List<TemplateParse> tempParseArr;
+        private String templateID;
+        public Template(String ident, List<TemplateParse> templateList)
+        {
+            templateID = ident;
+            tempParseArr = templateList;
+        }
+
+        public String getId()
+        {
+            return templateID;
+        }
+
+        public List<TemplateParse> getList()
+        {
+            return tempParseArr;
+        }
+
+    }
+
+       
 
 
     /*
@@ -144,6 +172,7 @@ namespace WindowsFormsApplication1
         static IntPtr hHook = IntPtr.Zero;
         private static IntPtr currentHandle;
         private List<TemplateParse> tempParseArr = new List<TemplateParse>();
+        private List<Template> templateArr = new List<Template>();
         private static string customizeValOne; // the value for the first point of the square being customized
         private static int customizeValOneX; // the value for the first point's x position
         private static int customizeValOneY; //  the value for the first point's y position
@@ -169,22 +198,12 @@ namespace WindowsFormsApplication1
         {
             InitializeComponent();
             string path = Directory.GetCurrentDirectory() + "\\templates.txt";
-            Debug.Print("{0}", Directory.GetCurrentDirectory());
-            StreamReader sr = new StreamReader(path);
-            String line = sr.ReadLine();
-            String name;
-            int lineAt;
-            //tempParseId = 0; // *************************** THIS LINE IS TEMPORARY  *************************
-            while (line != null)
-            {
-                Debug.Print("{0}", line);
-                lineAt = line.IndexOf('|');
-                name = line.Substring(0, lineAt);
-                if(line != null)
-                    this.templateList.Items.Add(name);
-                line = sr.ReadLine();
-                
-            }
+            //string path = Directory.GetCurrentDirectory() + "\\templatesInfo.txt";
+            loadTemplates(path);
+
+
+
+
 
             imageList = new Image[20];
             imageListIndex = 0;
@@ -214,6 +233,105 @@ namespace WindowsFormsApplication1
 
 
 
+        /**
+        When the application starts up load all saved templates from templates.txt
+        */
+        private void loadTemplates(String path)
+        {
+            //throw new NotImplementedException();
+            //Debug.Print("{0}", Directory.GetCurrentDirectory());
+            StreamReader sr = new StreamReader(path);
+            String line = sr.ReadLine();
+            String name = "";
+            int lineAt;
+            bool firstVal = true;
+            //tempParseId = 0; // *************************** THIS LINE IS TEMPORARY  *************************
+            while (line != null)
+            {
+                //Debug.Print("{0}", line);
+                while (!line.Equals("end"))
+                {
+                    int tX = 0, tY = 0, bX = 0, bY = 0;
+                    lineAt = line.IndexOf('|');
+                    try
+                    {
+                        if (firstVal)
+                        {
+                            firstVal = false;
+                            name = line.Substring(0, lineAt);
+                            if (line != null)
+                                this.templateList.Items.Add(name);
+                        }
+                        else
+                        {
+                            int jIndex = 0;
+                            //Debug.Print("here");
+                            while (jIndex < 4)
+                            {
+                                //Debug.Print(lineAt.ToString());
+                                if (jIndex == 0)
+                                {
+                                    int commaAt = line.IndexOf(',');
+                                    String val = line.Substring(1, commaAt-1);
+                                    Debug.Print(val);
+                                    line = line.Substring(commaAt + 1);
+                                    tX = Int32.Parse(val);
+                                }
+                                else if (jIndex < 3) {
+                                    int commaAt = line.IndexOf(',');
+                                    String val = line.Substring(0, commaAt);
+                                    Debug.Print(val);
+                                    line = line.Substring(commaAt+1);
+                                    if(jIndex == 1)
+                                        tY = Int32.Parse(val);
+                                    else
+                                        bX = Int32.Parse(val);
+
+                                }
+                                else
+                                {
+                                    int closeParanAt = line.IndexOf(')');
+                                    String val = line.Substring(0, closeParanAt);
+                                    Debug.Print(val);
+                                    line = line.Substring(closeParanAt + 1);
+                                    bY = Int32.Parse(val);
+                                }
+                                jIndex++;
+                            }
+                            Debug.Print("val added");
+                            Debug.Print(tX.ToString());
+                            tempParseArr.Add(new TemplateParse(tX,tY,bX,bY));
+                            //Debug.Print(tempParseArr[0].toString());
+                            
+                        }
+
+
+                    }
+                    catch (System.ArgumentOutOfRangeException) { }
+                    //Debug.Print(line);
+                    //Debug.Print(lineAt.ToString());
+                    lineAt = line.IndexOf('|');
+                    line = line.Substring(lineAt+1);
+
+                    //Debug.Print("prevrios");
+                    //Debug.Print(tempParseArr[0].toString());
+                    
+                    //Debug.Print(templateArr[0].getList()[0].toString());
+                }
+                //Debug.Print(tempParseArr[0].toString());
+                List<TemplateParse> newTempArr = new List<TemplateParse>();
+                for(int i = 0; i < tempParseArr.Count; i++)
+                {
+                    Debug.Print(tempParseArr[i].toString());
+                    newTempArr.Add(tempParseArr[i]);
+                }
+                templateArr.Add(new Template(name, newTempArr));
+                tempParseArr.Clear();
+                line = sr.ReadLine();
+                firstVal = true;
+            }
+        }
+
         public static Bitmap ResizeImage(Image image, int width, int height)
         {
             var destRect = new Rectangle(0, 0, width, height);
@@ -238,8 +356,6 @@ namespace WindowsFormsApplication1
 
             return destImage;
         }
-
-
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -280,7 +396,7 @@ namespace WindowsFormsApplication1
 
 
 
-        private void button2_Click(object sender, EventArgs e)
+        private void customizationButtonClick(object sender, EventArgs e)
         {
             this.pictureBox1.Visible = true;
         }
@@ -374,40 +490,6 @@ namespace WindowsFormsApplication1
                             SWP_NOZORDER | SWP_SHOWWINDOW);
                     }
                 }
-
-
-
-                //if (x == 0 && y == 0 && handle == currentHandle)
-                //{
-                //    SetWindowPos(handle, 0, 0, 0, 960, 540,
-                //        SWP_NOZORDER | SWP_SHOWWINDOW);
-                //}
-                //else if (x >= 1919 && y == 0 && handle == currentHandle)
-                //{
-                //    SetWindowPos(handle, 0, 960, 0, 960, 540,
-                //        SWP_NOZORDER | SWP_SHOWWINDOW);
-                //}
-                //else if (x >= 1919 && y >= 1036 && handle == currentHandle)
-                //{
-                //    SetWindowPos(handle, 0, 960, 540, 960, 540,
-                //        SWP_NOZORDER | SWP_SHOWWINDOW);
-                //}
-                //else if (x <= 2 && y >= 1036 && handle == currentHandle)
-                //{
-                //    SetWindowPos(handle, 0, 0, 540, 960, 540,
-                //        SWP_NOZORDER | SWP_SHOWWINDOW);
-                //}
-                //else if (x <= 2 && handle == currentHandle)
-                //{
-                //    SetWindowPos(handle, 0, 0, 0, 960, 1030,
-                //        SWP_NOZORDER | SWP_SHOWWINDOW);
-                //}
-                //else if (x >= 1919 && handle == currentHandle)
-                //{
-                //    SetWindowPos(handle, 0, 960, 0, 960, 1030,
-                //        SWP_NOZORDER | SWP_SHOWWINDOW);
-                //}
-
             }
         }
 
@@ -425,6 +507,8 @@ namespace WindowsFormsApplication1
             //this.positioningText.Text = x + "  " + y;
             //throw new NotImplementedException();
         }
+
+
 
         private void GetPathOfWallpaper()
         {
@@ -540,14 +624,60 @@ namespace WindowsFormsApplication1
         {
         }
 
-
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        /**
+        ______________________________________________________________________________________________________
+            This is the event handler for the list of templates that are currently made. 
+            When an index is change the picture box will change to represent the template.
+            __________________________________________________________________________________________________
+        */
+        private void templateListSelectedIndexChanged(object sender, EventArgs e)
         {
-            this.positioningText.Text = templateList.SelectedItem.ToString();
-            template = templateList.SelectedItem.ToString();
+            try {
+                this.positioningText.Text = templateList.SelectedItem.ToString();
+                template = templateList.SelectedItem.ToString();
+                this.pictureBox1.Visible = true;
+                String templateId = templateList.SelectedItem.ToString();
+
+                for (int i = 0; i < templateArr.Count; i++)
+                {
+                    //Debug.Print(templateId);
+                    //Debug.Print(templateArr[i].getId());
+                    if (templateArr[i].getId().Equals(templateId))
+                    {
+                        //Debug.Print("In");
+                        List<TemplateParse> selected = templateArr[i].getList();
+                        Debug.Print(templateArr[i].getId());
+                        Debug.Print(templateArr[i].getList().Count.ToString());
+                        //Debug.Print(selected[0].toString());
+                        for(int j = 0; j < selected.Count; j++)
+                        {
+                            Debug.Print(selected[j].toString());
+                            tempParseArr.Add(selected[j]);
+                        }
+                        //tempParseArr = templateArr[i].getList();
+                        //Debug.Print(tempParseArr[0].toString());
+                        pictureBox1.Update();
+                        //pictureBox1.Refresh();
+                    }
+
+                }
+            }
+            catch(NullReferenceException exe)
+            {
+                Console.WriteLine("Exception " + exe.Message);
+            }
+
+
+
+
+
         }
 
 
+
+        /**
+        This will move the left side of the current templateBox when the numeric up down is changed
+        */
         private void firstXCoorScroller_ValueChanged(object sender, EventArgs e)
         {
             customizeValOneX = Decimal.ToInt32(firstXCoorScroller.Value) / 3;
@@ -556,7 +686,9 @@ namespace WindowsFormsApplication1
 
         }
 
-
+        /**
+        This will move the top side of the current templateBox when the numeric up down is changed
+        */
         private void firstYCoorScroller_ValueChanged(object sender, EventArgs e)
         {
             customizeValOneY = Decimal.ToInt32(firstYCoorScroller.Value) / 3;
@@ -564,7 +696,9 @@ namespace WindowsFormsApplication1
             pictureBox1.Refresh();
         }
 
-
+        /**
+        This will move the right side of the current templateBox when the numeric up down is changed
+        */
         private void secondXCoorScroller_ValueChanged(object sender, EventArgs e)
         {
             customizeValTwoX = Decimal.ToInt32(secondXCoorScroller.Value) / 3;
@@ -572,7 +706,9 @@ namespace WindowsFormsApplication1
             pictureBox1.Refresh();
         }
 
-
+        /**
+        This will move the bottom side of the current templateBox when the numeric up down is changed
+        */
         private void secondYCoorScroller_ValueChanged(object sender, EventArgs e)
         {
             customizeValTwoY = Decimal.ToInt32(secondYCoorScroller.Value) / 3;
@@ -610,7 +746,7 @@ namespace WindowsFormsApplication1
                         //tempParseArr.Add(new TemplateParse(tempParseId, customizeValOneX, customizeValOneY, customizeValTwoX, customizeValTwoY));
                         //gNew = Graphics.FromImage(currentImage);
                         pen1 = new Pen(Color.Red, 5);
-                        //Debug.Print("{0} and {1}", e.X * 3, e.Y * 3);
+                        Debug.Print("{0} and {1}", (tempParseArr[i]).getTopX(), (tempParseArr[i]).getTopY());
                         gCur.DrawRectangle(pen1, (tempParseArr[i]).getTopX(), (tempParseArr[i]).getTopY(), (tempParseArr[i]).getBotX() - (tempParseArr[i]).getTopX(), (tempParseArr[i]).getBotY() - (tempParseArr[i]).getTopY());
                         gCur.Save();
                         pen1 = new Pen(Color.Green, 5);
@@ -628,17 +764,36 @@ namespace WindowsFormsApplication1
                 gCur.DrawRectangle(pen1, customizeValOneX, customizeValOneY, customizeValTwoX - customizeValOneX, customizeValTwoY - customizeValOneY);
                 gCur.Save();
             }
-            //gNew.Save();
-            //pictureBox1.Image = currentImage;
-            //imageList[imageListIndex] = currentImage;
         }
 
         private void confirmationButton_Click(object sender, EventArgs e)
         {
-            tempParseArr.Add(new TemplateParse(tempParseId, customizeValOneX, customizeValOneY, customizeValTwoX, customizeValTwoY));
+            tempParseArr.Add(new TemplateParse(customizeValOneX, customizeValOneY, customizeValTwoX, customizeValTwoY));
 
             pictureBox1.Refresh();
             pictureBox1.Update();
+
+        }
+
+        private void templateConfirmationButton_Click(object sender, EventArgs e)
+        {
+            //String savedTemplateString;
+            MessageBox.Show("Do you want to save this template", "Save Template", MessageBoxButtons.YesNoCancel);
+            Template savedTemplate = new Template();
+
+
+            templateArr.Add(savedTemplate);
+            
+            try
+            {
+                string path = Directory.GetCurrentDirectory() + "\\templates.txt";
+                StreamWriter sw = new StreamWriter(path);
+                sw.Close();
+            }
+            catch(Exception exe)
+            {
+                Console.WriteLine("Exception " + exe.Message);
+            }
 
         }
     }

@@ -101,7 +101,7 @@ namespace WindowsFormsApplication1
     This is where the form1 code begins
     */
 
-    public partial class Form1 : Form
+    public partial class CreationForm : Form
     {
         [DllImport("user32.dll", EntryPoint = "SetWindowPos")]
         public static extern IntPtr SetWindowPos(IntPtr hWnd,
@@ -194,17 +194,14 @@ namespace WindowsFormsApplication1
         /**
         
         */
-        public Form1()
+        public CreationForm()
         {
             InitializeComponent();
             string path = Directory.GetCurrentDirectory() + "\\templates.txt";
             //string path = Directory.GetCurrentDirectory() + "\\templatesInfo.txt";
             loadTemplates(path);
 
-
-
-
-
+            new Plexiglass();
             imageList = new Image[20];
             imageListIndex = 0;
             Rectangle rect = Screen.PrimaryScreen.WorkingArea;
@@ -592,8 +589,6 @@ namespace WindowsFormsApplication1
                 //pictureBox1.Image = currentImage;
                 //imageList[imageListIndex] = currentImage;
 
-                
-
             }
             else
             {
@@ -632,6 +627,7 @@ namespace WindowsFormsApplication1
         */
         private void templateListSelectedIndexChanged(object sender, EventArgs e)
         {
+            tempParseArr.Clear();
             try {
                 this.positioningText.Text = templateList.SelectedItem.ToString();
                 template = templateList.SelectedItem.ToString();
@@ -657,7 +653,7 @@ namespace WindowsFormsApplication1
                         //tempParseArr = templateArr[i].getList();
                         //Debug.Print(tempParseArr[0].toString());
                         pictureBox1.Update();
-                        //pictureBox1.Refresh();
+                        pictureBox1.Refresh();
                     }
 
                 }

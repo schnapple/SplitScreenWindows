@@ -30,7 +30,7 @@ namespace WindowsFormsApplication1
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Point mousepoint = Control.MousePosition;
-            Application.Run(new Form1());
+            Application.Run(new CreationForm());
             Console.ReadLine();
             //MousePos mp = new MousePos();
         }

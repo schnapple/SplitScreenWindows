@@ -13,17 +13,17 @@ namespace WindowsFormsApplication1
 
     class Plexiglass : Form
     {
-        public Plexiglass()
+        public Plexiglass(int tX, int tY)
         {
-            this.BackColor = Color.DarkGray;
-            this.Opacity = 0.30;      // Tweak as desired
+            this.BackColor = Color.Green;
+            this.Opacity = 0.60;      // Tweak as desired
             this.FormBorderStyle = FormBorderStyle.None;
             this.ControlBox = false;
             this.ShowInTaskbar = false;
             this.StartPosition = FormStartPosition.Manual;
             this.AutoScaleMode = AutoScaleMode.None;
-            this.Size = new Size(1176, 512);
-            this.Location = new Point(10, 10);
+            this.Size = new Size(100, 100);
+            this.Location = new Point(tX, tY);
             this.Show();
 
             //this.Location = PointToScreen(Point.Empty);
@@ -53,14 +53,15 @@ namespace WindowsFormsApplication1
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             // Restore owner
-            this.Owner.LocationChanged -= Cover_LocationChanged;
-            this.Owner.ClientSizeChanged -= Cover_ClientSizeChanged;
-            if (!this.Owner.IsDisposed && Environment.OSVersion.Version.Major >= 6)
-            {
-                int value = 1;
-                DwmSetWindowAttribute(this.Owner.Handle, DWMWA_TRANSITIONS_FORCEDISABLED, ref value, 4);
-            }
-            base.OnFormClosing(e);
+
+            //this.Owner.LocationChanged -= Cover_LocationChanged;
+            //this.Owner.ClientSizeChanged -= Cover_ClientSizeChanged;
+            //if (!this.Owner.IsDisposed && Environment.OSVersion.Version.Major >= 6)
+            //{
+            //    int value = 1;
+            //    DwmSetWindowAttribute(this.Owner.Handle, DWMWA_TRANSITIONS_FORCEDISABLED, ref value, 4);
+            //}
+            //base.OnFormClosing(e);
         }
         protected override void OnActivated(EventArgs e)
         {

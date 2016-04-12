@@ -69,6 +69,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <None Include="bin\Debug\WindowsFormsApplication1.exe.config" />
+    <None Include="bin\Debug\WindowsFormsApplication1.vshost.exe.config" />
+    <None Include="bin\Debug\WindowsFormsApplication1.vshost.exe.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -83,7 +86,14 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="templateInfo.txt" />
+    <Content Include="bin\Debug\templates.txt" />
+    <Content Include="bin\Debug\templatesInfo.txt" />
+    <Content Include="bin\Debug\WindowsFormsApplication1.exe" />
+    <Content Include="bin\Debug\WindowsFormsApplication1.pdb" />
+    <Content Include="bin\Debug\WindowsFormsApplication1.vshost.exe" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="bin\Release\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

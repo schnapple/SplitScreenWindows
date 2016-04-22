@@ -1,0 +1,9 @@
+d:\documents\visual studio 2015\Projects\WindowsFormsApplication3\WindowsFormsApplication3\bin\Debug\WindowsFormsApplication3.exe.config
+d:\documents\visual studio 2015\Projects\WindowsFormsApplication3\WindowsFormsApplication3\bin\Debug\WindowsFormsApplication3.exe
+d:\documents\visual studio 2015\Projects\WindowsFormsApplication3\WindowsFormsApplication3\bin\Debug\WindowsFormsApplication3.pdb
+d:\documents\visual studio 2015\Projects\WindowsFormsApplication3\WindowsFormsApplication3\obj\Debug\WindowsFormsApplication3.csprojResolveAssemblyReference.cache
+d:\documents\visual studio 2015\Projects\WindowsFormsApplication3\WindowsFormsApplication3\obj\Debug\WindowsFormsApplication3.Properties.Resources.resources
+d:\documents\visual studio 2015\Projects\WindowsFormsApplication3\WindowsFormsApplication3\obj\Debug\WindowsFormsApplication3.csproj.GenerateResource.Cache
+d:\documents\visual studio 2015\Projects\WindowsFormsApplication3\WindowsFormsApplication3\obj\Debug\WindowsFormsApplication3.exe
+d:\documents\visual studio 2015\Projects\WindowsFormsApplication3\WindowsFormsApplication3\obj\Debug\WindowsFormsApplication3.pdb
+d:\documents\visual studio 2015\Projects\WindowsFormsApplication3\WindowsFormsApplication3\obj\Debug\TestApp.Form1.resources

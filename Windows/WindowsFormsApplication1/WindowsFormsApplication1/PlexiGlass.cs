@@ -15,7 +15,9 @@ namespace WindowsFormsApplication1
     {
         public Plexiglass(int tX, int tY)
         {
+       
             this.BackColor = Color.Green;
+            
             this.Opacity = 0.60;      // Tweak as desired
             this.FormBorderStyle = FormBorderStyle.None;
             this.ControlBox = false;

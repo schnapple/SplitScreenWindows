@@ -27,10 +27,11 @@ namespace WindowsFormsApplication1
         static void Main(string[] args)
         {
            // if (installHook()) Debug.Write("success");
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+            //Application.EnableVisualStyles();
+            //Application.SetCompatibleTextRenderingDefault(false);
             Point mousepoint = Control.MousePosition;
-            Application.Run(new CreationForm());
+            //Application.Run(new CreationForm());
+            Application.Run(new SplitScreenTrayApp());
             Console.ReadLine();
             //MousePos mp = new MousePos();
         }

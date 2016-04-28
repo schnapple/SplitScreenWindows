@@ -3,7 +3,6 @@ using System.IO;
 using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Timers;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using System.Drawing.Drawing2D;
@@ -72,126 +71,37 @@ namespace WindowsFormsApplication1
         }
     }
 
-    public struct Template
-    {
-        private List<TemplateParse> tempParseArr;
-        private String templateID;
-        public Template(String ident, List<TemplateParse> templateList)
-        {
-            templateID = ident;
-            tempParseArr = templateList;
-        }
-
-        public String getId()
-        {
-            return templateID;
-        }
-
-        public List<TemplateParse> getList()
-        {
-            return tempParseArr;
-        }
-
-    }
-
-       
-
-
     /*
     This is where the form1 code begins
     */
 
     public partial class CreationForm : Form
     {
-        [DllImport("user32.dll", EntryPoint = "SetWindowPos")]
-        public static extern IntPtr SetWindowPos(IntPtr hWnd,
-            int hWndInsertAfter, int x, int Y, int cx, int cy, int wFlags);
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        private static extern IntPtr SetWindowsHookEx(int idHook,
-            LowLevelMouseProc Ipfn, IntPtr hMod, uint dwThreadId);
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool UnhookWindowsHookEx(IntPtr hhk);
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        private static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode,
-            IntPtr wParam, IntPtr lParam);
-
-        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        private static extern IntPtr GetModuleHandle(string lpModuleName);
-
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool GetCursorPos(out POINT lpPoint);
-
-        [DllImport("user32.dll")]
-        static extern IntPtr WindowFromPoint(POINT Point);
-
-        //NOTE: DllImport attributes must be applied for each function, one for each function.
-        // Sam's file path [DllImport(@"C:\GitProjects\SplitScreenWindows\HookDll\HookDLL.dll")]
-
-
-        [DllImport(@"C:\Users\plaga\Documents\GitHub\SplitScreenWindows\HookDll")]
-        private static extern bool installHook();
-
-        /**
-        [DllImport(@"C:\GitProjects\SplitScreenWindows\HookDll\HookDLL.dll")]
-            private static extern bool installHook();
-        [DllImport(@"C:\GitProjects\SplitScreenWindows\HookDll\HookDLL.dll")]
-            private static extern bool getMoving();
-        // getX and getY  not functional at the moment. Will always return 0.
-        [DllImport(@"C:\GitProjects\SplitScreenWindows\HookDll\HookDLL.dll")]
-            private static extern int getX();
-        [DllImport(@"C:\GitProjects\SplitScreenWindows\HookDll\HookDLL.dll")]
-            private static extern int getY()
-        */
 
         private static string pathWallpaper;
-        private static int x; // mouse x position
-        private static int y; // mouse y position
         private static int height; // screen height resolution
         private static int width;  // screen width resolution
         private bool draw;
         private Image[] imageList;
         private int imageListIndex;
         private Image currentImage;
-        //private Image origImage;
-        //private Bitmap currBit;
-        //private Image drawnImage;
         private static string template;
-        private static System.Timers.Timer aTimer;
-        private static System.Timers.Timer bTimer;
-        private static System.Timers.Timer cTimer;
-        // private MouseButtons mouseButton;
-        //private static bool isMousePress = false;
-        //private static bool hookCreated = false;
-        private static LowLevelMouseProc _proc = HookCallback;
-        private static IntPtr _hookID = IntPtr.Zero;
-        static IntPtr hHook = IntPtr.Zero;
-        private static IntPtr currentHandle;
+        private SnapOn snapper;
         private List<TemplateParse> tempParseArr = new List<TemplateParse>();
-        private List<Template> templateArr = new List<Template>();
-        private List<Plexiglass> tempPlexiArr = new List<Plexiglass>();
+        private List<ConcreteTemplate> templateArr = new List<ConcreteTemplate>();
+        //private List<Plexiglass> tempPlexiArr = new List<Plexiglass>();
+        TemplateFactory factTemp = new ConcreteTemplateFactory();
         private static string customizeValOne; // the value for the first point of the square being customized
         private static int customizeValOneX; // the value for the first point's x position
         private static int customizeValOneY; //  the value for the first point's y position
         private static string customizeValTwo; // the value for the first point of the square being customized
         private static int customizeValTwoX; // the value for the first point's x position
         private static int customizeValTwoY; //  the value for the first point's y position
-        private int tempParseId; // the current template parse ID
-       // private Graphics gNew; // the newest graphics
-        private List<Graphics> listGraphics;
 
 
         private delegate IntPtr LowLevelMouseProc(int nCode,
             IntPtr wParam, IntPtr lParam);
 
-       // private int _mouseChange;
-
-
-        
         /**
         
         */
@@ -200,8 +110,8 @@ namespace WindowsFormsApplication1
             InitializeComponent();
             string path = Directory.GetCurrentDirectory() + "\\templates.txt";
             //string path = Directory.GetCurrentDirectory() + "\\templatesInfo.txt";
-            loadTemplates(path);
-
+            //loadTemplates(path);
+            snapper = new SnapOn();
             //new Plexiglass();
             imageList = new Image[20];
             imageListIndex = 0;
@@ -211,106 +121,24 @@ namespace WindowsFormsApplication1
             Debug.Print("{0} y {1}", width, height);
             this.pictureBox1.Height = height/3;
             this.pictureBox1.Width = width/3;
-            aTimer = new System.Timers.Timer(100);
-            bTimer = new System.Timers.Timer(1000);
-            cTimer = new System.Timers.Timer(100);
             GetPathOfWallpaper();
-            //if(pathWallpaper != null)
-            //    this.pictureBox1.ImageLocation = pathWallpaper;
-            //this.pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
             currentImage = Image.FromFile(pathWallpaper);
             currentImage = ResizeImage(currentImage, width/3, height/3);
-           // pictureBox1.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox1_Paint);
-            
-           // origImage = Image.FromFile(pathWallpaper);
-           // origImage = ResizeImage(currentImage, width / 3, height / 3);
             this.pictureBox1.Image = currentImage;
             imageList[imageListIndex] = currentImage;
             //this.pictureBox1.
         }
 
 
-
-        /**
-        When the application starts up load all saved templates from templates.txt
-        */
-        private void loadTemplates(String path)
+        public void addTemplatesToList(List<ConcreteTemplate> arr)
         {
-            StreamReader sr = new StreamReader(path);
-            String line = sr.ReadLine();
-            String name = "";
-            int lineAt;
-            bool firstVal = true;
-            int pointCounter;
-
-            while (line != null)
-            {
-                pointCounter = 0;
-                int tX = 0, tY = 0, bX = 0, bY = 0;
-                while (!line.Equals("end"))
-                {
-                    
-                    //bool snapBox = false;
-                    
-                    lineAt = line.IndexOf('|');
-                    if (firstVal)
-                    {
-                        firstVal = false;
-                        name = line.Substring(0, lineAt);
-                        templateList.Items.Add(name);
-                    }
-                    else
-                    {
-                        if(pointCounter % 4 == 0)
-                        {
-                            String val = line.Substring(0, lineAt);
-                            Debug.Print(val + " 1");
-                            
-                            tX = Int32.Parse(val);
-                        }
-                        else if (pointCounter % 4 == 1)
-                        {
-                            String val = line.Substring(0, lineAt);
-                            Debug.Print(val + "2");
-                         
-                            tY = Int32.Parse(val);
-                        }
-                        else if (pointCounter % 4 == 2)
-                        {
-                            String val = line.Substring(0, lineAt);
-                            Debug.Print(val + "3");
-                           
-                            bX = Int32.Parse(val);
-                        }
-                        else
-                        {
-                            String val = line.Substring(0, lineAt);
-                            Debug.Print(val + "4");
-                            bY = Int32.Parse(val);
-                            tempParseArr.Add(new TemplateParse(tX, tY, bX, bY));
-                            Debug.Print("FUCK");
-                        }
-                        pointCounter ++;
-
-                    }
-
-                    line = line.Substring(lineAt + 1);
-                }
-
-                List<TemplateParse> newTempArr = new List<TemplateParse>();
-                Debug.Print(name + tempParseArr.Count);
-                for (int i = 0; i < tempParseArr.Count; i++)
-                {
-                    //Debug.Print(tempParseArr[i].toString());
-                    newTempArr.Add(tempParseArr[i]);
-                }
-                templateArr.Add(new Template(name, newTempArr));
-                tempParseArr.Clear();
-                line = sr.ReadLine();
-                firstVal = true;
+            for(int i =0; i < arr.Count; i++) {
+                templateArr.Add(factTemp.makeTemplate(arr[i].getId(), arr[i].getList()));
+                templateList.Items.Add(arr[i].getId());
             }
-            sr.Close();
         }
+
+
 
         public static Bitmap ResizeImage(Image image, int width, int height)
         {
@@ -337,41 +165,35 @@ namespace WindowsFormsApplication1
             return destImage;
         }
 
+
+
+
+        private void confirmationButton_Click(object sender, EventArgs e)
+        {
+            tempParseArr.Add(new TemplateParse(customizeValOneX, customizeValOneY, customizeValTwoX, customizeValTwoY));
+
+            pictureBox1.Refresh();
+            pictureBox1.Update();
+
+        }
+
+
         private void button1_Click(object sender, EventArgs e)
         {
-            aTimer.Elapsed += GrabMousePos;
-            bTimer.Elapsed += WindowInPos;
-            cTimer.Elapsed += hookTimer;
-           
+            //if (tempParseArr.Count != 0)
+            //{
 
-            if (this.snappingButton.Text == "Run")
-            {
-
-                aTimer.AutoReset = true;
-                aTimer.Enabled = true;
-
-                bTimer.AutoReset = true;
-                bTimer.Enabled = true;
-
-                cTimer.AutoReset = true;
-                cTimer.Enabled = true;
-
-                snappingButton.Text = "Stop";
-            }
-            else
-            {
-                Debug.Print("Stopped");
-                aTimer.AutoReset = false;
-                aTimer.Enabled = false;
-
-                bTimer.AutoReset = false;
-                bTimer.Enabled = false;
-
-                cTimer.AutoReset = false;
-                cTimer.Enabled = false;
-                snappingButton.Text = "Run";
-            }
-
+            //    if (this.snappingButton.Text == "Run")
+            //    {
+            //        snapper.Run(tempParseArr);
+            //        snappingButton.Text = "Stop";
+            //    }
+            //    else
+            //    {
+            //        snapper.Halt();
+            //        snappingButton.Text = "Run";
+            //    }
+            //}
         }
 
 
@@ -379,105 +201,6 @@ namespace WindowsFormsApplication1
         private void customizationButtonClick(object sender, EventArgs e)
         {
             this.pictureBox1.Visible = true;
-        }
-
-
-
-        private void hookTimer(object sender, ElapsedEventArgs e)
-        {
-           // if(nCode >= 0 && MouseMessages.WM_LBUTTONDOWN == (MouseMessages)wParam)
-           // {
-           
-                POINT cusorPoint;
-                bool ret = GetCursorPos(out cusorPoint);
-                IntPtr winHandle = WindowFromPoint(cusorPoint);
-                currentHandle = winHandle;
-
-                //UnhookWindowsHookEx(hHook);
-                //hHook = IntPtr.Zero;
-           // }
-
-        }
-
-        private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
-        {
-            if(nCode >= 0 && MouseMessages.WM_LBUTTONDOWN == (MouseMessages)wParam)
-            {
-                POINT cusorPoint;
-                bool ret = GetCursorPos(out cusorPoint);
-
-                IntPtr winHandle = WindowFromPoint(cusorPoint);
-
-                currentHandle = winHandle;
-
-                UnhookWindowsHookEx(hHook);
-                hHook = IntPtr.Zero;
-            }
-            return CallNextHookEx(_hookID, nCode, wParam, lParam);
-        }
-
-
-
-        private const int WH_Mouse_LL = 14;
-
-        private enum MouseMessages
-        {
-            WM_LBUTTONDOWN = 0x0201,
-            WM_LBUTTONUP = 0x0202,
-            WM_MOUSEMOVE = 0x0200,
-            WM_MOUSEWHEEL = 0x020A,
-            WM_RBUTTONDOWN = 0x0204,
-            WM_RBUTTONUP = 0x0205
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct POINT
-        {
-            public int x;
-            public int y;
-        }
-
-
-
-        private void WindowInPos(object sender, ElapsedEventArgs e)
-        {
-                        
-           // const short SWP_NOSIZE = 1;
-           // const short SWP_NOMOVE = 0x2;
-            const short SWP_NOZORDER = 0x4;
-            const int SWP_SHOWWINDOW = 0x0040;
-            
-            Process[] processes = Process.GetProcesses();
-            foreach (var process in processes)
-            {
-                //Console.WriteLine( process.ProcessName);
-
-                IntPtr handle = process.MainWindowHandle;
-
-                for (int i = 0; i < tempParseArr.Count; i++)
-                {
-                    if(x > tempParseArr[i].getBotX() * 3 - 100 && y > tempParseArr[i].getBotY() * 3 - 100 && x < tempParseArr[i].getBotX()*3 && y < tempParseArr[i].getBotY()*3 && handle == currentHandle)
-                    {
-                        SetWindowPos(handle, 0, tempParseArr[i].getTopX() * 3, tempParseArr[i].getTopY() * 3, tempParseArr[i].getBotX() * 3 - tempParseArr[i].getTopX() * 3, tempParseArr[i].getBotY() * 3 - tempParseArr[i].getTopY() * 3,
-                            SWP_NOZORDER | SWP_SHOWWINDOW);
-                    }
-                }
-            }
-        }
-
-
-
-        /**
-        This will grab the position of the mouse when the run button is clicked
-        */
-        private void GrabMousePos(object sender, ElapsedEventArgs e)
-        {
-            Point mousePoint = MousePosition;
-            Debug.Print("{0} and {1}" , mousePoint.X, mousePoint.Y);
-            x = mousePoint.X;
-            y = mousePoint.Y;
-            //this.positioningText.Text = x + "  " + y;
-            //throw new NotImplementedException();
         }
 
 
@@ -496,11 +219,13 @@ namespace WindowsFormsApplication1
 
 
 
+
+
         private void Form1_Load(object sender, EventArgs e)
         {
             this.pictureBox1.ContextMenu = new ContextMenu();
             this.pictureBox1.MouseDown += new MouseEventHandler(pictureBox1_MouseDown);
-            this.pictureBox1.MouseMove += new MouseEventHandler(pictureBox1_MouseMove);
+            //this.pictureBox1.MouseMove += new MouseEventHandler(pictureBox1_MouseMove);
             this.pictureBox1.MouseUp += new MouseEventHandler(pictureBox1_MouseUp);
             this.pictureBox1.Paint += new PaintEventHandler(this.pictureBox1_Paint);
         }
@@ -519,41 +244,117 @@ namespace WindowsFormsApplication1
         */
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
         {
-            Debug.Print("mouse is down on picture box");
-
-
+            //Debug.Print("mouse is down on picture box");
             // for the first click
             if (customizeValOne == null)
             {
-                customizeValOne = e.X * 3 + "," + e.Y * 3;
-                customizeValOneX = e.X;
-                customizeValOneY = e.Y;
+                if (e.X * 3 > 1920)
+                {
+                    if (e.Y * 3 > 1010)
+                    {
+                        customizeValOne = " 1920,1010";
+                        customizeValOneY = 1010;
+                        customizeValOneX = 1920;
+                    }
+                    else
+                    {
+                        customizeValOne = "1920," + e.Y * 3;
+                        customizeValOneY = e.Y * 3;
+                        customizeValOneX = 1920;
+                    }
+
+                }
+                else if (e.Y * 3 > 1010)
+                {
+                    customizeValOne = e.X * 3 + ",1010";
+                    customizeValOneY = 1010;
+                    customizeValOneX = e.X * 3;
+                }
+                else
+                {
+                    customizeValOne = e.X * 3 + "," + e.Y * 3;
+                    customizeValOneX = e.X;
+                    customizeValOneY = e.Y;
+                }
+
                 positionText.Text = customizeValOne;
-                firstXCoorScroller.Value = customizeValOneX * 3;
-                firstYCoorScroller.Value = customizeValOneY * 3;
+                firstXCoorScroller.Value = customizeValOneX;
+                firstYCoorScroller.Value = customizeValOneY;
 
             }
             // for the second click
             else if(customizeValTwo == null)
             {
-                customizeValTwo = e.X * 3 + "," + e.Y * 3;
-                customizeValTwoX = e.X;
-                customizeValTwoY = e.Y;
+                // replace with a method that does the same task
+                if (e.X * 3 > 1920)
+                {
+                    if (e.Y * 3 > 1010)
+                    {
+                        customizeValTwo = " 1920,1010";
+                        customizeValTwoY = 1010;
+                        customizeValTwoX = 1920;
+                    }
+                    else
+                    {
+                        customizeValTwo = "1920," + e.Y * 3;
+                        customizeValTwoY = e.Y * 3;
+                        customizeValTwoX = 1920;
+                    }
+
+                }
+                else if(e.Y * 3 > 1010)
+                {
+                    customizeValTwo = e.X*3 + ",1010";
+                    customizeValTwoY = 1010;
+                    customizeValTwoX = e.X*3;
+                }
+                else
+                {
+                    customizeValTwo = e.X * 3 + "," + e.Y * 3;
+                    customizeValTwoX = e.X;
+                    customizeValTwoY = e.Y;
+                }
+
                 positionText.Text = customizeValOne + " and " + customizeValTwo;
-                secondXCoorScroller.Value = customizeValTwoX * 3;
-                secondYCoorScroller.Value = customizeValTwoY * 3;
+                secondXCoorScroller.Value = customizeValTwoX;
+                secondYCoorScroller.Value = customizeValTwoY;
                 pictureBox1.Refresh();
                 // draw the box on the current
 
             }
             else
             {
-                customizeValOne = e.X * 3 + "," + e.Y * 3;
-                customizeValOneX = e.X;
-                customizeValOneY = e.Y;
+                if (e.X * 3 > 1920)
+                {
+                    if (e.Y * 3 > 1010)
+                    {
+                        customizeValOne = " 1920,1010";
+                        customizeValOneY = 1010;
+                        customizeValOneX = 1920;
+                    }
+                    else
+                    {
+                        customizeValOne = "1920," + e.Y * 3;
+                        customizeValOneY = e.Y * 3;
+                        customizeValOneX = 1920;
+                    }
+
+                }
+                else if (e.Y * 3 > 1010)
+                {
+                    customizeValOne = e.X * 3 + ",1010";
+                    customizeValOneY = 1010;
+                    customizeValOneX = e.X * 3;
+                }
+                else
+                {
+                    customizeValOne = e.X * 3 + "," + e.Y * 3;
+                    customizeValOneX = e.X;
+                    customizeValOneY = e.Y;
+                }
                 customizeValTwo = null;
-                firstXCoorScroller.Value = customizeValOneX * 3;
-                firstYCoorScroller.Value = customizeValOneY * 3;
+                firstXCoorScroller.Value = customizeValOneX;
+                firstYCoorScroller.Value = customizeValOneY;
                 secondXCoorScroller.Value = 0;
                 secondYCoorScroller.Value = 0;
                 positionText.Text = customizeValOne;
@@ -568,12 +369,12 @@ namespace WindowsFormsApplication1
         }
 
 
-        /**
-        This method is currently not being used
-        */
-        private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
-        {
-        }
+        ///**
+        //This method is currently not being used
+        //*/
+        //private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
+        //{
+        //}
 
         /**
         ______________________________________________________________________________________________________
@@ -584,11 +385,11 @@ namespace WindowsFormsApplication1
         private void templateListSelectedIndexChanged(object sender, EventArgs e)
         {
             tempParseArr.Clear();
-            for(int i = 0; i < tempPlexiArr.Count; i++)
-            {
-                tempPlexiArr[i].Close();
-            }
-            tempPlexiArr.Clear();
+            //for(int i = 0; i < tempPlexiArr.Count; i++)
+            //{
+            //    tempPlexiArr[i].Close();
+            //}
+            //tempPlexiArr.Clear();
             try {
                 this.positioningText.Text = templateList.SelectedItem.ToString();
                 template = templateList.SelectedItem.ToString();
@@ -609,7 +410,7 @@ namespace WindowsFormsApplication1
                         {
                             Debug.Print(selected[j].toString());
                             tempParseArr.Add(selected[j]);
-                            tempPlexiArr.Add(new Plexiglass(selected[j].getBotX()*3-100, selected[j].getBotY()*3-100));
+                            //tempPlexiArr.Add(new Plexiglass(selected[j].getBotX()*3-100, selected[j].getBotY()*3-100));
                         }
                         //tempParseArr = templateArr[i].getList();
                         //Debug.Print(tempParseArr[0].toString());
@@ -623,11 +424,6 @@ namespace WindowsFormsApplication1
             {
                 Console.WriteLine("Exception " + exe.Message);
             }
-
-
-
-
-
         }
 
 
@@ -723,37 +519,32 @@ namespace WindowsFormsApplication1
             }
         }
 
-        private void confirmationButton_Click(object sender, EventArgs e)
-        {
-            tempParseArr.Add(new TemplateParse(customizeValOneX, customizeValOneY, customizeValTwoX, customizeValTwoY));
 
-            pictureBox1.Refresh();
-            pictureBox1.Update();
 
-        }
 
         private void templateConfirmationButton_Click(object sender, EventArgs e)
         {
             //String savedTemplateString;
             var result = MessageBox.Show("Do you want to save this template", "Save Template", MessageBoxButtons.YesNoCancel);
-            Template savedTemplate;
+            //ConcreteTemplate savedTemplate;
             int randomNuber = new Random().Next(int.MinValue, int.MaxValue);
             String newLine = "helloworld" + randomNuber;
             if (result == DialogResult.Yes)
             {
                 templateList.Items.Add(newLine);
-                Debug.Print("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
-                savedTemplate = new Template(newLine, tempParseArr);
-                templateArr.Add(savedTemplate);
+                //Debug.Print("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
+                //savedTemplate = new ConcreteTemplate(newLine, tempParseArr);
+                templateArr.Add(factTemp.makeTemplate(newLine, tempParseArr));
                 try
                 {
                     string path = Directory.GetCurrentDirectory() + "\\templates.txt";
-                    StreamWriter sw = new StreamWriter(path);
+                    TextWriter sw = new StreamWriter(path, true);
                     for(int i = 0; i <tempParseArr.Count; i++)
                     {
                         newLine = newLine + "|" + tempParseArr[i].getTopX() + "|" + tempParseArr[i].getTopY() + "|" + tempParseArr[i].getBotX() + "|" + tempParseArr[i].getBotY();
                     }
                     newLine = newLine + "|end";
+                    
                     
                     sw.WriteLine(newLine);
                     sw.Close();
@@ -764,11 +555,84 @@ namespace WindowsFormsApplication1
                 }
             }
 
-
-            
-            
-
-
         }
     }
 }
+
+
+
+
+//private void hookTimer(object sender, ElapsedEventArgs e)
+//{
+//   // if(nCode >= 0 && MouseMessages.WM_LBUTTONDOWN == (MouseMessages)wParam)
+//   // {
+
+//        POINT cusorPoint;
+//        bool ret = GetCursorPos(out cusorPoint);
+//        IntPtr winHandle = WindowFromPoint(cusorPoint);
+//        currentHandle = winHandle;
+
+//        //UnhookWindowsHookEx(hHook);
+//        //hHook = IntPtr.Zero;
+//   // }
+
+//}
+
+//private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
+//{
+//    if(nCode >= 0 && MouseMessages.WM_LBUTTONDOWN == (MouseMessages)wParam)
+//    {
+//        POINT cusorPoint;
+//        bool ret = GetCursorPos(out cusorPoint);
+
+//        IntPtr winHandle = WindowFromPoint(cusorPoint);
+
+//        currentHandle = winHandle;
+
+//        UnhookWindowsHookEx(hHook);
+//        hHook = IntPtr.Zero;
+//    }
+//    return CallNextHookEx(_hookID, nCode, wParam, lParam);
+//}
+
+
+//private void WindowInPos(object sender, ElapsedEventArgs e)
+//{
+
+//   // const short SWP_NOSIZE = 1;
+//   // const short SWP_NOMOVE = 0x2;
+//    const short SWP_NOZORDER = 0x4;
+//    const int SWP_SHOWWINDOW = 0x0040;
+
+//    Process[] processes = Process.GetProcesses();
+//    foreach (var process in processes)
+//    {
+//        //Console.WriteLine( process.ProcessName);
+
+//        IntPtr handle = process.MainWindowHandle;
+
+//        for (int i = 0; i < tempParseArr.Count; i++)
+//        {
+//            if(x > tempParseArr[i].getBotX() * 3 - 100 && y > tempParseArr[i].getBotY() * 3 - 100 && x < tempParseArr[i].getBotX()*3 && y < tempParseArr[i].getBotY()*3 && handle == currentHandle)
+//            {
+//                SetWindowPos(handle, 0, tempParseArr[i].getTopX() * 3, tempParseArr[i].getTopY() * 3, tempParseArr[i].getBotX() * 3 - tempParseArr[i].getTopX() * 3, tempParseArr[i].getBotY() * 3 - tempParseArr[i].getTopY() * 3,
+//                    SWP_NOZORDER | SWP_SHOWWINDOW);
+//            }
+//        }
+//    }
+//}
+
+
+
+/**
+This will grab the position of the mouse when the run button is clicked
+*/
+//private void GrabMousePos(object sender, ElapsedEventArgs e)
+//{
+//    Point mousePoint = MousePosition;
+//    Debug.Print("{0} and {1}" , mousePoint.X, mousePoint.Y);
+//    x = mousePoint.X;
+//    y = mousePoint.Y;
+//    //this.positioningText.Text = x + "  " + y;
+//    //throw new NotImplementedException();
+//}

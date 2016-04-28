@@ -1,0 +1,9 @@
+C:\Users\plaga\Documents\GitHub\SplitScreenWindows\Windows\WindowsFormsApplication1\WindowsFormsApplication1\bin\Release\WindowsFormsApplication1.exe.config
+C:\Users\plaga\Documents\GitHub\SplitScreenWindows\Windows\WindowsFormsApplication1\WindowsFormsApplication1\bin\Release\WindowsFormsApplication1.exe
+C:\Users\plaga\Documents\GitHub\SplitScreenWindows\Windows\WindowsFormsApplication1\WindowsFormsApplication1\bin\Release\WindowsFormsApplication1.pdb
+C:\Users\plaga\Documents\GitHub\SplitScreenWindows\Windows\WindowsFormsApplication1\WindowsFormsApplication1\obj\Release\WindowsFormsApplication1.csprojResolveAssemblyReference.cache
+C:\Users\plaga\Documents\GitHub\SplitScreenWindows\Windows\WindowsFormsApplication1\WindowsFormsApplication1\obj\Release\WindowsFormsApplication1.CreationForm.resources
+C:\Users\plaga\Documents\GitHub\SplitScreenWindows\Windows\WindowsFormsApplication1\WindowsFormsApplication1\obj\Release\WindowsFormsApplication1.Properties.Resources.resources
+C:\Users\plaga\Documents\GitHub\SplitScreenWindows\Windows\WindowsFormsApplication1\WindowsFormsApplication1\obj\Release\WindowsFormsApplication1.csproj.GenerateResource.Cache
+C:\Users\plaga\Documents\GitHub\SplitScreenWindows\Windows\WindowsFormsApplication1\WindowsFormsApplication1\obj\Release\WindowsFormsApplication1.exe
+C:\Users\plaga\Documents\GitHub\SplitScreenWindows\Windows\WindowsFormsApplication1\WindowsFormsApplication1\obj\Release\WindowsFormsApplication1.pdb

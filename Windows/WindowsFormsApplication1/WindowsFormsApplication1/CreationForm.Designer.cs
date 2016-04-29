@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.snappingButton = new System.Windows.Forms.Button();
+            this.removeButton = new System.Windows.Forms.Button();
             this.positioningText = new System.Windows.Forms.TextBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.customizationButton = new System.Windows.Forms.Button();
@@ -47,18 +47,18 @@
             ((System.ComponentModel.ISupportInitialize)(this.secondYCoorScroller)).BeginInit();
             this.SuspendLayout();
             // 
-            // snappingButton
+            // removeButton
             // 
-            this.snappingButton.BackColor = System.Drawing.SystemColors.MenuHighlight;
-            this.snappingButton.Font = new System.Drawing.Font("Arial", 26F);
-            this.snappingButton.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.snappingButton.Location = new System.Drawing.Point(12, 87);
-            this.snappingButton.Name = "snappingButton";
-            this.snappingButton.Size = new System.Drawing.Size(243, 59);
-            this.snappingButton.TabIndex = 0;
-            this.snappingButton.Text = "Run";
-            this.snappingButton.UseVisualStyleBackColor = false;
-            this.snappingButton.Click += new System.EventHandler(this.button1_Click);
+            this.removeButton.BackColor = System.Drawing.SystemColors.MenuHighlight;
+            this.removeButton.Font = new System.Drawing.Font("Arial", 26F);
+            this.removeButton.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.removeButton.Location = new System.Drawing.Point(12, 87);
+            this.removeButton.Name = "removeButton";
+            this.removeButton.Size = new System.Drawing.Size(243, 59);
+            this.removeButton.TabIndex = 0;
+            this.removeButton.Text = "Remove";
+            this.removeButton.UseVisualStyleBackColor = false;
+            this.removeButton.Click += new System.EventHandler(this.button1_Click);
             // 
             // positioningText
             // 
@@ -198,7 +198,7 @@
             this.Controls.Add(this.customizationButton);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.positioningText);
-            this.Controls.Add(this.snappingButton);
+            this.Controls.Add(this.removeButton);
             this.Name = "Form1";
             this.ShowIcon = false;
             this.Text = "SplitScreen";
@@ -220,7 +220,7 @@
 
         #endregion
 
-        private System.Windows.Forms.Button snappingButton;
+        private System.Windows.Forms.Button removeButton;
         private System.Windows.Forms.TextBox positioningText;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Button customizationButton;

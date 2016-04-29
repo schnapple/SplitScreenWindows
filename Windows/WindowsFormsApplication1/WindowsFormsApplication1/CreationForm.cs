@@ -118,7 +118,7 @@ namespace WindowsFormsApplication1
             Rectangle rect = Screen.PrimaryScreen.WorkingArea;
             height = rect.Height;
             width = rect.Width;
-            Debug.Print("{0} y {1}", width, height);
+            //Debug.Print("{0} y {1}", width, height);
             this.pictureBox1.Height = height/3;
             this.pictureBox1.Width = width/3;
             GetPathOfWallpaper();
@@ -180,20 +180,66 @@ namespace WindowsFormsApplication1
 
         private void button1_Click(object sender, EventArgs e)
         {
-            //if (tempParseArr.Count != 0)
-            //{
 
-            //    if (this.snappingButton.Text == "Run")
-            //    {
-            //        snapper.Run(tempParseArr);
-            //        snappingButton.Text = "Stop";
-            //    }
-            //    else
-            //    {
-            //        snapper.Halt();
-            //        snappingButton.Text = "Run";
-            //    }
-            //}
+            if (templateList.SelectedItem.ToString() != "")
+            {
+                StreamReader sr = new StreamReader(Directory.GetCurrentDirectory() + "\\templates.txt");
+                Debug.Print("hellp");
+                String name = templateList.SelectedItem.ToString();
+                Debug.Print("got though");
+                String line = sr.ReadLine();
+                String retu = null;
+                int lineAt = 0;
+                try
+                {
+                    while (line != null)
+                    {
+
+                        Debug.Print(templateList.SelectedItem.ToString());
+                        lineAt = line.IndexOf('|');
+                        //Debug.Print(name.Substring(0, line.IndexOf('|')));
+                        //Debug.Print("heleleoel");
+                        if (!(name.Equals(line.Substring(0, lineAt))))
+                        {
+                            //if (sr.ReadLine() == null)
+                            //{
+                            //    Debug.Print("heleleoel");
+                            //    retu = retu + line;
+                            //}
+                            //else
+                            //{
+                            retu = retu + line;
+                            //}
+                            line = sr.ReadLine();
+                            
+                            if (line != null)
+                            {
+                                lineAt = line.IndexOf('|');
+                                if (!(name.Equals(line.Substring(0, lineAt))))
+                                {
+                                    Debug.Print("herehe");
+                                    retu = retu + "\n";
+                                }
+                            }
+                        }
+                        else {
+                            line = sr.ReadLine();
+                        }
+                        
+                    }
+                    sr.Close();
+                    sr.Dispose();
+                    StreamWriter sw = new StreamWriter(Directory.GetCurrentDirectory() + "\\templates.txt");
+                    sw.WriteLine(retu);
+                    sw.Close();
+                    sw.Dispose();
+                    templateList.Items.Remove(templateList.SelectedItem.ToString());
+                }
+                catch (Exception exe)
+                {
+                    Console.WriteLine("Exception::::: " + exe.Message);
+                }
+            }
         }
 
 
@@ -273,8 +319,8 @@ namespace WindowsFormsApplication1
                 else
                 {
                     customizeValOne = e.X * 3 + "," + e.Y * 3;
-                    customizeValOneX = e.X;
-                    customizeValOneY = e.Y;
+                    customizeValOneX = e.X*3;
+                    customizeValOneY = e.Y*3;
                 }
 
                 positionText.Text = customizeValOne;
@@ -311,8 +357,8 @@ namespace WindowsFormsApplication1
                 else
                 {
                     customizeValTwo = e.X * 3 + "," + e.Y * 3;
-                    customizeValTwoX = e.X;
-                    customizeValTwoY = e.Y;
+                    customizeValTwoX = e.X*3;
+                    customizeValTwoY = e.Y*3;
                 }
 
                 positionText.Text = customizeValOne + " and " + customizeValTwo;
@@ -349,8 +395,8 @@ namespace WindowsFormsApplication1
                 else
                 {
                     customizeValOne = e.X * 3 + "," + e.Y * 3;
-                    customizeValOneX = e.X;
-                    customizeValOneY = e.Y;
+                    customizeValOneX = e.X*3;
+                    customizeValOneY = e.Y*3;
                 }
                 customizeValTwo = null;
                 firstXCoorScroller.Value = customizeValOneX;
@@ -385,6 +431,9 @@ namespace WindowsFormsApplication1
         private void templateListSelectedIndexChanged(object sender, EventArgs e)
         {
             tempParseArr.Clear();
+            //Debug.Print(tempParseArr.Count.ToString());
+            //pictureBox1.Update();
+            //pictureBox1.Refresh();
             //for(int i = 0; i < tempPlexiArr.Count; i++)
             //{
             //    tempPlexiArr[i].Close();
@@ -403,12 +452,12 @@ namespace WindowsFormsApplication1
                     {
                         //Debug.Print("In");
                         List<TemplateParse> selected = templateArr[i].getList();
-                        Debug.Print(templateArr[i].getId());
-                        Debug.Print(templateArr[i].getList().Count.ToString());
+                        //Debug.Print(templateArr[i].getId());
+                        //Debug.Print(templateArr[i].getList().Count.ToString());
                         //Debug.Print(selected[0].toString());
                         for(int j = 0; j < selected.Count; j++)
                         {
-                            Debug.Print(selected[j].toString());
+                            //Debug.Print(selected[j].toString());
                             tempParseArr.Add(selected[j]);
                             //tempPlexiArr.Add(new Plexiglass(selected[j].getBotX()*3-100, selected[j].getBotY()*3-100));
                         }
@@ -517,6 +566,7 @@ namespace WindowsFormsApplication1
                 gCur.DrawRectangle(pen1, customizeValOneX, customizeValOneY, customizeValTwoX - customizeValOneX, customizeValTwoY - customizeValOneY);
                 gCur.Save();
             }
+
         }
 
 
@@ -548,11 +598,16 @@ namespace WindowsFormsApplication1
                     
                     sw.WriteLine(newLine);
                     sw.Close();
+                    sw.Dispose();
                 }
                 catch (Exception exe)
                 {
                     Console.WriteLine("Exception::::: " + exe.Message);
                 }
+                firstXCoorScroller.Value = 0;
+                secondXCoorScroller.Value = 0;
+                firstYCoorScroller.Value = 0;
+                secondYCoorScroller.Value = 0;
             }
 
         }

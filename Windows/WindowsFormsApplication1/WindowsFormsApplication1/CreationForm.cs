@@ -227,8 +227,11 @@ namespace WindowsFormsApplication1
             this.pictureBox1.Image = currentImage;
             imageList[imageListIndex] = currentImage;
             //this.pictureBox1.
+            this.DoubleBuffered = true;
         }
+        Rectangle rec = new Rectangle(0, 0, 0, 0);
 
+        
 
 
         /**
@@ -496,14 +499,7 @@ namespace WindowsFormsApplication1
 
 
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            this.pictureBox1.ContextMenu = new ContextMenu();
-            this.pictureBox1.MouseDown += new MouseEventHandler(pictureBox1_MouseDown);
-            this.pictureBox1.MouseMove += new MouseEventHandler(pictureBox1_MouseMove);
-            this.pictureBox1.MouseUp += new MouseEventHandler(pictureBox1_MouseUp);
-            this.pictureBox1.Paint += new PaintEventHandler(this.pictureBox1_Paint);
-        }
+
 
 
 
@@ -517,64 +513,95 @@ namespace WindowsFormsApplication1
         *                                                                     *
         ***********************************************************************
         */
-        private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
-        {
-            Debug.Print("mouse is down on picture box");
+        //private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
+        //{
+        //    Debug.Print("mouse is down on picture box");
 
 
-            // for the first click
-            if (customizeValOne == null)
-            {
-                customizeValOne = e.X * 3 + "," + e.Y * 3;
-                customizeValOneX = e.X;
-                customizeValOneY = e.Y;
-                positionText.Text = customizeValOne;
-                firstXCoorScroller.Value = customizeValOneX * 3;
-                firstYCoorScroller.Value = customizeValOneY * 3;
+        //    // for the first click
+        //    if (customizeValOne == null)
+        //    {
+        //        customizeValOne = e.X * 3 + "," + e.Y * 3;
+        //        customizeValOneX = e.X;
+        //        customizeValOneY = e.Y;
+        //        positionText.Text = customizeValOne;
+        //        firstXCoorScroller.Value = customizeValOneX * 3;
+        //        firstYCoorScroller.Value = customizeValOneY * 3;
 
-            }
-            // for the second click
-            else if(customizeValTwo == null)
-            {
-                customizeValTwo = e.X * 3 + "," + e.Y * 3;
-                customizeValTwoX = e.X;
-                customizeValTwoY = e.Y;
-                positionText.Text = customizeValOne + " and " + customizeValTwo;
-                secondXCoorScroller.Value = customizeValTwoX * 3;
-                secondYCoorScroller.Value = customizeValTwoY * 3;
-                pictureBox1.Refresh();
-                // draw the box on the current
+        //    }
+        //    // for the second click
+        //    else if(customizeValTwo == null)
+        //    {
+        //        customizeValTwo = e.X * 3 + "," + e.Y * 3;
+        //        customizeValTwoX = e.X;
+        //        customizeValTwoY = e.Y;
+        //        positionText.Text = customizeValOne + " and " + customizeValTwo;
+        //        secondXCoorScroller.Value = customizeValTwoX * 3;
+        //        secondYCoorScroller.Value = customizeValTwoY * 3;
+        //        pictureBox1.Refresh();
+        //        // draw the box on the current
 
-            }
-            else
-            {
-                customizeValOne = e.X * 3 + "," + e.Y * 3;
-                customizeValOneX = e.X;
-                customizeValOneY = e.Y;
-                customizeValTwo = null;
-                firstXCoorScroller.Value = customizeValOneX * 3;
-                firstYCoorScroller.Value = customizeValOneY * 3;
-                secondXCoorScroller.Value = 0;
-                secondYCoorScroller.Value = 0;
-                positionText.Text = customizeValOne;
-            }
-        }
+        //    }
+        //    else
+        //    {
+        //        customizeValOne = e.X * 3 + "," + e.Y * 3;
+        //        customizeValOneX = e.X;
+        //        customizeValOneY = e.Y;
+        //        customizeValTwo = null;
+        //        firstXCoorScroller.Value = customizeValOneX * 3;
+        //        firstYCoorScroller.Value = customizeValOneY * 3;
+        //        secondXCoorScroller.Value = 0;
+        //        secondYCoorScroller.Value = 0;
+        //        positionText.Text = customizeValOne;
+        //    }
+        //}
 
 
 
-        private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
-        {
-            draw = false;
-        }
+        //private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
+        //{
+        //    draw = false;
+        //}
 
 
         /**
         This method is currently not being used
         */
-        private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
+        private void Form1_Load(object sender, EventArgs e)
         {
+            this.pictureBox1.ContextMenu = new ContextMenu();
+            this.pictureBox1.MouseDown += new MouseEventHandler(OnMouseDown);
+            this.pictureBox1.MouseMove += new MouseEventHandler(OnMouseMove);
+            // this.pictureBox1.MouseUp += new MouseEventHandler(pictureBox1_MouseUp);
+            this.pictureBox1.Paint += new PaintEventHandler(OnPaint);
+        }
+        protected void OnPaint(object sender, PaintEventArgs e)
+        {
+            Pen pen1 = new Pen(Color.Red, 1);
+            e.Graphics.DrawRectangle(pen1, rec);
+            Debug.WriteLine("drawing");
+        }
+        protected void OnMouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                rec = new Rectangle(e.X, e.Y, 0, 0);
+                Invalidate();
+                Debug.WriteLine("mouse down");
+            }
+        }
+        protected void OnMouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                rec.Width = e.X - rec.X;
+                rec.Height = e.Y - rec.Y;
+                Invalidate();
+                Debug.WriteLine("moving");
+            }
         }
 
+        
         /**
         ______________________________________________________________________________________________________
             This is the event handler for the list of templates that are currently made. 

@@ -13,6 +13,7 @@ namespace TestApp
         /// </summary>
 
         public static int x = 0, y = 0;
+        public static bool moving = false;
         [STAThread]
         static void Main()
         {

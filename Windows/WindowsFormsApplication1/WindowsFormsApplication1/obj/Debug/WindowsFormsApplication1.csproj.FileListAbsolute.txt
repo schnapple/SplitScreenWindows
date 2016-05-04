@@ -34,3 +34,6 @@ C:\Users\plaga\Documents\GitHub\SplitScreenWindows\Windows\WindowsFormsApplicati
 C:\Users\plaga\Documents\GitHub\SplitScreenWindows\Windows\WindowsFormsApplication1\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.Properties.Resources.resources
 C:\Users\plaga\Documents\GitHub\SplitScreenWindows\Windows\WindowsFormsApplication1\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.csproj.GenerateResource.Cache
 C:\Users\plaga\Documents\GitHub\SplitScreenWindows\Windows\WindowsFormsApplication1\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.CreationForm.resources
+D:\Documents\GitHub\SplitScreenWindows\Windows\WindowsFormsApplication1\WindowsFormsApplication1\bin\Debug\WindowsFormsApplication1.exe.config
+D:\Documents\GitHub\SplitScreenWindows\Windows\WindowsFormsApplication1\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.exe
+D:\Documents\GitHub\SplitScreenWindows\Windows\WindowsFormsApplication1\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.pdb

@@ -20,21 +20,40 @@ namespace TestApp
             InitializeComponent();
 
             MouseHook.Start();
-            MouseHook.MouseAction += new EventHandler(Event);
+            MouseHook.MouseAction += new EventHandler(MouseEvent);
         }
         int numClicks = 0;
-        private void Event(object sender, EventArgs e)
+        private void MouseEvent(object sender, EventArgs e)
         {
             numClicks++;
             label1.Text = numClicks.ToString();
             label2.Text = "(" + TestApp.Program.x.ToString() + "," + TestApp.Program.y.ToString() + ")";
-            
+
         }
 
+        private const int WM_MOVING = 0x0216;
+        private const int WM_EXITSIZEMOVE = 0x0232;
+        [System.Security.Permissions.PermissionSet(System.Security.Permissions.SecurityAction.Demand, Name = "FullTrust")]
+        protected override void WndProc(ref Message m)
+        {
+            // Listen for operating system messages.
+            switch (m.Msg)
+            {
+                case WM_MOVING:
+                    Program.moving = true;
+                    label3.Text = "Moving";
+                    break;
+                case WM_EXITSIZEMOVE:
+                    Program.moving = false;
+                    label3.Text = "Still";
+                    break;
+            }
+            base.WndProc(ref m);
+        }
     }
 
     public static class MouseHook
-    {
+    { 
         public static event EventHandler MouseAction = delegate { };
 
         public static void Start()

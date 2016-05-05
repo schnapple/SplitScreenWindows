@@ -5,6 +5,7 @@ using System.Timers;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
+//using UserActivityMonitor.GlobalEventProvider;
 
 namespace WindowsFormsApplication1
 {
@@ -55,10 +56,24 @@ namespace WindowsFormsApplication1
         private static System.Timers.Timer aTimer;
         private static System.Timers.Timer bTimer;
         private static System.Timers.Timer cTimer;
+        private static System.Timers.Timer plexiTimer;
         private List<TemplateParse> tempParseArr = new List<TemplateParse>();
         private static IntPtr currentHandle;
         private static int x; // mouse x position
         private static int y; // mouse y position
+        private static bool leftButtonState = false;
+        //private static Plexiglass overlayPlex;
+        //private int overlayPlexTX;
+        //private int overlayPlexTY;
+        //private int overlayPlexBX;
+        //private int overlayPlexBY;
+        //private int overlayPlexCounterX = 150;
+        //private int overlayPlexCounterY = 150;
+        private IntPtr handle;
+        private TemplateParse curTempParse;
+        private bool location = false;
+
+        //private static MouseHook mHook = new MouseHook();
 
 
         public SnapOn()
@@ -66,17 +81,103 @@ namespace WindowsFormsApplication1
             //tempParseArr = curTemp.getList();
 
 
-            aTimer = new System.Timers.Timer(100);
-            bTimer = new System.Timers.Timer(1000);
-            cTimer = new System.Timers.Timer(100);
-            aTimer.Elapsed += GrabMousePos;
-            bTimer.Elapsed += WindowInPos;
-            cTimer.Elapsed += hookTimer;
+            //aTimer = new System.Timers.Timer(100);
+            //bTimer = new System.Timers.Timer(1000);
+            //cTimer = new System.Timers.Timer(100);
+            //plexiTimer = new System.Timers.Timer(.01);
+            //aTimer.Elapsed += GrabMousePos;
+            //bTimer.Elapsed += WindowInPos;
+            //cTimer.Elapsed += hookTimer;
+            //plexiTimer.Elapsed += plexiGrow;
+            //MouseHook.Start();
+            MouseHook.Start();
+            MouseHook.MouseUp += new EventHandler(mouseUp);
+            MouseHook.MouseDown += new EventHandler(mouseDown);
+            MouseHook.MouseMove += new EventHandler(mouseMove);
+            //MouseHook.MouseHover += new EventHandler(mouseHover);
+            //MouseHookTwo.Start();
+            //MouseHookTwo.MouseAction += new EventHandler(mouseUp);
+            //Console.WriteLine("started Mouse");
 
-
+            //MouseEventArgs mouseE = (MouseEventArgs)e;
 
         }
 
+        //private void mouseHover(object sender, EventArgs e)
+        //{
+        //    //POINT cusorPoint;
+        //    //bool ret = GetCursorPos(out cusorPoint);
+        //    //IntPtr winHandle = WindowFromPoint(cusorPoint);
+        //    //currentHandle = winHandle;
+
+        //    //Console.WriteLine(currentHandle.ToString());
+        //}
+
+        private void mouseMove(object sender, EventArgs e)
+        {
+            Point mousePoint = Control.MousePosition;
+            x = mousePoint.X;
+            y = mousePoint.Y;
+
+            
+
+            for (int i = 0; i < tempParseArr.Count; i++)
+            {
+                if (leftButtonState == true)
+                {
+                    if (x > tempParseArr[i].getBotX() * 3 - 80 && y > tempParseArr[i].getBotY() * 3 - 80
+                        && x < tempParseArr[i].getBotX() * 3 && y < tempParseArr[i].getBotY() * 3)
+                    {
+                        curTempParse = tempParseArr[i];
+                        location = true;
+                        Console.WriteLine("location true");
+                        break;
+                    }
+                    else
+                    {
+                        location = false;
+                        Console.WriteLine("location false");
+                    }
+                }
+            }
+        }
+
+        private void mouseUp(object sender, EventArgs e)
+        {
+            const short SWP_NOZORDER = 0x4;
+            const int SWP_SHOWWINDOW = 0x0040;
+            const int SWP_DRAWFRAME = 0x0020;
+
+            Console.WriteLine("Left mouse up!");
+
+            if (location == true)
+            {
+                Process[] processes = Process.GetProcesses();
+                foreach (var process in processes)
+                {
+                    Console.WriteLine(process.ProcessName);
+
+                    handle = process.MainWindowHandle;
+                        Console.WriteLine("ehrherhe");
+                        SetWindowPos(currentHandle, 0, curTempParse.getTopX() * 3, curTempParse.getTopY() * 3, curTempParse.getBotX() * 3
+                            - curTempParse.getTopX() * 3, curTempParse.getBotY() * 3 - curTempParse.getTopY() * 3,
+                            SWP_DRAWFRAME | SWP_SHOWWINDOW | SWP_NOZORDER);
+
+                    location = false;
+                }
+            }
+            leftButtonState = false;
+        }
+
+        private void mouseDown(object sender, EventArgs e)
+        {
+            POINT cusorPoint;
+            bool ret = GetCursorPos(out cusorPoint);
+            IntPtr winHandle = WindowFromPoint(cusorPoint);
+            currentHandle = winHandle;
+            Console.WriteLine("Left mouse click!");
+            leftButtonState = true;
+        }
 
         [StructLayout(LayoutKind.Sequential)]
         private struct POINT
@@ -117,23 +218,24 @@ namespace WindowsFormsApplication1
         public void Run(List<TemplateParse> arr)
         {
             tempParseArr = arr;
-            aTimer.AutoReset = true;
-            aTimer.Enabled = true;
-            bTimer.AutoReset = true;
-            bTimer.Enabled = true;
-            cTimer.AutoReset = true;
-            cTimer.Enabled = true;
+            //aTimer.AutoReset = true;
+            //aTimer.Enabled = true;
+            //bTimer.AutoReset = true;
+            //bTimer.Enabled = true;
+            //cTimer.AutoReset = true;
+            //cTimer.Enabled = true;
             this.createPlexiGlass();
         }
 
         public void Halt()
         {
-            aTimer.AutoReset = false;
-            aTimer.Enabled = false;
-            bTimer.AutoReset = false;
-            bTimer.Enabled = false;
-            cTimer.AutoReset = false;
-            cTimer.Enabled = false;
+            //aTimer.AutoReset = false;
+            //aTimer.Enabled = false;
+            //bTimer.AutoReset = false;
+            //bTimer.Enabled = false;
+            //cTimer.AutoReset = false;
+            //cTimer.Enabled = false;
+            MouseHook.stop();
         }
 
         public void RemovePlexi()
@@ -150,36 +252,116 @@ namespace WindowsFormsApplication1
 
             // const short SWP_NOSIZE = 1;
             // const short SWP_NOMOVE = 0x2;
-            const short SWP_NOZORDER = 0x4;
-            const int SWP_SHOWWINDOW = 0x0040;
+            //const short SWP_NOZORDER = 0x4;
+            //const int SWP_SHOWWINDOW = 0x0040;
 
-            Process[] processes = Process.GetProcesses();
-            foreach (var process in processes)
-            {
+            //Process[] processes = Process.GetProcesses();
+            //foreach (var process in processes)
+            //{
                 //Console.WriteLine( process.ProcessName);
 
-                IntPtr handle = process.MainWindowHandle;
+                //handle = process.MainWindowHandle;
 
-                for (int i = 0; i < tempParseArr.Count; i++)
+            for (int i = 0; i < tempParseArr.Count; i++)
+            {
+                if (leftButtonState == true)
                 {
-                    if (x > tempParseArr[i].getBotX() * 3 - 100 && y > tempParseArr[i].getBotY() * 3 - 100 && x < tempParseArr[i].getBotX() * 3 && y < tempParseArr[i].getBotY() * 3 && handle == currentHandle)
+                    if (x > tempParseArr[i].getBotX() * 3 - 80 && y > tempParseArr[i].getBotY() * 3 - 80
+                        && x < tempParseArr[i].getBotX() * 3 && y < tempParseArr[i].getBotY() * 3)
                     {
-                        SetWindowPos(handle, 0, tempParseArr[i].getTopX() * 3, tempParseArr[i].getTopY() * 3, tempParseArr[i].getBotX() * 3 - tempParseArr[i].getTopX() * 3, tempParseArr[i].getBotY() * 3 - tempParseArr[i].getTopY() * 3,
-                            SWP_NOZORDER | SWP_SHOWWINDOW);
+                        curTempParse = tempParseArr[i];
+                        Console.WriteLine("Location is true");
+                        //SetWindowPos(handle, 0, tempParseArr[i].getTopX() * 3, tempParseArr[i].getTopY() * 3, tempParseArr[i].getBotX() * 3 
+                        //    - tempParseArr[i].getTopX() * 3, tempParseArr[i].getBotY() * 3 - tempParseArr[i].getTopY() * 3,
+                        //    SWP_NOZORDER | SWP_SHOWWINDOW);
+                        location = true;
+                        //makePlexiOverlay(tempParseArr[i], handle);
                     }
-                }
+                        //else
+                        //{
+                        //    location = false;
+                        //}
+                    }
+                    //}
             }
         }
 
-        private void GrabMousePos(object sender, ElapsedEventArgs e)
+
+
+
+        /**
+            Hold on with this until you fix the mouse hook issues
+        */
+        private void makePlexiOverlay(TemplateParse tempParse, IntPtr handle)
         {
-            Point mousePoint = Control.MousePosition;
-            //Debug.Print("{0} and {1}", mousePoint.X, mousePoint.Y);
-            x = mousePoint.X;
-            y = mousePoint.Y;
-            //this.positioningText.Text = x + "  " + y;
+            //nsole.WriteLine("HERHERHE");
+            //bTimer.AutoReset = false;
+            //bTimer.Enabled = false;
+            //const short SWP_NOZORDER = 0x4;
+            //const int SWP_SHOWWINDOW = 0x0040;
+
+
+
+            //overlayPlexBX = tempParse.getBotX() * 3;
+            //overlayPlexBY = tempParse.getBotY() * 3;
+            //overlayPlexTX = tempParse.getTopX() * 3;
+            //overlayPlexTY = tempParse.getTopY() * 3;
+            //overlayPlex = new Plexiglass(overlayPlexBX - 300, overlayPlexBY - 300, 0, 0);
+            //plexiTimer.AutoReset = true;
+            //plexiTimer.Enabled = true;
+            //while(i != tempParse.getTopX() && j != tempParse.getTopY())
+            //{
+
+            //}
+
+
+
+            //for(int i = temp)
             //throw new NotImplementedException();
         }
+
+
+        private void plexiGrow(object sender, ElapsedEventArgs e)
+        {
+            //overlayPlex.Close();
+            //if (overlayPlexBX - overlayPlexCounterX >= overlayPlexTX && overlayPlexTY <= overlayPlexBY - overlayPlexCounterY)
+            //{
+            //    overlayPlexCounterX += 8;
+            //    overlayPlexCounterY += 8;
+            //    overlayPlex.modifySize(overlayPlexBX - overlayPlexCounterX, overlayPlexBY - overlayPlexCounterY,
+            //        overlayPlexBX - (overlayPlexBX - overlayPlexCounterX), overlayPlexBY - (overlayPlexBY - overlayPlexCounterY));
+
+            //}
+            //else if (overlayPlexBX - overlayPlexCounterX >= overlayPlexTX)
+            //{
+            //    overlayPlexCounterX += 8;
+            //    overlayPlex.modifySize(overlayPlexBX - overlayPlexCounterX, overlayPlexTY,
+            //        overlayPlexBX - (overlayPlexBX - overlayPlexCounterX), overlayPlexBY - overlayPlexTY);
+            //}
+            //else if (overlayPlexBY - overlayPlexCounterY >= overlayPlexTY)
+            //{
+            //    overlayPlexCounterY += 8;
+            //    overlayPlex.modifySize(overlayPlexTX, overlayPlexBY - overlayPlexCounterY,
+            //        overlayPlexBX - overlayPlexTY, overlayPlexBY - (overlayPlexBY - overlayPlexCounterY));
+            //}
+            //else
+            //{
+            //    plexiTimer.AutoReset = false;
+            //    plexiTimer.Enabled = false;
+            //}
+
+
+        }
+
+        //private void GrabMousePos(object sender, ElapsedEventArgs e)
+        //{
+        //    Point mousePoint = Control.MousePosition;
+
+        //    Debug.Print("{0} and {1}", mousePoint.X, mousePoint.Y);
+
+        //    this.positioningText.Text = x + "  " + y;
+        //    throw new NotImplementedException();
+        //}
 
         private void createPlexiGlass()
         {
@@ -193,7 +375,7 @@ namespace WindowsFormsApplication1
             {
                             //Debug.Print(selected[j].toString());
                    
-                   tempPlexiArr.Add(new Plexiglass(tempParseArr[j].getBotX() * 3 - 100, tempParseArr[j].getBotY() * 3 - 100));
+                   tempPlexiArr.Add(new Plexiglass(tempParseArr[j].getBotX() * 3 - 80, tempParseArr[j].getBotY() * 3 - 80,80,80));
              }
                     
 

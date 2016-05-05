@@ -118,6 +118,7 @@ namespace WindowsFormsApplication1
             Rectangle rect = Screen.PrimaryScreen.WorkingArea;
             height = rect.Height;
             width = rect.Width;
+            
             //Debug.Print("{0} y {1}", width, height);
             this.pictureBox1.Height = height/3;
             this.pictureBox1.Width = width/3;
@@ -294,34 +295,7 @@ namespace WindowsFormsApplication1
             // for the first click
             if (customizeValOne == null)
             {
-                if (e.X * 3 > 1920)
-                {
-                    if (e.Y * 3 > 1010)
-                    {
-                        customizeValOne = " 1920,1010";
-                        customizeValOneY = 1010;
-                        customizeValOneX = 1920;
-                    }
-                    else
-                    {
-                        customizeValOne = "1920," + e.Y * 3;
-                        customizeValOneY = e.Y * 3;
-                        customizeValOneX = 1920;
-                    }
-
-                }
-                else if (e.Y * 3 > 1010)
-                {
-                    customizeValOne = e.X * 3 + ",1010";
-                    customizeValOneY = 1010;
-                    customizeValOneX = e.X * 3;
-                }
-                else
-                {
-                    customizeValOne = e.X * 3 + "," + e.Y * 3;
-                    customizeValOneX = e.X*3;
-                    customizeValOneY = e.Y*3;
-                }
+                pictureBoxFirstClickCensor(e.X, e.Y);
 
                 positionText.Text = customizeValOne;
                 firstXCoorScroller.Value = customizeValOneX;
@@ -332,34 +306,7 @@ namespace WindowsFormsApplication1
             else if(customizeValTwo == null)
             {
                 // replace with a method that does the same task
-                if (e.X * 3 > 1920)
-                {
-                    if (e.Y * 3 > 1010)
-                    {
-                        customizeValTwo = " 1920,1010";
-                        customizeValTwoY = 1010;
-                        customizeValTwoX = 1920;
-                    }
-                    else
-                    {
-                        customizeValTwo = "1920," + e.Y * 3;
-                        customizeValTwoY = e.Y * 3;
-                        customizeValTwoX = 1920;
-                    }
-
-                }
-                else if(e.Y * 3 > 1010)
-                {
-                    customizeValTwo = e.X*3 + ",1010";
-                    customizeValTwoY = 1010;
-                    customizeValTwoX = e.X*3;
-                }
-                else
-                {
-                    customizeValTwo = e.X * 3 + "," + e.Y * 3;
-                    customizeValTwoX = e.X*3;
-                    customizeValTwoY = e.Y*3;
-                }
+                pictureBoxSecondClickCensor(e.X, e.Y);
 
                 positionText.Text = customizeValOne + " and " + customizeValTwo;
                 secondXCoorScroller.Value = customizeValTwoX;
@@ -370,40 +317,79 @@ namespace WindowsFormsApplication1
             }
             else
             {
-                if (e.X * 3 > 1920)
-                {
-                    if (e.Y * 3 > 1010)
-                    {
-                        customizeValOne = " 1920,1010";
-                        customizeValOneY = 1010;
-                        customizeValOneX = 1920;
-                    }
-                    else
-                    {
-                        customizeValOne = "1920," + e.Y * 3;
-                        customizeValOneY = e.Y * 3;
-                        customizeValOneX = 1920;
-                    }
-
-                }
-                else if (e.Y * 3 > 1010)
-                {
-                    customizeValOne = e.X * 3 + ",1010";
-                    customizeValOneY = 1010;
-                    customizeValOneX = e.X * 3;
-                }
-                else
-                {
-                    customizeValOne = e.X * 3 + "," + e.Y * 3;
-                    customizeValOneX = e.X*3;
-                    customizeValOneY = e.Y*3;
-                }
+                pictureBoxFirstClickCensor(e.X, e.Y);
                 customizeValTwo = null;
                 firstXCoorScroller.Value = customizeValOneX;
                 firstYCoorScroller.Value = customizeValOneY;
                 secondXCoorScroller.Value = 0;
                 secondYCoorScroller.Value = 0;
                 positionText.Text = customizeValOne;
+            }
+        }
+
+
+        private void pictureBoxFirstClickCensor(int x, int y)
+        {
+            if (x * 3 > 1920)
+            {
+                if (y * 3 > 1010)
+                {
+                    customizeValOne = " 1920,1010";
+                    customizeValOneY = 1010;
+                    customizeValOneX = 1920;
+                }
+                else
+                {
+                    customizeValOne = "1920," + y * 3;
+                    customizeValOneY = y * 3;
+                    customizeValOneX = 1920;
+                }
+
+            }
+            else if (y * 3 > 1010)
+            {
+                customizeValOne = x * 3 + ",1010";
+                customizeValOneY = 1010;
+                customizeValOneX = x * 3;
+            }
+            else
+            {
+                customizeValOne = x * 3 + "," + y * 3;
+                customizeValOneX = x * 3;
+                customizeValOneY = y * 3;
+            }
+        }
+
+
+        private void pictureBoxSecondClickCensor(int x, int y)
+        {
+            if (x * 3 > 1920)
+            {
+                if (y * 3 > 1010)
+                {
+                    customizeValTwo = " 1920,1010";
+                    customizeValTwoY = 1010;
+                    customizeValTwoX = 1920;
+                }
+                else
+                {
+                    customizeValTwo = "1920," + y * 3;
+                    customizeValTwoY = y * 3;
+                    customizeValTwoX = 1920;
+                }
+
+            }
+            else if (y * 3 > 1010)
+            {
+                customizeValTwo = x * 3 + ",1010";
+                customizeValTwoY = 1010;
+                customizeValTwoX = x * 3;
+            }
+            else
+            {
+                customizeValTwo = x * 3 + "," + y * 3;
+                customizeValTwoX = x * 3;
+                customizeValTwoY = y * 3;
             }
         }
 
@@ -612,7 +598,9 @@ namespace WindowsFormsApplication1
 
         }
     }
+
 }
+
 
 
 

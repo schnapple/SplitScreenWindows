@@ -13,19 +13,23 @@ namespace WindowsFormsApplication1
 
     class Plexiglass : Form
     {
-        public Plexiglass(int tX, int tY)
+        public Plexiglass(int tX, int tY, int bY, int bX)
         {
        
-            this.BackColor = Color.Green;
-            
+            this.BackColor = Color.Red;
+            CheckForIllegalCrossThreadCalls = false;
             this.Opacity = 0.60;      // Tweak as desired
             this.FormBorderStyle = FormBorderStyle.None;
             this.ControlBox = false;
             this.ShowInTaskbar = false;
+            
             this.StartPosition = FormStartPosition.Manual;
             this.AutoScaleMode = AutoScaleMode.None;
-            this.Size = new Size(100, 100);
+            this.Size = new Size(bX, bY);
             this.Location = new Point(tX, tY);
+            this.TopMost = false;
+            this.ResizeRedraw = true;
+            
             this.Show();
 
             //this.Location = PointToScreen(Point.Empty);
@@ -42,6 +46,19 @@ namespace WindowsFormsApplication1
                 //DwmSetWindowAttribute(tocover.Handle, DWMWA_TRANSITIONS_FORCEDISABLED, ref value, 4);
             }
         }
+        
+        public void modifySize(int tx, int ty, int bx, int by)
+        {
+
+            this.Size = new System.Drawing.Size(bx, by);
+            this.Location = new Point(tx, ty);
+            //this.SizeChanged() += 1;
+            //this.Size = new Size(200, 200);
+
+            
+            //this.Show();
+        }
+
         private void Cover_LocationChanged(object sender, EventArgs e)
         {
             // Ensure the plexiglass follows the owner
@@ -73,5 +90,23 @@ namespace WindowsFormsApplication1
         private const int DWMWA_TRANSITIONS_FORCEDISABLED = 3;
         [DllImport("dwmapi.dll")]
         private static extern int DwmSetWindowAttribute(IntPtr hWnd, int attr, ref int value, int attrLen);
+
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+            // 
+            // Plexiglass
+            // 
+            this.ClientSize = new System.Drawing.Size(284, 261);
+            this.Name = "Plexiglass";
+            this.Load += new System.EventHandler(this.Plexiglass_Load);
+            this.ResumeLayout(false);
+
+        }
+
+        private void Plexiglass_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

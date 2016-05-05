@@ -26,11 +26,12 @@ namespace WindowsFormsApplication1
         //private static extern bool installHook(); 
         static void Main(string[] args)
         {
-           // if (installHook()) Debug.Write("success");
+            // if (installHook()) Debug.Write("success");
             //Application.EnableVisualStyles();
             //Application.SetCompatibleTextRenderingDefault(false);
-            Point mousepoint = Control.MousePosition;
+            //Point mousepoint = Control.MousePosition;
             //Application.Run(new CreationForm());
+            //MouseHook.stop();
             Application.Run(new SplitScreenTrayApp());
             Console.ReadLine();
             //MousePos mp = new MousePos();

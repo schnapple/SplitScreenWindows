@@ -50,14 +50,13 @@ namespace WindowsFormsApplication1
 
         private void openCreationForm(object sender, EventArgs e)
         {
-            //Application.EnableVisualStyles();
-            //Application.SetCompatibleTextRenderingDefault(false);
-            //Application.Run(new CreationForm());
+            
             snapper.RemovePlexi();
+            snapper.Halt();
+            Console.WriteLine("Help!!");
             createForm = new CreationForm();
             createForm.addTemplatesToList(templateArr);
             createForm.Visible = true;
-            
 
         }
 

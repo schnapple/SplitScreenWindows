@@ -114,7 +114,7 @@
             // 
             this.firstXCoorScroller.Location = new System.Drawing.Point(381, 87);
             this.firstXCoorScroller.Maximum = new decimal(new int[] {
-            1980,
+            1920,
             0,
             0,
             0});
@@ -140,7 +140,7 @@
             // 
             this.secondXCoorScroller.Location = new System.Drawing.Point(557, 87);
             this.secondXCoorScroller.Maximum = new decimal(new int[] {
-            1980,
+            1920,
             0,
             0,
             0});

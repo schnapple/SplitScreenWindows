@@ -53,6 +53,7 @@
             // snappingButton
             // 
             this.snappingButton.BackColor = System.Drawing.SystemColors.MenuHighlight;
+            this.snappingButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.snappingButton.Font = new System.Drawing.Font("Arial", 26F);
             this.snappingButton.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.snappingButton.Location = new System.Drawing.Point(12, 87);
@@ -75,12 +76,12 @@
             // 
             // pictureBox1
             // 
+            this.pictureBox1.Cursor = System.Windows.Forms.Cursors.Cross;
             this.pictureBox1.Location = new System.Drawing.Point(381, 168);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(737, 341);
             this.pictureBox1.TabIndex = 2;
             this.pictureBox1.TabStop = false;
-            this.pictureBox1.Visible = false;
             this.pictureBox1.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox1_Paint);
             this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseDown);
             this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseMove);
@@ -88,6 +89,7 @@
             // customizationButton
             // 
             this.customizationButton.BackColor = System.Drawing.SystemColors.MenuHighlight;
+            this.customizationButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.customizationButton.Font = new System.Drawing.Font("Arial", 26F);
             this.customizationButton.Location = new System.Drawing.Point(12, 12);
             this.customizationButton.Name = "customizationButton";
@@ -95,17 +97,17 @@
             this.customizationButton.TabIndex = 3;
             this.customizationButton.Text = "Customize";
             this.customizationButton.UseVisualStyleBackColor = false;
-            this.customizationButton.Click += new System.EventHandler(this.customizationButtonClick);
+            //this.customizationButton.Click += new System.EventHandler(this.customizationButtonClick); //pictureBox now visible by default
             // 
             // templateList
             // 
             this.templateList.BackColor = System.Drawing.Color.GhostWhite;
-            this.templateList.Font = new System.Drawing.Font("Segoe Print", 26F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.templateList.Font = new System.Drawing.Font("Arial Narrow", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.templateList.FormattingEnabled = true;
-            this.templateList.ItemHeight = 61;
+            this.templateList.ItemHeight = 42;
             this.templateList.Location = new System.Drawing.Point(12, 200);
             this.templateList.Name = "templateList";
-            this.templateList.Size = new System.Drawing.Size(298, 309);
+            this.templateList.Size = new System.Drawing.Size(298, 298);
             this.templateList.TabIndex = 4;
             this.templateList.SelectedIndexChanged += new System.EventHandler(this.templateListSelectedIndexChanged);
             // 

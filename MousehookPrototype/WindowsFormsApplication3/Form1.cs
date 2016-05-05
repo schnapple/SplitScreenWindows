@@ -89,8 +89,8 @@ namespace TestApp
             {
                 MSLLHOOKSTRUCT hookStruct = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT));
                 MouseAction(null, new EventArgs());
-                TestApp.Program.x = hookStruct.pt.x;
-                TestApp.Program.y = hookStruct.pt.y;
+                Program.x = hookStruct.pt.x;
+                Program.y = hookStruct.pt.y;
             }
             return CallNextHookEx(_hookID, nCode, wParam, lParam);
         }

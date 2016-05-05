@@ -63,21 +63,24 @@
             // positioningText
             // 
             this.positioningText.BackColor = System.Drawing.Color.Fuchsia;
-            this.positioningText.Font = new System.Drawing.Font("PT Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.positioningText.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.positioningText.Location = new System.Drawing.Point(12, 151);
             this.positioningText.Name = "positioningText";
-            this.positioningText.Size = new System.Drawing.Size(154, 43);
+            this.positioningText.Size = new System.Drawing.Size(154, 38);
             this.positioningText.TabIndex = 1;
             this.positioningText.Text = "Positioning";
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(381, 164);
+            this.pictureBox1.Location = new System.Drawing.Point(381, 168);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(737, 341);
             this.pictureBox1.TabIndex = 2;
             this.pictureBox1.TabStop = false;
             this.pictureBox1.Visible = false;
+            this.pictureBox1.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox1_Paint);
+            this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseDown);
+            this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseMove);
             // 
             // customizationButton
             // 
@@ -182,7 +185,7 @@
             this.templateConfirmationButton.UseVisualStyleBackColor = true;
             this.templateConfirmationButton.Click += new System.EventHandler(this.templateConfirmationButton_Click);
             // 
-            // Form1
+            // CreationForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -199,7 +202,7 @@
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.positioningText);
             this.Controls.Add(this.snappingButton);
-            this.Name = "Form1";
+            this.Name = "CreationForm";
             this.ShowIcon = false;
             this.Text = "SplitScreen";
             this.Load += new System.EventHandler(this.Form1_Load);

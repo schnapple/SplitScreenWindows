@@ -129,31 +129,13 @@ namespace WindowsFormsApplication1
         [DllImport("user32.dll")]
         static extern IntPtr WindowFromPoint(POINT Point);
 
-        //NOTE: DllImport attributes must be applied for each function, one for each function.
-        // Sam's file path [DllImport(@"C:\GitProjects\SplitScreenWindows\HookDll\HookDLL.dll")]
-
-
-        [DllImport(@"C:\Users\plaga\Documents\GitHub\SplitScreenWindows\HookDll")]
-        private static extern bool installHook();
-
-        /**
-        [DllImport(@"C:\GitProjects\SplitScreenWindows\HookDll\HookDLL.dll")]
-            private static extern bool installHook();
-        [DllImport(@"C:\GitProjects\SplitScreenWindows\HookDll\HookDLL.dll")]
-            private static extern bool getMoving();
-        // getX and getY  not functional at the moment. Will always return 0.
-        [DllImport(@"C:\GitProjects\SplitScreenWindows\HookDll\HookDLL.dll")]
-            private static extern int getX();
-        [DllImport(@"C:\GitProjects\SplitScreenWindows\HookDll\HookDLL.dll")]
-            private static extern int getY()
-        */
+        [DllImport("user32.dll")]
+        static extern int GetWindowText(IntPtr hWnd, System.Text.StringBuilder text, int count);
 
         private static string pathWallpaper;
-        private static int x; // mouse x position
-        private static int y; // mouse y position
         private static int height; // screen height resolution
         private static int width;  // screen width resolution
-        private bool draw;
+        private bool running = false;
         private Image[] imageList;
         private int imageListIndex;
         private Image currentImage;
@@ -161,9 +143,6 @@ namespace WindowsFormsApplication1
         //private Bitmap currBit;
         //private Image drawnImage;
         private static string template;
-        private static System.Timers.Timer aTimer;
-        private static System.Timers.Timer bTimer;
-        private static System.Timers.Timer cTimer;
         // private MouseButtons mouseButton;
         //private static bool isMousePress = false;
         //private static bool hookCreated = false;
@@ -189,12 +168,7 @@ namespace WindowsFormsApplication1
             IntPtr wParam, IntPtr lParam);
 
        // private int _mouseChange;
-
-
-        
-        /**
-        
-        */
+       
         public CreationForm()
         {
             InitializeComponent();
@@ -211,9 +185,6 @@ namespace WindowsFormsApplication1
             Debug.Print("{0} y {1}", width, height);
             this.pictureBox1.Height = height/3;
             this.pictureBox1.Width = width/3;
-            aTimer = new System.Timers.Timer(100);
-            bTimer = new System.Timers.Timer(1000);
-            cTimer = new System.Timers.Timer(100);
             GetPathOfWallpaper();
             //if(pathWallpaper != null)
             //    this.pictureBox1.ImageLocation = pathWallpaper;
@@ -228,11 +199,69 @@ namespace WindowsFormsApplication1
             imageList[imageListIndex] = currentImage;
             //this.pictureBox1.
             this.DoubleBuffered = true;
+
+            
         }
-        Rectangle rec = new Rectangle(0, 0, 0, 0);
 
-        
+        private const int WM_MOVING = 0x0216;
+        private const int WM_EXITSIZEMOVE = 0x0232;
+        [System.Security.Permissions.PermissionSet(System.Security.Permissions.SecurityAction.Demand, Name = "FullTrust")]
+        protected override void WndProc(ref Message m)
+        {
+            // Listen for operating system messages.
+            switch (m.Msg)
+            {
+                case WM_MOVING:
+                    Program.moving = true;
+                    Debug.WriteLine("moving");
+                    break;
+                case WM_EXITSIZEMOVE:
+                    Program.moving = false;
+                    break;
+            }
+            base.WndProc(ref m);
+        }
 
+        private void MouseEvent(object sender, EventArgs e)
+        {
+            POINT cursorPoint;
+            cursorPoint.x = Program.x;
+            cursorPoint.y = Program.y;
+            currentHandle = WindowFromPoint(cursorPoint);
+
+            System.Text.StringBuilder Buff = new System.Text.StringBuilder(256);
+            if (GetWindowText(currentHandle, Buff, 256) > 0)
+            {
+                Debug.WriteLine(Buff.ToString());
+            }
+
+            //old "WindowInPos" code
+            if (Program.moving)
+            {
+                const short SWP_NOZORDER = 0x4;
+                const int SWP_SHOWWINDOW = 0x0040;
+
+                Process[] processes = Process.GetProcesses();
+                foreach (var process in processes)
+                {
+                    //Console.WriteLine( process.ProcessName);
+
+                    IntPtr handle = process.MainWindowHandle;
+
+                    for (int i = 0; i < tempParseArr.Count; i++)
+                    {
+                        if (Program.x > tempParseArr[i].getBotX() * 3 - 100 && Program.y > tempParseArr[i].getBotY() * 3 - 100 && Program.x < tempParseArr[i].getBotX() * 3 && Program.y < tempParseArr[i].getBotY() * 3 && handle == currentHandle)
+                        {
+                            SetWindowPos(handle, 0, tempParseArr[i].getTopX() * 3, tempParseArr[i].getTopY() * 3, tempParseArr[i].getBotX() * 3 - tempParseArr[i].getTopX() * 3, tempParseArr[i].getBotY() * 3 - tempParseArr[i].getTopY() * 3,
+                                SWP_NOZORDER | SWP_SHOWWINDOW);
+                        }
+                    }
+                }
+            }
+
+            //Debug.WriteLine(currentHandle);
+            //Debug.WriteLine("(" + Program.x.ToString() + "," + Program.y.ToString() + ")");
+        }
 
         /**
         When the application starts up load all saved templates from templates.txt
@@ -342,36 +371,19 @@ namespace WindowsFormsApplication1
 
         private void button1_Click(object sender, EventArgs e)
         {
-            aTimer.Elapsed += GrabMousePos;
-            bTimer.Elapsed += WindowInPos;
-            cTimer.Elapsed += hookTimer;
-           
-
             if (this.snappingButton.Text == "Run")
             {
-
-                aTimer.AutoReset = true;
-                aTimer.Enabled = true;
-
-                bTimer.AutoReset = true;
-                bTimer.Enabled = true;
-
-                cTimer.AutoReset = true;
-                cTimer.Enabled = true;
-
+                running = true;
+                MouseHook.Start();
+                MouseHook.MouseAction += new EventHandler(MouseEvent);
                 snappingButton.Text = "Stop";
             }
             else
             {
                 Debug.Print("Stopped");
-                aTimer.AutoReset = false;
-                aTimer.Enabled = false;
-
-                bTimer.AutoReset = false;
-                bTimer.Enabled = false;
-
-                cTimer.AutoReset = false;
-                cTimer.Enabled = false;
+                running = false;
+                MouseHook.stop();
+                MouseHook.MouseAction -= new EventHandler(MouseEvent);
                 snappingButton.Text = "Run";
             }
 
@@ -382,24 +394,6 @@ namespace WindowsFormsApplication1
         private void customizationButtonClick(object sender, EventArgs e)
         {
             this.pictureBox1.Visible = true;
-        }
-
-
-
-        private void hookTimer(object sender, ElapsedEventArgs e)
-        {
-           // if(nCode >= 0 && MouseMessages.WM_LBUTTONDOWN == (MouseMessages)wParam)
-           // {
-           
-                POINT cusorPoint;
-                bool ret = GetCursorPos(out cusorPoint);
-                IntPtr winHandle = WindowFromPoint(cusorPoint);
-                currentHandle = winHandle;
-
-                //UnhookWindowsHookEx(hHook);
-                //hHook = IntPtr.Zero;
-           // }
-
         }
 
         private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
@@ -418,10 +412,14 @@ namespace WindowsFormsApplication1
             }
             return CallNextHookEx(_hookID, nCode, wParam, lParam);
         }
-
-
-
-        private const int WH_Mouse_LL = 14;
+        
+        
+        [StructLayout(LayoutKind.Sequential)]
+        private struct POINT
+        {
+            public int x;
+            public int y;
+        }
 
         private enum MouseMessages
         {
@@ -433,55 +431,7 @@ namespace WindowsFormsApplication1
             WM_RBUTTONUP = 0x0205
         }
 
-        [StructLayout(LayoutKind.Sequential)]
-        private struct POINT
-        {
-            public int x;
-            public int y;
-        }
-
-
-
-        private void WindowInPos(object sender, ElapsedEventArgs e)
-        {
-                        
-           // const short SWP_NOSIZE = 1;
-           // const short SWP_NOMOVE = 0x2;
-            const short SWP_NOZORDER = 0x4;
-            const int SWP_SHOWWINDOW = 0x0040;
-            
-            Process[] processes = Process.GetProcesses();
-            foreach (var process in processes)
-            {
-                //Console.WriteLine( process.ProcessName);
-
-                IntPtr handle = process.MainWindowHandle;
-
-                for (int i = 0; i < tempParseArr.Count; i++)
-                {
-                    if(x > tempParseArr[i].getBotX() * 3 - 100 && y > tempParseArr[i].getBotY() * 3 - 100 && x < tempParseArr[i].getBotX()*3 && y < tempParseArr[i].getBotY()*3 && handle == currentHandle)
-                    {
-                        SetWindowPos(handle, 0, tempParseArr[i].getTopX() * 3, tempParseArr[i].getTopY() * 3, tempParseArr[i].getBotX() * 3 - tempParseArr[i].getTopX() * 3, tempParseArr[i].getBotY() * 3 - tempParseArr[i].getTopY() * 3,
-                            SWP_NOZORDER | SWP_SHOWWINDOW);
-                    }
-                }
-            }
-        }
-
-
-
-        /**
-        This will grab the position of the mouse when the run button is clicked
-        */
-        private void GrabMousePos(object sender, ElapsedEventArgs e)
-        {
-            Point mousePoint = MousePosition;
-            Debug.Print("{0} and {1}" , mousePoint.X, mousePoint.Y);
-            x = mousePoint.X;
-            y = mousePoint.Y;
-            //this.positioningText.Text = x + "  " + y;
-            //throw new NotImplementedException();
-        }
+        
 
 
 
@@ -570,38 +520,71 @@ namespace WindowsFormsApplication1
         private void Form1_Load(object sender, EventArgs e)
         {
             this.pictureBox1.ContextMenu = new ContextMenu();
-            this.pictureBox1.MouseDown += new MouseEventHandler(OnMouseDown);
-            this.pictureBox1.MouseMove += new MouseEventHandler(OnMouseMove);
-            // this.pictureBox1.MouseUp += new MouseEventHandler(pictureBox1_MouseUp);
-            this.pictureBox1.Paint += new PaintEventHandler(OnPaint);
         }
-        protected void OnPaint(object sender, PaintEventArgs e)
+
+        Rectangle rec;
+        
+        private void pictureBox1_Paint(object sender, PaintEventArgs e)
         {
-            Pen pen1 = new Pen(Color.Red, 1);
-            e.Graphics.DrawRectangle(pen1, rec);
-            Debug.WriteLine("drawing");
-        }
-        protected void OnMouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
+            using (Pen pen = new Pen(Color.Red, 2))
             {
-                rec = new Rectangle(e.X, e.Y, 0, 0);
-                Invalidate();
-                Debug.WriteLine("mouse down");
+                e.Graphics.DrawRectangle(pen, rec);
+            }
+
+            if (tempParseArr.Count == 0)
+            {
+                e.Graphics.Save();
+            }
+            else
+            {
+                Pen pen1;
+                SolidBrush brush1;
+                if (tempParseArr != null)
+                {
+                    //foreach (TemplateParse template in tempParseArr)
+                    for (int i = 0; i < tempParseArr.Count; i++)
+                    {
+                        //tempParseArr.Add(new TemplateParse(tempParseId, customizeValOneX, customizeValOneY, customizeValTwoX, customizeValTwoY));
+                        //gNew = Graphics.FromImage(currentImage);
+                        pen1 = new Pen(Color.Red, 5);
+                        Debug.Print("{0} and {1}", (tempParseArr[i]).getTopX(), (tempParseArr[i]).getTopY());
+                        e.Graphics.DrawRectangle(pen1, (tempParseArr[i]).getTopX(), (tempParseArr[i]).getTopY(), (tempParseArr[i]).getBotX() - (tempParseArr[i]).getTopX(), (tempParseArr[i]).getBotY() - (tempParseArr[i]).getTopY());
+                        e.Graphics.Save();
+                        pen1 = new Pen(Color.Green, 5);
+                        brush1 = new SolidBrush(Color.Green);
+                        //gCur.DrawRectangle(pen1, (tempParseArr[i]).getBotX() - 50, (tempParseArr[i]).getBotY() - 50, 50, 50);
+                        e.Graphics.FillRectangle(brush1, (tempParseArr[i]).getBotX() - 20, (tempParseArr[i]).getBotY() - 20, 20, 20);
+                    }
+                }
+                //tempParseArr.Add(new TemplateParse(tempParseId, customizeValOneX, customizeValOneY, customizeValTwoX, customizeValTwoY));
+                //gNew = Graphics.FromImage(currentImage);
+                pen1 = new Pen(Color.Black, 2);
+                //Debug.Print("{0} and {1}", e.X * 3, e.Y * 3);
+                e.Graphics.DrawRectangle(pen1, rec);// customizeValOneX, customizeValOneY, customizeValTwoX - customizeValOneX, customizeValTwoY - customizeValOneY);
+                e.Graphics.Save();
             }
         }
-        protected void OnMouseMove(object sender, MouseEventArgs e)
+        private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
                 rec.Width = e.X - rec.X;
                 rec.Height = e.Y - rec.Y;
-                Invalidate();
-                Debug.WriteLine("moving");
+                pictureBox1.Invalidate();
+                Debug.WriteLine(rec.Height + "," + rec.Width);
             }
         }
 
-        
+        private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                rec = new Rectangle(e.X, e.Y, 0, 0);
+                pictureBox1.Invalidate();
+                Debug.WriteLine("New Rectangle");
+            }
+        }
+
         /**
         ______________________________________________________________________________________________________
             This is the event handler for the list of templates that are currently made. 
@@ -700,56 +683,6 @@ namespace WindowsFormsApplication1
             pictureBox1.Refresh();
         }
 
-
-
-
-        private void pictureBox1_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
-        {
-            if (tempParseArr.Count == 0)
-            {
-                Graphics gCur = e.Graphics;
-                draw = true;
-                //tempParseArr.Add(new TemplateParse(tempParseId, customizeValOneX, customizeValOneY, customizeValTwoX, customizeValTwoY));
-                //gNew = Graphics.FromImage(currentImage);
-                Pen pen1 = new Pen(Color.Red, 1);
-                //Debug.Print("{0} and {1}", e.X * 3, e.Y * 3);
-                gCur.DrawRectangle(pen1, customizeValOneX, customizeValOneY, customizeValTwoX - customizeValOneX, customizeValTwoY - customizeValOneY);
-                gCur.Save();
-            }
-            else
-            {
-                Graphics gCur;
-                Pen pen1;
-                SolidBrush brush1;
-                if(tempParseArr != null) {
-                    //foreach (TemplateParse template in tempParseArr)
-                    for (int i = 0; i < tempParseArr.Count; i++ )
-                    {
-                        gCur = e.Graphics;
-                        draw = true;
-                        //tempParseArr.Add(new TemplateParse(tempParseId, customizeValOneX, customizeValOneY, customizeValTwoX, customizeValTwoY));
-                        //gNew = Graphics.FromImage(currentImage);
-                        pen1 = new Pen(Color.Red, 5);
-                        Debug.Print("{0} and {1}", (tempParseArr[i]).getTopX(), (tempParseArr[i]).getTopY());
-                        gCur.DrawRectangle(pen1, (tempParseArr[i]).getTopX(), (tempParseArr[i]).getTopY(), (tempParseArr[i]).getBotX() - (tempParseArr[i]).getTopX(), (tempParseArr[i]).getBotY() - (tempParseArr[i]).getTopY());
-                        gCur.Save();
-                        pen1 = new Pen(Color.Green, 5);
-                        brush1 = new SolidBrush(Color.Green);
-                        //gCur.DrawRectangle(pen1, (tempParseArr[i]).getBotX() - 50, (tempParseArr[i]).getBotY() - 50, 50, 50);
-                        gCur.FillRectangle(brush1, (tempParseArr[i]).getBotX() - 20, (tempParseArr[i]).getBotY() - 20, 20, 20);
-                    }
-                }
-                gCur = e.Graphics;
-                draw = true;
-                //tempParseArr.Add(new TemplateParse(tempParseId, customizeValOneX, customizeValOneY, customizeValTwoX, customizeValTwoY));
-                //gNew = Graphics.FromImage(currentImage);
-                pen1 = new Pen(Color.Red, 1);
-                //Debug.Print("{0} and {1}", e.X * 3, e.Y * 3);
-                gCur.DrawRectangle(pen1, customizeValOneX, customizeValOneY, customizeValTwoX - customizeValOneX, customizeValTwoY - customizeValOneY);
-                gCur.Save();
-            }
-        }
-
         private void confirmationButton_Click(object sender, EventArgs e)
         {
             tempParseArr.Add(new TemplateParse(customizeValOneX, customizeValOneY, customizeValTwoX, customizeValTwoY));
@@ -797,5 +730,97 @@ namespace WindowsFormsApplication1
 
 
         }
+
+        
     }
+
+    public static class MouseHook
+    {
+        public static event EventHandler MouseAction = delegate { };
+
+        public static void Start()
+        {
+            _hookID = SetHook(_proc);
+
+
+        }
+        public static void stop()
+        {
+            UnhookWindowsHookEx(_hookID);
+        }
+
+        private static LowLevelMouseProc _proc = HookCallback;
+        private static IntPtr _hookID = IntPtr.Zero;
+
+        private static IntPtr SetHook(LowLevelMouseProc proc)
+        {
+            using (Process curProcess = Process.GetCurrentProcess())
+            using (ProcessModule curModule = curProcess.MainModule)
+            {
+                return SetWindowsHookEx(WH_MOUSE_LL, proc,
+                  GetModuleHandle(curModule.ModuleName), 0);
+            }
+        }
+
+        private delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
+
+        private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
+        {
+            if (nCode >= 0 && MouseMessages.WM_MOUSEMOVE == (MouseMessages)wParam)
+            {
+                MSLLHOOKSTRUCT hookStruct = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT));
+                MouseAction(null, new EventArgs());
+                Program.x = hookStruct.pt.x;
+                Program.y = hookStruct.pt.y;
+            }
+            return CallNextHookEx(_hookID, nCode, wParam, lParam);
+        }
+
+        private const int WH_MOUSE_LL = 14;
+
+        private enum MouseMessages
+        {
+            WM_LBUTTONDOWN = 0x0201,
+            WM_LBUTTONUP = 0x0202,
+            WM_MOUSEMOVE = 0x0200,
+            WM_MOUSEWHEEL = 0x020A,
+            WM_RBUTTONDOWN = 0x0204,
+            WM_RBUTTONUP = 0x0205
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct POINT
+        {
+            public int x;
+            public int y;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct MSLLHOOKSTRUCT
+        {
+            public POINT pt;
+            public uint mouseData;
+            public uint flags;
+            public uint time;
+            public IntPtr dwExtraInfo;
+        }
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr SetWindowsHookEx(int idHook,
+          LowLevelMouseProc lpfn, IntPtr hMod, uint dwThreadId);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool UnhookWindowsHookEx(IntPtr hhk);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode,
+          IntPtr wParam, IntPtr lParam);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr GetModuleHandle(string lpModuleName);
+
+
+    }
+
 }

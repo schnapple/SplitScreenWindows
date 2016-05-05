@@ -19,11 +19,11 @@ namespace WindowsFormsApplication1
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-        //[STAThread]
+        public static int x = 0, y = 0;
+        public static bool moving = false;
+        [STAThread]
 
 
-        //[DllImport(@"C:\GitProjects\SplitScreenWindows\HookDll\HookDLL.dll")]
-        //private static extern bool installHook(); 
         static void Main(string[] args)
         {
            // if (installHook()) Debug.Write("success");

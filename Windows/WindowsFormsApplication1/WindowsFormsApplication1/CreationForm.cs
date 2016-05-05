@@ -146,7 +146,7 @@ namespace WindowsFormsApplication1
         // private MouseButtons mouseButton;
         //private static bool isMousePress = false;
         //private static bool hookCreated = false;
-        private static LowLevelMouseProc _proc = HookCallback;
+        //private static LowLevelMouseProc _proc = HookCallback;
         private static IntPtr _hookID = IntPtr.Zero;
         static IntPtr hHook = IntPtr.Zero;
         private static IntPtr currentHandle;
@@ -224,16 +224,11 @@ namespace WindowsFormsApplication1
 
         private void MouseEvent(object sender, EventArgs e)
         {
+            //get cursor pos, get handle, window in pos
             POINT cursorPoint;
             cursorPoint.x = Program.x;
             cursorPoint.y = Program.y;
             currentHandle = WindowFromPoint(cursorPoint);
-
-            System.Text.StringBuilder Buff = new System.Text.StringBuilder(256);
-            if (GetWindowText(currentHandle, Buff, 256) > 0)
-            {
-                Debug.WriteLine(Buff.ToString());
-            }
 
             //old "WindowInPos" code
             if (Program.moving)
@@ -261,6 +256,17 @@ namespace WindowsFormsApplication1
 
             //Debug.WriteLine(currentHandle);
             //Debug.WriteLine("(" + Program.x.ToString() + "," + Program.y.ToString() + ")");
+            System.Text.StringBuilder Buff = new System.Text.StringBuilder(256);
+            if (GetWindowText(currentHandle, Buff, 256) > 0)
+            {
+                label2.Text = "Handle Title: "+Buff.ToString();
+            }
+            else
+            {
+                label2.Text = "Handle Title: ";
+            }
+            label1.Text = "CursorPos: (" + Program.x.ToString() + "," + Program.y.ToString() + ")";
+            label3.Text = "Window Moving: " + Program.moving.ToString();
         }
 
         /**
@@ -396,22 +402,22 @@ namespace WindowsFormsApplication1
             this.pictureBox1.Visible = true;
         }
 
-        private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
-        {
-            if(nCode >= 0 && MouseMessages.WM_LBUTTONDOWN == (MouseMessages)wParam)
-            {
-                POINT cusorPoint;
-                bool ret = GetCursorPos(out cusorPoint);
+        //private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
+        //{
+        //    if(nCode >= 0 && MouseMessages.WM_LBUTTONDOWN == (MouseMessages)wParam)
+        //    {
+        //        POINT cusorPoint;
+        //        bool ret = GetCursorPos(out cusorPoint);
 
-                IntPtr winHandle = WindowFromPoint(cusorPoint);
+        //        IntPtr winHandle = WindowFromPoint(cusorPoint);
 
-                currentHandle = winHandle;
+        //        currentHandle = winHandle;
 
-                UnhookWindowsHookEx(hHook);
-                hHook = IntPtr.Zero;
-            }
-            return CallNextHookEx(_hookID, nCode, wParam, lParam);
-        }
+        //        UnhookWindowsHookEx(hHook);
+        //        hHook = IntPtr.Zero;
+        //    }
+        //    return CallNextHookEx(_hookID, nCode, wParam, lParam);
+        //}
         
         
         [StructLayout(LayoutKind.Sequential)]
@@ -571,7 +577,7 @@ namespace WindowsFormsApplication1
                 rec.Width = e.X - rec.X;
                 rec.Height = e.Y - rec.Y;
                 pictureBox1.Invalidate();
-                Debug.WriteLine(rec.Height + "," + rec.Width);
+                //Debug.WriteLine(rec.Height + "," + rec.Width);
             }
         }
 
@@ -581,7 +587,7 @@ namespace WindowsFormsApplication1
             {
                 rec = new Rectangle(e.X, e.Y, 0, 0);
                 pictureBox1.Invalidate();
-                Debug.WriteLine("New Rectangle");
+               // Debug.WriteLine("New Rectangle");
             }
         }
 

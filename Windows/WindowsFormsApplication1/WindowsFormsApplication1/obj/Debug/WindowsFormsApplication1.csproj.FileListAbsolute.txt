@@ -22,7 +22,6 @@ C:\GitProjects\SplitScreenWindows\Windows\WindowsFormsApplication1\WindowsFormsA
 C:\GitProjects\SplitScreenWindows\Windows\WindowsFormsApplication1\WindowsFormsApplication1\bin\Debug\WindowsFormsApplication1.exe
 C:\GitProjects\SplitScreenWindows\Windows\WindowsFormsApplication1\WindowsFormsApplication1\bin\Debug\WindowsFormsApplication1.pdb
 C:\GitProjects\SplitScreenWindows\Windows\WindowsFormsApplication1\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.csprojResolveAssemblyReference.cache
-C:\GitProjects\SplitScreenWindows\Windows\WindowsFormsApplication1\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.Form1.resources
 C:\GitProjects\SplitScreenWindows\Windows\WindowsFormsApplication1\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.Properties.Resources.resources
 C:\GitProjects\SplitScreenWindows\Windows\WindowsFormsApplication1\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.csproj.GenerateResource.Cache
 C:\Users\plaga\Documents\GitHub\SplitScreenWindows\Windows\WindowsFormsApplication1\WindowsFormsApplication1\bin\Debug\WindowsFormsApplication1.exe.config
@@ -43,3 +42,4 @@ D:\Documents\GitHub\SplitScreenWindows\Windows\WindowsFormsApplication1\WindowsF
 D:\Documents\GitHub\SplitScreenWindows\Windows\WindowsFormsApplication1\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.CreationForm.resources
 D:\Documents\GitHub\SplitScreenWindows\Windows\WindowsFormsApplication1\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.Properties.Resources.resources
 D:\Documents\GitHub\SplitScreenWindows\Windows\WindowsFormsApplication1\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.csproj.GenerateResource.Cache
+C:\GitProjects\SplitScreenWindows\Windows\WindowsFormsApplication1\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.CreationForm.resources

@@ -21,6 +21,8 @@ namespace WindowsFormsApplication1
         /// </summary>
         public static int x = 0, y = 0;
         public static bool moving = false;
+        internal static bool mouseDown = false;
+
         [STAThread]
 
 

@@ -230,32 +230,35 @@ namespace WindowsFormsApplication1
             cursorPoint.y = Program.y;
             currentHandle = WindowFromPoint(cursorPoint);
 
-            //old "WindowInPos" code
-            if (Program.moving)
+            if (Program.moving) //moving here means if a window is moving (being dragged)
             {
-                const short SWP_NOZORDER = 0x4;
-                const int SWP_SHOWWINDOW = 0x0040;
+                //old "WindowInPos" code
+                /*This code causes the program to run slowly. It may be better to have this block run on a timer, otherwise it runs everytime the mouse moves while dragging a window*/
 
-                Process[] processes = Process.GetProcesses();
-                foreach (var process in processes)
-                {
-                    //Console.WriteLine( process.ProcessName);
+                //const short SWP_NOZORDER = 0x4;
+                //const int SWP_SHOWWINDOW = 0x0040;
 
-                    IntPtr handle = process.MainWindowHandle;
+                //Process[] processes = Process.GetProcesses();
+                //foreach (var process in processes)
+                //{
+                //    //Console.WriteLine( process.ProcessName);
 
-                    for (int i = 0; i < tempParseArr.Count; i++)
-                    {
-                        if (Program.x > tempParseArr[i].getBotX() * 3 - 100 && Program.y > tempParseArr[i].getBotY() * 3 - 100 && Program.x < tempParseArr[i].getBotX() * 3 && Program.y < tempParseArr[i].getBotY() * 3 && handle == currentHandle)
-                        {
-                            SetWindowPos(handle, 0, tempParseArr[i].getTopX() * 3, tempParseArr[i].getTopY() * 3, tempParseArr[i].getBotX() * 3 - tempParseArr[i].getTopX() * 3, tempParseArr[i].getBotY() * 3 - tempParseArr[i].getTopY() * 3,
-                                SWP_NOZORDER | SWP_SHOWWINDOW);
-                        }
-                    }
-                }
+                //    IntPtr handle = process.MainWindowHandle;
+
+                //    for (int i = 0; i < tempParseArr.Count; i++)
+                //    {
+                //        if (Program.x > tempParseArr[i].getBotX() * 3 - 100 && Program.y > tempParseArr[i].getBotY() * 3 - 100 && Program.x < tempParseArr[i].getBotX() * 3 && Program.y < tempParseArr[i].getBotY() * 3 && handle == currentHandle)
+                //        {
+                //            SetWindowPos(handle, 0, tempParseArr[i].getTopX() * 3, tempParseArr[i].getTopY() * 3, tempParseArr[i].getBotX() * 3 - tempParseArr[i].getTopX() * 3, tempParseArr[i].getBotY() * 3 - tempParseArr[i].getTopY() * 3,
+                //                SWP_NOZORDER | SWP_SHOWWINDOW);
+                //        }
+                //    }
+                //}
             }
 
             //Debug.WriteLine(currentHandle);
             //Debug.WriteLine("(" + Program.x.ToString() + "," + Program.y.ToString() + ")");
+
             System.Text.StringBuilder Buff = new System.Text.StringBuilder(256);
             if (GetWindowText(currentHandle, Buff, 256) > 0)
             {

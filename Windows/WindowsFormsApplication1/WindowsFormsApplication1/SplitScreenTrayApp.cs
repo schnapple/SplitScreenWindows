@@ -26,11 +26,12 @@ namespace WindowsFormsApplication1
         public SplitScreenTrayApp()
         {
             path = Directory.GetCurrentDirectory() + "\\templates.txt";
-            
-            
+            //createForm = new CreationForm();
+
             trayMenu = new ContextMenu();
             trayMenu.MenuItems.Add("Exit", OnExit);
             trayMenu.MenuItems.Add("Open Creation Form", openCreationForm);
+            
             //trayMenu.MenuItems.Add("Load Templates", reloadTemps);
             loadTemplates(path);
             snapper = new SnapOn();
@@ -41,6 +42,16 @@ namespace WindowsFormsApplication1
 
             trayIcon.ContextMenu = trayMenu;
             trayIcon.Visible = true;
+
+
+            // FOR TESTING
+            //createForm.addTemplatesToList(templateArr);
+            //createForm.Visible = true;
+        }
+
+        public void reload()
+        {
+
         }
 
         //private void reloadTemps(object sender, EventArgs e)
@@ -53,10 +64,12 @@ namespace WindowsFormsApplication1
             
             snapper.RemovePlexi();
             snapper.Halt();
-            Console.WriteLine("Help!!");
-            createForm = new CreationForm();
+            //Console.WriteLine("Help!!");
+            createForm = new CreationForm();// this);
             createForm.addTemplatesToList(templateArr);
             createForm.Visible = true;
+            //trayMenu.Dispose();
+            this.Hide();
 
         }
 

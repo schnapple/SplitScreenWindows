@@ -7,3 +7,4 @@ C:\Users\plaga\Documents\GitHub\SplitScreenWindows\Windows\WindowsFormsApplicati
 C:\Users\plaga\Documents\GitHub\SplitScreenWindows\Windows\WindowsFormsApplication1\WindowsFormsApplication1\obj\Release\WindowsFormsApplication1.csproj.GenerateResource.Cache
 C:\Users\plaga\Documents\GitHub\SplitScreenWindows\Windows\WindowsFormsApplication1\WindowsFormsApplication1\obj\Release\WindowsFormsApplication1.exe
 C:\Users\plaga\Documents\GitHub\SplitScreenWindows\Windows\WindowsFormsApplication1\WindowsFormsApplication1\obj\Release\WindowsFormsApplication1.pdb
+C:\Users\plaga\Documents\GitHub\SplitScreenWindows\Windows\WindowsFormsApplication1\WindowsFormsApplication1\obj\Release\WindowsFormsApplication1.Plexiglass.resources

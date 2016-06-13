@@ -79,24 +79,34 @@ namespace WindowsFormsApplication1
     {
 
         private static string pathWallpaper;
-        private static int height; // screen height resolution
-        private static int width;  // screen width resolution
-        private bool draw;
+        //private static int height; // screen height resolution
+        //private static int width;  // screen width resolution
+        private bool draw = false;
         private Image[] imageList;
         private int imageListIndex;
         private Image currentImage;
         private static string template;
-        private SnapOn snapper;
+        //private SnapOn snapper;
+        //private SplitScreenTrayApp calledFrom;
         private List<TemplateParse> tempParseArr = new List<TemplateParse>();
+        private TemplateParse selectedTemplateParse;
         private List<ConcreteTemplate> templateArr = new List<ConcreteTemplate>();
+        private List<ToolStripMenuItem> editList = new List<ToolStripMenuItem>();
         //private List<Plexiglass> tempPlexiArr = new List<Plexiglass>();
         TemplateFactory factTemp = new ConcreteTemplateFactory();
+
         private static string customizeValOne; // the value for the first point of the square being customized
-        private static int customizeValOneX; // the value for the first point's x position
-        private static int customizeValOneY; //  the value for the first point's y position
+        private static int customizeValOneX = -20; // the value for the first point's x position
+        private static int customizeValOneY = -20; //  the value for the first point's y position
         private static string customizeValTwo; // the value for the first point of the square being customized
-        private static int customizeValTwoX; // the value for the first point's x position
+        private static int customizeValTwoX = -20; // the value for the first point's x position
         private static int customizeValTwoY; //  the value for the first point's y position
+        private static int screenY = Screen.PrimaryScreen.WorkingArea.Height; // Screen Resolution Y value
+        private static int screenX = Screen.PrimaryScreen.WorkingArea.Width; // Screen Resolution X value
+        private static double resoRatioY = screenY/1080.0;
+        private static double resoRatioX = screenX/1920.0;
+        private static double formSizeRatioX = 0;
+        private static double formSizeRatioY = 0;
 
 
         private delegate IntPtr LowLevelMouseProc(int nCode,
@@ -105,37 +115,43 @@ namespace WindowsFormsApplication1
         /**
         
         */
-        public CreationForm()
+        public CreationForm()//SplitScreenTrayApp caller)
         {
             InitializeComponent();
-            string path = Directory.GetCurrentDirectory() + "\\templates.txt";
-            //string path = Directory.GetCurrentDirectory() + "\\templatesInfo.txt";
-            //loadTemplates(path);
-            snapper = new SnapOn();
-            //new Plexiglass();
-            imageList = new Image[20];
-            imageListIndex = 0;
-            Rectangle rect = Screen.PrimaryScreen.WorkingArea;
-            height = rect.Height;
-            width = rect.Width;
-            
-            //Debug.Print("{0} y {1}", width, height);
-            this.pictureBox1.Height = height/3;
-            this.pictureBox1.Width = width/3;
+            formSizeRatioX = (this.Width-30) / (double)screenX;
+            formSizeRatioY = (this.Height-100) / (double)screenY;
             GetPathOfWallpaper();
             currentImage = Image.FromFile(pathWallpaper);
-            currentImage = ResizeImage(currentImage, width/3, height/3);
-            this.pictureBox1.Image = currentImage;
-            imageList[imageListIndex] = currentImage;
-            //this.pictureBox1.
         }
+
+
+
+        private void GetPathOfWallpaper()
+        {
+            pathWallpaper = "";
+            RegistryKey regKey = Registry.CurrentUser.OpenSubKey("Control Panel\\Desktop", false);
+
+            if (regKey != null)
+            {
+                pathWallpaper = regKey.GetValue("WallPaper").ToString();
+                regKey.Close();
+            }
+        }
+
 
 
         public void addTemplatesToList(List<ConcreteTemplate> arr)
         {
             for(int i =0; i < arr.Count; i++) {
                 templateArr.Add(factTemp.makeTemplate(arr[i].getId(), arr[i].getList()));
-                templateList.Items.Add(arr[i].getId());
+                //templateList.Items.Add(arr[i].getId());
+
+                editList.Add(new ToolStripMenuItem());
+                editList[i].Text = arr[i].getId();
+                editList[i].Click += new EventHandler(OnEditSubItemClick);
+                
+                this.editToolStripMenuItem.DropDownItems.Add(editList[i]);
+                
             }
         }
 
@@ -173,107 +189,22 @@ namespace WindowsFormsApplication1
         {
             tempParseArr.Add(new TemplateParse(customizeValOneX, customizeValOneY, customizeValTwoX, customizeValTwoY));
 
+            //pictureBox1.Dispose();
+            customizeValOneX = 0;
+            customizeValOneY = 0;
+            customizeValTwoX = 0;
+            customizeValTwoY = 0;
             pictureBox1.Refresh();
             pictureBox1.Update();
 
         }
 
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-
-            if (templateList.SelectedItem.ToString() != "")
-            {
-                StreamReader sr = new StreamReader(Directory.GetCurrentDirectory() + "\\templates.txt");
-                Debug.Print("hellp");
-                String name = templateList.SelectedItem.ToString();
-                Debug.Print("got though");
-                String line = sr.ReadLine();
-                String retu = null;
-                int lineAt = 0;
-                try
-                {
-                    while (line != null)
-                    {
-
-                        Debug.Print(templateList.SelectedItem.ToString());
-                        lineAt = line.IndexOf('|');
-                        //Debug.Print(name.Substring(0, line.IndexOf('|')));
-                        //Debug.Print("heleleoel");
-                        if (!(name.Equals(line.Substring(0, lineAt))))
-                        {
-                            //if (sr.ReadLine() == null)
-                            //{
-                            //    Debug.Print("heleleoel");
-                            //    retu = retu + line;
-                            //}
-                            //else
-                            //{
-                            retu = retu + line;
-                            //}
-                            line = sr.ReadLine();
-                            
-                            if (line != null)
-                            {
-                                lineAt = line.IndexOf('|');
-                                if (!(name.Equals(line.Substring(0, lineAt))))
-                                {
-                                    Debug.Print("herehe");
-                                    retu = retu + "\n";
-                                }
-                            }
-                        }
-                        else {
-                            line = sr.ReadLine();
-                        }
-                        
-                    }
-                    sr.Close();
-                    sr.Dispose();
-                    StreamWriter sw = new StreamWriter(Directory.GetCurrentDirectory() + "\\templates.txt");
-                    sw.WriteLine(retu);
-                    sw.Close();
-                    sw.Dispose();
-                    templateList.Items.Remove(templateList.SelectedItem.ToString());
-                }
-                catch (Exception exe)
-                {
-                    Console.WriteLine("Exception::::: " + exe.Message);
-                }
-            }
-        }
-
-
-
-        private void customizationButtonClick(object sender, EventArgs e)
-        {
-            this.pictureBox1.Visible = true;
-        }
-
-
-
-        private void GetPathOfWallpaper()
-        {
-            pathWallpaper = "";
-            RegistryKey regKey = Registry.CurrentUser.OpenSubKey("Control Panel\\Desktop", false);
-            
-            if(regKey != null)
-            {
-                pathWallpaper = regKey.GetValue("WallPaper").ToString();
-                regKey.Close();
-            }
-        }
-
-
-
-
 
         private void Form1_Load(object sender, EventArgs e)
         {
             this.pictureBox1.ContextMenu = new ContextMenu();
-            this.pictureBox1.MouseDown += new MouseEventHandler(pictureBox1_MouseDown);
-            //this.pictureBox1.MouseMove += new MouseEventHandler(pictureBox1_MouseMove);
-            this.pictureBox1.MouseUp += new MouseEventHandler(pictureBox1_MouseUp);
+  
             this.pictureBox1.Paint += new PaintEventHandler(this.pictureBox1_Paint);
         }
 
@@ -289,111 +220,6 @@ namespace WindowsFormsApplication1
         *                                                                     *
         ***********************************************************************
         */
-        private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
-        {
-            //Debug.Print("mouse is down on picture box");
-            // for the first click
-            if (customizeValOne == null)
-            {
-                pictureBoxFirstClickCensor(e.X, e.Y);
-
-                positionText.Text = customizeValOne;
-                firstXCoorScroller.Value = customizeValOneX;
-                firstYCoorScroller.Value = customizeValOneY;
-
-            }
-            // for the second click
-            else if(customizeValTwo == null)
-            {
-                // replace with a method that does the same task
-                pictureBoxSecondClickCensor(e.X, e.Y);
-
-                positionText.Text = customizeValOne + " and " + customizeValTwo;
-                secondXCoorScroller.Value = customizeValTwoX;
-                secondYCoorScroller.Value = customizeValTwoY;
-                pictureBox1.Refresh();
-                // draw the box on the current
-
-            }
-            else
-            {
-                pictureBoxFirstClickCensor(e.X, e.Y);
-                customizeValTwo = null;
-                firstXCoorScroller.Value = customizeValOneX;
-                firstYCoorScroller.Value = customizeValOneY;
-                secondXCoorScroller.Value = 0;
-                secondYCoorScroller.Value = 0;
-                positionText.Text = customizeValOne;
-            }
-        }
-
-
-        private void pictureBoxFirstClickCensor(int x, int y)
-        {
-            if (x * 3 > 1920)
-            {
-                if (y * 3 > 1010)
-                {
-                    customizeValOne = " 1920,1010";
-                    customizeValOneY = 1010;
-                    customizeValOneX = 1920;
-                }
-                else
-                {
-                    customizeValOne = "1920," + y * 3;
-                    customizeValOneY = y * 3;
-                    customizeValOneX = 1920;
-                }
-
-            }
-            else if (y * 3 > 1010)
-            {
-                customizeValOne = x * 3 + ",1010";
-                customizeValOneY = 1010;
-                customizeValOneX = x * 3;
-            }
-            else
-            {
-                customizeValOne = x * 3 + "," + y * 3;
-                customizeValOneX = x * 3;
-                customizeValOneY = y * 3;
-            }
-        }
-
-
-        private void pictureBoxSecondClickCensor(int x, int y)
-        {
-            if (x * 3 > 1920)
-            {
-                if (y * 3 > 1010)
-                {
-                    customizeValTwo = " 1920,1010";
-                    customizeValTwoY = 1010;
-                    customizeValTwoX = 1920;
-                }
-                else
-                {
-                    customizeValTwo = "1920," + y * 3;
-                    customizeValTwoY = y * 3;
-                    customizeValTwoX = 1920;
-                }
-
-            }
-            else if (y * 3 > 1010)
-            {
-                customizeValTwo = x * 3 + ",1010";
-                customizeValTwoY = 1010;
-                customizeValTwoX = x * 3;
-            }
-            else
-            {
-                customizeValTwo = x * 3 + "," + y * 3;
-                customizeValTwoX = x * 3;
-                customizeValTwoY = y * 3;
-            }
-        }
-
-
 
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
         {
@@ -401,108 +227,137 @@ namespace WindowsFormsApplication1
         }
 
 
-        ///**
-        //This method is currently not being used
-        //*/
-        //private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
-        //{
-        //}
+        private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (((e.X * (1 / formSizeRatioX)) - (customizeValOneX) < 10) 
+                && ((e.X * (1 / formSizeRatioX)) - (customizeValOneX) > -10)
+                && ((e.Y * (1 / formSizeRatioY)) - (customizeValOneY) < 10)
+                && ((e.Y * (1 / formSizeRatioY)) - (customizeValOneY) > -10))
+            {
+                Cursor.Current = Cursors.PanNW;
+            }
+            else
+            {
+                Cursor.Current = Cursors.Default;
+            }
 
-        /**
-        ______________________________________________________________________________________________________
-            This is the event handler for the list of templates that are currently made. 
-            When an index is change the picture box will change to represent the template.
-            __________________________________________________________________________________________________
-        */
-        private void templateListSelectedIndexChanged(object sender, EventArgs e)
+            if (((e.X * (1 / formSizeRatioX)) - (customizeValOneX) < 10)
+                && ((e.X * (1 / formSizeRatioX)) - (customizeValOneX) > -10)
+                && ((e.Y * (1 / formSizeRatioY)) - (customizeValOneY) < 10)
+                && ((e.Y * (1 / formSizeRatioY)) - (customizeValOneY) > -10)
+                && draw)
+            {
+                Cursor.Current = Cursors.PanNW;
+                customizeValOneX = Convert.ToInt32(e.X * (1 / formSizeRatioX));
+                customizeValOneY = Convert.ToInt32(e.Y * (1 / formSizeRatioY));
+                pictureBox1.Refresh();
+            }
+            else if (draw)
+            {
+                if(e.X > screenX*formSizeRatioX)
+                    customizeValTwoX = Convert.ToInt32(currentImage.Width*(1/formSizeRatioX));
+                else
+                    customizeValTwoX = Convert.ToInt32(e.X * (1 / formSizeRatioX));
+
+                if(e.Y > screenY*formSizeRatioY)
+                    customizeValTwoY = Convert.ToInt32(currentImage.Height * (1 / formSizeRatioY));
+                else
+                    customizeValTwoY = Convert.ToInt32(e.Y * (1 / formSizeRatioY));
+                pictureBox1.Refresh();
+            }
+
+
+        }
+
+        private void pictureBox1_DoubleClick(object sender, MouseEventArgs e)
+        {
+            if (tempParseArr.Count != 0)
+            {
+                if (tempParseArr != null)
+                {
+                    for (int i = 0; i < tempParseArr.Count; i++)
+                    {
+                        if ((e.X* (1 / formSizeRatioX)) - (tempParseArr[i]).getTopX() < 20 && (e.X * (1 / formSizeRatioX)) - (tempParseArr[i]).getTopX() > 0) 
+                        {
+                            customizeValOneX = tempParseArr[i].getTopX();
+                            customizeValOneY = tempParseArr[i].getTopY();
+                            customizeValTwoX = tempParseArr[i].getBotX();
+                            customizeValTwoY = tempParseArr[i].getBotY();
+                            tempParseArr.Remove(tempParseArr[i]);
+                            
+                            pictureBox1.Refresh();
+                        }
+
+                    }
+                }
+            }
+        }
+
+
+        private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (((e.X * (1 / formSizeRatioX)) - (customizeValOneX) < 10)
+                && ((e.X * (1 / formSizeRatioX)) - (customizeValOneX) > -10)
+                && ((e.Y * (1 / formSizeRatioY)) - (customizeValOneY) < 10)
+                && ((e.Y * (1 / formSizeRatioY)) - (customizeValOneY) > -10))
+            {
+                Cursor.Current = Cursors.PanNW;
+            }
+            else
+            {
+                Cursor.Current = Cursors.Default;
+            }
+
+
+            draw = true;
+                customizeValOneX = Convert.ToInt32(e.X * (1 / formSizeRatioX));
+                customizeValOneY = Convert.ToInt32(e.Y * (1 / formSizeRatioY));
+                if (customizeValOneX < 20)
+                    customizeValOneX = 0;
+                if (customizeValOneY < 20)
+                    customizeValOneY = 0;
+            
+
+        }
+
+        
+        private void OnEditSubItemClick(object sender, EventArgs e)
         {
             tempParseArr.Clear();
-            //Debug.Print(tempParseArr.Count.ToString());
-            //pictureBox1.Update();
-            //pictureBox1.Refresh();
-            //for(int i = 0; i < tempPlexiArr.Count; i++)
-            //{
-            //    tempPlexiArr[i].Close();
-            //}
-            //tempPlexiArr.Clear();
-            try {
-                this.positioningText.Text = templateList.SelectedItem.ToString();
-                template = templateList.SelectedItem.ToString();
-                this.pictureBox1.Visible = true;
-                String templateId = templateList.SelectedItem.ToString();
+            ToolStripMenuItem menuItem = sender as ToolStripMenuItem;
+            string args = menuItem.Text.ToString();
+           // Debug.Print(args);
 
+            tempParseArr.Clear();
+            currentImage = ResizeImage(currentImage, Convert.ToInt32(screenX * formSizeRatioX), Convert.ToInt32(screenY * formSizeRatioY));
+            this.pictureBox1.Size = new System.Drawing.Size(Convert.ToInt32(screenX * formSizeRatioX), Convert.ToInt32(screenY * formSizeRatioY));
+            this.pictureBox1.Image = currentImage;
+            this.pictureBox1.Visible = true;
+
+            try
+            {
+                this.positioningText.Text = args;
+                template = args;
                 for (int i = 0; i < templateArr.Count; i++)
                 {
-                    
-                    if (templateArr[i].getId().Equals(templateId))
+                    if (templateArr[i].getId().Equals(args))
                     {
-                        //Debug.Print("In");
                         List<TemplateParse> selected = templateArr[i].getList();
-                        //Debug.Print(templateArr[i].getId());
-                        //Debug.Print(templateArr[i].getList().Count.ToString());
-                        //Debug.Print(selected[0].toString());
-                        for(int j = 0; j < selected.Count; j++)
+                        for (int j = 0; j < selected.Count; j++)
                         {
-                            //Debug.Print(selected[j].toString());
                             tempParseArr.Add(selected[j]);
-                            //tempPlexiArr.Add(new Plexiglass(selected[j].getBotX()*3-100, selected[j].getBotY()*3-100));
                         }
-                        //tempParseArr = templateArr[i].getList();
-                        //Debug.Print(tempParseArr[0].toString());
                         pictureBox1.Update();
                         pictureBox1.Refresh();
                     }
-
                 }
             }
-            catch(NullReferenceException exe)
+            catch (NullReferenceException exe)
             {
                 Console.WriteLine("Exception " + exe.Message);
             }
         }
 
-
-
-        /**
-        This will move the left side of the current templateBox when the numeric up down is changed
-        */
-        private void firstXCoorScroller_ValueChanged(object sender, EventArgs e)
-        {
-            customizeValOneX = Decimal.ToInt32(firstXCoorScroller.Value) / 3;
-            pictureBox1.Update();
-            pictureBox1.Refresh();
-
-        }
-
-        /**
-        This will move the top side of the current templateBox when the numeric up down is changed
-        */
-        private void firstYCoorScroller_ValueChanged(object sender, EventArgs e)
-        {
-            customizeValOneY = Decimal.ToInt32(firstYCoorScroller.Value) / 3;
-            pictureBox1.Update();
-            pictureBox1.Refresh();
-        }
-
-        /**
-        This will move the right side of the current templateBox when the numeric up down is changed
-        */
-        private void secondXCoorScroller_ValueChanged(object sender, EventArgs e)
-        {
-            customizeValTwoX = Decimal.ToInt32(secondXCoorScroller.Value) / 3;
-            pictureBox1.Update();
-            pictureBox1.Refresh();
-        }
-
-        /**
-        This will move the bottom side of the current templateBox when the numeric up down is changed
-        */
-        private void secondYCoorScroller_ValueChanged(object sender, EventArgs e)
-        {
-            customizeValTwoY = Decimal.ToInt32(secondYCoorScroller.Value) / 3;
-            pictureBox1.Update();
-            pictureBox1.Refresh();
-        }
 
 
 
@@ -512,13 +367,11 @@ namespace WindowsFormsApplication1
             if (tempParseArr.Count == 0)
             {
                 Graphics gCur = e.Graphics;
-                draw = true;
-                //tempParseArr.Add(new TemplateParse(tempParseId, customizeValOneX, customizeValOneY, customizeValTwoX, customizeValTwoY));
-                //gNew = Graphics.FromImage(currentImage);
-                Pen pen1 = new Pen(Color.Red, 1);
-                //Debug.Print("{0} and {1}", e.X * 3, e.Y * 3);
-                gCur.DrawRectangle(pen1, customizeValOneX, customizeValOneY, customizeValTwoX - customizeValOneX, customizeValTwoY - customizeValOneY);
-                gCur.Save();
+                Pen pen1 = new Pen(Color.WhiteSmoke, 1);
+                gCur.DrawRectangle(pen1, Convert.ToInt32(customizeValOneX*formSizeRatioX), Convert.ToInt32(customizeValOneY*formSizeRatioY), 
+                    Convert.ToInt32(customizeValTwoX*formSizeRatioX) - Convert.ToInt32(customizeValOneX*formSizeRatioX),
+                    Convert.ToInt32(customizeValTwoY*formSizeRatioY) - Convert.ToInt32(customizeValOneY*formSizeRatioY));
+                
             }
             else
             {
@@ -526,31 +379,24 @@ namespace WindowsFormsApplication1
                 Pen pen1;
                 SolidBrush brush1;
                 if(tempParseArr != null) {
-                    //foreach (TemplateParse template in tempParseArr)
                     for (int i = 0; i < tempParseArr.Count; i++ )
                     {
                         gCur = e.Graphics;
-                        draw = true;
-                        //tempParseArr.Add(new TemplateParse(tempParseId, customizeValOneX, customizeValOneY, customizeValTwoX, customizeValTwoY));
-                        //gNew = Graphics.FromImage(currentImage);
                         pen1 = new Pen(Color.Red, 5);
                         Debug.Print("{0} and {1}", (tempParseArr[i]).getTopX(), (tempParseArr[i]).getTopY());
-                        gCur.DrawRectangle(pen1, (tempParseArr[i]).getTopX(), (tempParseArr[i]).getTopY(), (tempParseArr[i]).getBotX() - (tempParseArr[i]).getTopX(), (tempParseArr[i]).getBotY() - (tempParseArr[i]).getTopY());
-                        gCur.Save();
+                        gCur.DrawRectangle(pen1, Convert.ToInt32((tempParseArr[i]).getTopX()*formSizeRatioX), Convert.ToInt32((tempParseArr[i]).getTopY()*formSizeRatioY),
+                            (Convert.ToInt32((tempParseArr[i]).getBotX()*formSizeRatioX - (tempParseArr[i]).getTopX()*formSizeRatioX)), 
+                            Convert.ToInt32((tempParseArr[i]).getBotY()*formSizeRatioY - (tempParseArr[i]).getTopY()*formSizeRatioY));
                         pen1 = new Pen(Color.Green, 5);
                         brush1 = new SolidBrush(Color.Green);
-                        //gCur.DrawRectangle(pen1, (tempParseArr[i]).getBotX() - 50, (tempParseArr[i]).getBotY() - 50, 50, 50);
-                        gCur.FillRectangle(brush1, (tempParseArr[i]).getBotX() - 20, (tempParseArr[i]).getBotY() - 20, 20, 20);
+                        gCur.FillRectangle(brush1, (Convert.ToInt32((tempParseArr[i]).getBotX()*formSizeRatioX) - 20), Convert.ToInt32((tempParseArr[i]).getBotY()*formSizeRatioY - 20), 20, 20);
                     }
                 }
                 gCur = e.Graphics;
-                draw = true;
-                //tempParseArr.Add(new TemplateParse(tempParseId, customizeValOneX, customizeValOneY, customizeValTwoX, customizeValTwoY));
-                //gNew = Graphics.FromImage(currentImage);
-                pen1 = new Pen(Color.Red, 1);
-                //Debug.Print("{0} and {1}", e.X * 3, e.Y * 3);
-                gCur.DrawRectangle(pen1, customizeValOneX, customizeValOneY, customizeValTwoX - customizeValOneX, customizeValTwoY - customizeValOneY);
-                gCur.Save();
+                pen1 = new Pen(Color.WhiteSmoke, 1);
+                gCur.DrawRectangle(pen1, Convert.ToInt32(customizeValOneX*formSizeRatioX), Convert.ToInt32(customizeValOneY*formSizeRatioY), 
+                    Convert.ToInt32(customizeValTwoX*formSizeRatioX) - Convert.ToInt32(customizeValOneX*formSizeRatioX),
+                    Convert.ToInt32(customizeValTwoY*formSizeRatioY) - Convert.ToInt32(customizeValOneY*formSizeRatioY));
             }
 
         }
@@ -567,7 +413,7 @@ namespace WindowsFormsApplication1
             String newLine = "helloworld" + randomNuber;
             if (result == DialogResult.Yes)
             {
-                templateList.Items.Add(newLine);
+                //templateList.Items.Add(newLine);
                 //Debug.Print("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
                 //savedTemplate = new ConcreteTemplate(newLine, tempParseArr);
                 templateArr.Add(factTemp.makeTemplate(newLine, tempParseArr));
@@ -590,92 +436,25 @@ namespace WindowsFormsApplication1
                 {
                     Console.WriteLine("Exception::::: " + exe.Message);
                 }
-                firstXCoorScroller.Value = 0;
-                secondXCoorScroller.Value = 0;
-                firstYCoorScroller.Value = 0;
-                secondYCoorScroller.Value = 0;
+
             }
 
         }
+
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            tempParseArr.Clear();
+            GetPathOfWallpaper();
+           
+            currentImage = ResizeImage(currentImage, Convert.ToInt32(screenX * formSizeRatioX), Convert.ToInt32(screenY * formSizeRatioY));
+            this.pictureBox1.Size = new System.Drawing.Size(Convert.ToInt32(screenX * formSizeRatioX), Convert.ToInt32(screenY * formSizeRatioY));
+            //Debug.Print((formSizeRatioX.ToString());
+            
+            this.pictureBox1.Image = currentImage;
+            this.pictureBox1.Visible = true;
+            draw = false;
+        }
+
     }
 
 }
-
-
-
-
-
-//private void hookTimer(object sender, ElapsedEventArgs e)
-//{
-//   // if(nCode >= 0 && MouseMessages.WM_LBUTTONDOWN == (MouseMessages)wParam)
-//   // {
-
-//        POINT cusorPoint;
-//        bool ret = GetCursorPos(out cusorPoint);
-//        IntPtr winHandle = WindowFromPoint(cusorPoint);
-//        currentHandle = winHandle;
-
-//        //UnhookWindowsHookEx(hHook);
-//        //hHook = IntPtr.Zero;
-//   // }
-
-//}
-
-//private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
-//{
-//    if(nCode >= 0 && MouseMessages.WM_LBUTTONDOWN == (MouseMessages)wParam)
-//    {
-//        POINT cusorPoint;
-//        bool ret = GetCursorPos(out cusorPoint);
-
-//        IntPtr winHandle = WindowFromPoint(cusorPoint);
-
-//        currentHandle = winHandle;
-
-//        UnhookWindowsHookEx(hHook);
-//        hHook = IntPtr.Zero;
-//    }
-//    return CallNextHookEx(_hookID, nCode, wParam, lParam);
-//}
-
-
-//private void WindowInPos(object sender, ElapsedEventArgs e)
-//{
-
-//   // const short SWP_NOSIZE = 1;
-//   // const short SWP_NOMOVE = 0x2;
-//    const short SWP_NOZORDER = 0x4;
-//    const int SWP_SHOWWINDOW = 0x0040;
-
-//    Process[] processes = Process.GetProcesses();
-//    foreach (var process in processes)
-//    {
-//        //Console.WriteLine( process.ProcessName);
-
-//        IntPtr handle = process.MainWindowHandle;
-
-//        for (int i = 0; i < tempParseArr.Count; i++)
-//        {
-//            if(x > tempParseArr[i].getBotX() * 3 - 100 && y > tempParseArr[i].getBotY() * 3 - 100 && x < tempParseArr[i].getBotX()*3 && y < tempParseArr[i].getBotY()*3 && handle == currentHandle)
-//            {
-//                SetWindowPos(handle, 0, tempParseArr[i].getTopX() * 3, tempParseArr[i].getTopY() * 3, tempParseArr[i].getBotX() * 3 - tempParseArr[i].getTopX() * 3, tempParseArr[i].getBotY() * 3 - tempParseArr[i].getTopY() * 3,
-//                    SWP_NOZORDER | SWP_SHOWWINDOW);
-//            }
-//        }
-//    }
-//}
-
-
-
-/**
-This will grab the position of the mouse when the run button is clicked
-*/
-//private void GrabMousePos(object sender, ElapsedEventArgs e)
-//{
-//    Point mousePoint = MousePosition;
-//    Debug.Print("{0} and {1}" , mousePoint.X, mousePoint.Y);
-//    x = mousePoint.X;
-//    y = mousePoint.Y;
-//    //this.positioningText.Text = x + "  " + y;
-//    //throw new NotImplementedException();
-//}

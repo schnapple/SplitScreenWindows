@@ -1,4 +1,8 @@
-﻿namespace WindowsFormsApplication1
+﻿using System;
+using System.Drawing;
+using System.Windows.Forms;
+
+namespace WindowsFormsApplication1
 {
     partial class CreationForm
     {
@@ -31,20 +35,18 @@
             this.removeButton = new System.Windows.Forms.Button();
             this.positioningText = new System.Windows.Forms.TextBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.customizationButton = new System.Windows.Forms.Button();
-            this.templateList = new System.Windows.Forms.ListBox();
             this.positionText = new System.Windows.Forms.TextBox();
-            this.firstXCoorScroller = new System.Windows.Forms.NumericUpDown();
-            this.firstYCoorScroller = new System.Windows.Forms.NumericUpDown();
-            this.secondXCoorScroller = new System.Windows.Forms.NumericUpDown();
-            this.secondYCoorScroller = new System.Windows.Forms.NumericUpDown();
             this.confirmationButton = new System.Windows.Forms.Button();
             this.templateConfirmationButton = new System.Windows.Forms.Button();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.basicOneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.firstXCoorScroller)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.firstYCoorScroller)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.secondXCoorScroller)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.secondYCoorScroller)).BeginInit();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // removeButton
@@ -52,121 +54,48 @@
             this.removeButton.BackColor = System.Drawing.SystemColors.MenuHighlight;
             this.removeButton.Font = new System.Drawing.Font("Arial", 26F);
             this.removeButton.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.removeButton.Location = new System.Drawing.Point(12, 87);
+            this.removeButton.Location = new System.Drawing.Point(83, 1);
             this.removeButton.Name = "removeButton";
-            this.removeButton.Size = new System.Drawing.Size(243, 59);
+            this.removeButton.Size = new System.Drawing.Size(50, 43);
             this.removeButton.TabIndex = 0;
             this.removeButton.Text = "Remove";
             this.removeButton.UseVisualStyleBackColor = false;
-            this.removeButton.Click += new System.EventHandler(this.button1_Click);
             // 
             // positioningText
             // 
             this.positioningText.BackColor = System.Drawing.Color.Fuchsia;
             this.positioningText.Font = new System.Drawing.Font("PT Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.positioningText.Location = new System.Drawing.Point(12, 151);
+            this.positioningText.Location = new System.Drawing.Point(152, 0);
             this.positioningText.Name = "positioningText";
-            this.positioningText.Size = new System.Drawing.Size(154, 43);
+            this.positioningText.Size = new System.Drawing.Size(52, 43);
             this.positioningText.TabIndex = 1;
             this.positioningText.Text = "Positioning";
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(381, 164);
+            this.pictureBox1.Location = new System.Drawing.Point(12, 49);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(737, 341);
+            this.pictureBox1.Size = new System.Drawing.Size(1184, 425);
             this.pictureBox1.TabIndex = 2;
             this.pictureBox1.TabStop = false;
             this.pictureBox1.Visible = false;
-            // 
-            // customizationButton
-            // 
-            this.customizationButton.BackColor = System.Drawing.SystemColors.MenuHighlight;
-            this.customizationButton.Font = new System.Drawing.Font("Arial", 26F);
-            this.customizationButton.Location = new System.Drawing.Point(12, 12);
-            this.customizationButton.Name = "customizationButton";
-            this.customizationButton.Size = new System.Drawing.Size(243, 59);
-            this.customizationButton.TabIndex = 3;
-            this.customizationButton.Text = "Customize";
-            this.customizationButton.UseVisualStyleBackColor = false;
-            this.customizationButton.Click += new System.EventHandler(this.customizationButtonClick);
-            // 
-            // templateList
-            // 
-            this.templateList.BackColor = System.Drawing.Color.GhostWhite;
-            this.templateList.Font = new System.Drawing.Font("Segoe Print", 26F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.templateList.FormattingEnabled = true;
-            this.templateList.ItemHeight = 61;
-            this.templateList.Location = new System.Drawing.Point(12, 200);
-            this.templateList.Name = "templateList";
-            this.templateList.Size = new System.Drawing.Size(298, 309);
-            this.templateList.TabIndex = 4;
-            this.templateList.SelectedIndexChanged += new System.EventHandler(this.templateListSelectedIndexChanged);
+            this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseDown);
+            this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseMove);
+            this.pictureBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseUp);
+            this.pictureBox1.MouseDoubleClick += new MouseEventHandler(this.pictureBox1_DoubleClick);
             // 
             // positionText
             // 
-            this.positionText.Location = new System.Drawing.Point(913, 12);
+            this.positionText.Location = new System.Drawing.Point(976, 23);
             this.positionText.Name = "positionText";
             this.positionText.Size = new System.Drawing.Size(220, 20);
             this.positionText.TabIndex = 5;
             // 
-            // firstXCoorScroller
-            // 
-            this.firstXCoorScroller.Location = new System.Drawing.Point(381, 87);
-            this.firstXCoorScroller.Maximum = new decimal(new int[] {
-            1920,
-            0,
-            0,
-            0});
-            this.firstXCoorScroller.Name = "firstXCoorScroller";
-            this.firstXCoorScroller.Size = new System.Drawing.Size(120, 20);
-            this.firstXCoorScroller.TabIndex = 6;
-            this.firstXCoorScroller.ValueChanged += new System.EventHandler(this.firstXCoorScroller_ValueChanged);
-            // 
-            // firstYCoorScroller
-            // 
-            this.firstYCoorScroller.Location = new System.Drawing.Point(381, 115);
-            this.firstYCoorScroller.Maximum = new decimal(new int[] {
-            1010,
-            0,
-            0,
-            0});
-            this.firstYCoorScroller.Name = "firstYCoorScroller";
-            this.firstYCoorScroller.Size = new System.Drawing.Size(120, 20);
-            this.firstYCoorScroller.TabIndex = 7;
-            this.firstYCoorScroller.ValueChanged += new System.EventHandler(this.firstYCoorScroller_ValueChanged);
-            // 
-            // secondXCoorScroller
-            // 
-            this.secondXCoorScroller.Location = new System.Drawing.Point(557, 87);
-            this.secondXCoorScroller.Maximum = new decimal(new int[] {
-            1920,
-            0,
-            0,
-            0});
-            this.secondXCoorScroller.Name = "secondXCoorScroller";
-            this.secondXCoorScroller.Size = new System.Drawing.Size(120, 20);
-            this.secondXCoorScroller.TabIndex = 8;
-            this.secondXCoorScroller.ValueChanged += new System.EventHandler(this.secondXCoorScroller_ValueChanged);
-            // 
-            // secondYCoorScroller
-            // 
-            this.secondYCoorScroller.Location = new System.Drawing.Point(557, 114);
-            this.secondYCoorScroller.Maximum = new decimal(new int[] {
-            1010,
-            0,
-            0,
-            0});
-            this.secondYCoorScroller.Name = "secondYCoorScroller";
-            this.secondYCoorScroller.Size = new System.Drawing.Size(120, 20);
-            this.secondYCoorScroller.TabIndex = 9;
-            this.secondYCoorScroller.ValueChanged += new System.EventHandler(this.secondYCoorScroller_ValueChanged);
-            // 
             // confirmationButton
             // 
-            this.confirmationButton.Location = new System.Drawing.Point(711, 84);
+            this.confirmationButton.Location = new System.Drawing.Point(237, 19);
             this.confirmationButton.Name = "confirmationButton";
-            this.confirmationButton.Size = new System.Drawing.Size(147, 50);
+            this.confirmationButton.Size = new System.Drawing.Size(107, 20);
             this.confirmationButton.TabIndex = 10;
             this.confirmationButton.Text = "Confirmation Button";
             this.confirmationButton.UseVisualStyleBackColor = true;
@@ -174,43 +103,110 @@
             // 
             // templateConfirmationButton
             // 
-            this.templateConfirmationButton.Location = new System.Drawing.Point(896, 84);
+            this.templateConfirmationButton.Location = new System.Drawing.Point(371, 19);
             this.templateConfirmationButton.Name = "templateConfirmationButton";
-            this.templateConfirmationButton.Size = new System.Drawing.Size(160, 50);
+            this.templateConfirmationButton.Size = new System.Drawing.Size(119, 20);
             this.templateConfirmationButton.TabIndex = 11;
             this.templateConfirmationButton.Text = "templateConfirmationButton";
             this.templateConfirmationButton.UseVisualStyleBackColor = true;
             this.templateConfirmationButton.Click += new System.EventHandler(this.templateConfirmationButton_Click);
             // 
-            // Form1
+            // menuStrip1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1176, 521);
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fileToolStripMenuItem});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(1234, 24);
+            this.menuStrip1.TabIndex = 12;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // fileToolStripMenuItem
+            // 
+            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.newToolStripMenuItem,
+            this.toolStripSeparator1,
+            this.editToolStripMenuItem,
+            this.closeToolStripMenuItem});
+            this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+            this.fileToolStripMenuItem.Text = "File";
+            // 
+            // newToolStripMenuItem
+            // 
+            this.newToolStripMenuItem.Name = "newToolStripMenuItem";
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+            this.newToolStripMenuItem.Text = "New";
+            this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(100, 6);
+            // 
+            // editToolStripMenuItem
+            // 
+            this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.basicOneToolStripMenuItem});
+            this.editToolStripMenuItem.Name = "editToolStripMenuItem";
+            this.editToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+            this.editToolStripMenuItem.Text = "Edit";
+            // 
+            // basicOneToolStripMenuItem
+            // 
+            this.basicOneToolStripMenuItem.Name = "basicOneToolStripMenuItem";
+            this.basicOneToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
+            this.basicOneToolStripMenuItem.Text = "Basic One";
+            // 
+            // closeToolStripMenuItem
+            // 
+            this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+            this.closeToolStripMenuItem.Text = "Close";
+            // 
+            // CreationForm
+            // 
+            this.ClientSize = new System.Drawing.Size(1234, 529);
             this.Controls.Add(this.templateConfirmationButton);
             this.Controls.Add(this.confirmationButton);
-            this.Controls.Add(this.secondYCoorScroller);
-            this.Controls.Add(this.secondXCoorScroller);
-            this.Controls.Add(this.firstYCoorScroller);
-            this.Controls.Add(this.firstXCoorScroller);
             this.Controls.Add(this.positionText);
-            this.Controls.Add(this.templateList);
-            this.Controls.Add(this.customizationButton);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.positioningText);
             this.Controls.Add(this.removeButton);
-            this.Name = "Form1";
+            this.Controls.Add(this.menuStrip1);
+            this.MainMenuStrip = this.menuStrip1;
+            this.Name = "CreationForm";
             this.ShowIcon = false;
             this.Text = "SplitScreen";
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.Resize += new System.EventHandler(this.Form1_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.firstXCoorScroller)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.firstYCoorScroller)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.secondXCoorScroller)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.secondYCoorScroller)).EndInit();
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
+        }
+
+
+
+        private void Form1_Resize(object sender, EventArgs e)
+        {
+            //pictureBox1.Dispose();
+            formSizeRatioX = (this.Width - 30) / (double)screenX;
+            formSizeRatioY = (this.Height - 100) / (double)screenY;
+
+            //GetPathOfWallpaper();
+            currentImage = Image.FromFile(pathWallpaper);
+            currentImage = ResizeImage(currentImage, Convert.ToInt32(screenX * formSizeRatioX), Convert.ToInt32(screenY * formSizeRatioY));
+            this.pictureBox1.Size = new System.Drawing.Size(Convert.ToInt32(screenX * formSizeRatioX), Convert.ToInt32(screenY * formSizeRatioY));
+            //Debug.Print((formSizeRatioX.ToString());
+            
+            
+            this.pictureBox1.Image = currentImage;
+            this.pictureBox1.Visible = true;
+            pictureBox1.Update();
+            pictureBox1.Refresh();
         }
 
         private void PictureBox1_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
@@ -223,15 +219,16 @@
         private System.Windows.Forms.Button removeButton;
         private System.Windows.Forms.TextBox positioningText;
         private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.Button customizationButton;
-        private System.Windows.Forms.ListBox templateList;
         private System.Windows.Forms.TextBox positionText;
-        private System.Windows.Forms.NumericUpDown firstXCoorScroller;
-        private System.Windows.Forms.NumericUpDown firstYCoorScroller;
-        private System.Windows.Forms.NumericUpDown secondXCoorScroller;
-        private System.Windows.Forms.NumericUpDown secondYCoorScroller;
         private System.Windows.Forms.Button confirmationButton;
         private System.Windows.Forms.Button templateConfirmationButton;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem basicOneToolStripMenuItem;
     }
 }
 

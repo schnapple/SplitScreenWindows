@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="ConcreteTemplateFactory.cs" />
     <Compile Include="MouseHook.cs" />
+    <Compile Include="Mouse\MouseEventHandler.cs" />
     <Compile Include="SnapOn.cs" />
     <Compile Include="PlexiGlass.cs">
       <SubType>Form</SubType>

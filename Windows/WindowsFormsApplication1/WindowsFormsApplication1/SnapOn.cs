@@ -53,15 +53,20 @@ namespace WindowsFormsApplication1
         private static IntPtr _hookID = IntPtr.Zero;
         static IntPtr hHook = IntPtr.Zero;
         private List<Plexiglass> tempPlexiArr = new List<Plexiglass>();
-        private static System.Timers.Timer aTimer;
-        private static System.Timers.Timer bTimer;
-        private static System.Timers.Timer cTimer;
-        private static System.Timers.Timer plexiTimer;
+        //private static System.Timers.Timer aTimer;
+        //private static System.Timers.Timer bTimer;
+        //private static System.Timers.Timer cTimer;
+        //private static System.Timers.Timer plexiTimer;
         private List<TemplateParse> tempParseArr = new List<TemplateParse>();
         private static IntPtr currentHandle;
         private static int x; // mouse x position
         private static int y; // mouse y position
         private static bool leftButtonState = false;
+
+        private static int screenY = Screen.PrimaryScreen.WorkingArea.Height; // Screen Resolution Y value
+        private static int screenX = Screen.PrimaryScreen.WorkingArea.Width; // Screen Resolution X value
+        private static double resoRatioY = screenY / 1040.0;
+        private static double resoRatioX = screenX / 1920.0;
         //private static Plexiglass overlayPlex;
         //private int overlayPlexTX;
         //private int overlayPlexTY;
@@ -125,8 +130,8 @@ namespace WindowsFormsApplication1
             {
                 if (leftButtonState == true)
                 {
-                    if (x > tempParseArr[i].getBotX() * 3 - 80 && y > tempParseArr[i].getBotY() * 3 - 80
-                        && x < tempParseArr[i].getBotX() * 3 && y < tempParseArr[i].getBotY() * 3)
+                    if (x > tempParseArr[i].getBotX()*resoRatioX - 80 && y > tempParseArr[i].getBotY()*resoRatioY - 80
+                        && x < tempParseArr[i].getBotX()*resoRatioX && y < tempParseArr[i].getBotY()*resoRatioY)
                     {
                         curTempParse = tempParseArr[i];
                         location = true;
@@ -159,8 +164,8 @@ namespace WindowsFormsApplication1
 
                     handle = process.MainWindowHandle;
                         Console.WriteLine("ehrherhe");
-                        SetWindowPos(currentHandle, 0, curTempParse.getTopX() * 3, curTempParse.getTopY() * 3, curTempParse.getBotX() * 3
-                            - curTempParse.getTopX() * 3, curTempParse.getBotY() * 3 - curTempParse.getTopY() * 3,
+                        SetWindowPos(currentHandle, 0, Convert.ToInt32(curTempParse.getTopX()*resoRatioX), Convert.ToInt32(curTempParse.getTopY()*resoRatioY), Convert.ToInt32(curTempParse.getBotX()*resoRatioX)
+                            - Convert.ToInt32(curTempParse.getTopX()*resoRatioX), Convert.ToInt32(curTempParse.getBotY()*resoRatioY) - Convert.ToInt32(curTempParse.getTopY()*resoRatioY),
                             SWP_DRAWFRAME | SWP_SHOWWINDOW | SWP_NOZORDER);
 
                     location = false;
@@ -235,6 +240,7 @@ namespace WindowsFormsApplication1
             //bTimer.Enabled = false;
             //cTimer.AutoReset = false;
             //cTimer.Enabled = false;
+            tempParseArr.Clear();
             MouseHook.stop();
         }
 
@@ -266,8 +272,8 @@ namespace WindowsFormsApplication1
             {
                 if (leftButtonState == true)
                 {
-                    if (x > tempParseArr[i].getBotX() * 3 - 80 && y > tempParseArr[i].getBotY() * 3 - 80
-                        && x < tempParseArr[i].getBotX() * 3 && y < tempParseArr[i].getBotY() * 3)
+                    if (x > tempParseArr[i].getBotX()*resoRatioX - 80 && y > tempParseArr[i].getBotY()*resoRatioY - 80
+                        && x < tempParseArr[i].getBotX()*resoRatioX && y < tempParseArr[i].getBotY()*resoRatioY)
                     {
                         curTempParse = tempParseArr[i];
                         Console.WriteLine("Location is true");
@@ -375,7 +381,7 @@ namespace WindowsFormsApplication1
             {
                             //Debug.Print(selected[j].toString());
                    
-                   tempPlexiArr.Add(new Plexiglass(tempParseArr[j].getBotX() * 3 - 80, tempParseArr[j].getBotY() * 3 - 80,80,80));
+                   tempPlexiArr.Add(new Plexiglass(Convert.ToInt32(tempParseArr[j].getBotX()*resoRatioX) - 80, Convert.ToInt32(tempParseArr[j].getBotY()*resoRatioY) - 80,80,80));
              }
                     
 

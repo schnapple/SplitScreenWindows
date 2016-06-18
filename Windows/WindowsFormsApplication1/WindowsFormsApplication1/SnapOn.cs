@@ -223,6 +223,7 @@ namespace WindowsFormsApplication1
         public void Run(List<TemplateParse> arr)
         {
             tempParseArr = arr;
+            MouseHook.Start();
             //aTimer.AutoReset = true;
             //aTimer.Enabled = true;
             //bTimer.AutoReset = true;
@@ -381,7 +382,9 @@ namespace WindowsFormsApplication1
             {
                             //Debug.Print(selected[j].toString());
                    
-                   tempPlexiArr.Add(new Plexiglass(Convert.ToInt32(tempParseArr[j].getBotX()*resoRatioX) - 80, Convert.ToInt32(tempParseArr[j].getBotY()*resoRatioY) - 80,80,80));
+                   tempPlexiArr.Add(new Plexiglass(Convert.ToInt32(tempParseArr[j].getBotX()*resoRatioX) - 80,
+                       Convert.ToInt32(tempParseArr[j].getBotY()*resoRatioY) - 80,80,80));
+                
              }
                     
 

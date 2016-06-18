@@ -82,6 +82,17 @@ namespace WindowsFormsApplication1
         //private static int height; // screen height resolution
         //private static int width;  // screen width resolution
         private bool draw = false;
+        private bool resizeNW = false;
+        private bool resizeW = false;
+        private bool resizeSW = false;
+        private bool resizeS = false;
+        private bool resizeSE = false;
+        private bool resizeE = false;
+        private bool resizeNE = false;
+        private bool resizeN = false;
+
+
+
         private Image[] imageList;
         private int imageListIndex;
         private Image currentImage;
@@ -107,6 +118,7 @@ namespace WindowsFormsApplication1
         private static double resoRatioX = screenX/1920.0;
         private static double formSizeRatioX = 0;
         private static double formSizeRatioY = 0;
+        private SplitScreenTrayApp caller;
 
 
         private delegate IntPtr LowLevelMouseProc(int nCode,
@@ -115,8 +127,9 @@ namespace WindowsFormsApplication1
         /**
         
         */
-        public CreationForm()//SplitScreenTrayApp caller)
+        public CreationForm(SplitScreenTrayApp called)
         {
+            caller = called;
             InitializeComponent();
             formSizeRatioX = (this.Width-30) / (double)screenX;
             formSizeRatioY = (this.Height-100) / (double)screenY;
@@ -224,46 +237,160 @@ namespace WindowsFormsApplication1
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
         {
             draw = false;
-        }
+             resizeNW = false;
+             resizeW = false;
+             resizeSW = false;
+             resizeS = false;
+             resizeSE = false;
+             resizeE = false;
+             resizeNE = false;
+             resizeN = false;
+    }
 
 
         private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
         {
-            if (((e.X * (1 / formSizeRatioX)) - (customizeValOneX) < 10) 
-                && ((e.X * (1 / formSizeRatioX)) - (customizeValOneX) > -10)
-                && ((e.Y * (1 / formSizeRatioY)) - (customizeValOneY) < 10)
-                && ((e.Y * (1 / formSizeRatioY)) - (customizeValOneY) > -10))
+            int position = mousePosition(e.X, e.Y);
+            if (!draw)
             {
-                Cursor.Current = Cursors.PanNW;
+                if (position == 0)
+                {
+                    Cursor.Current = Cursors.PanNW;
+                }
+                else if (position == 1)
+                {
+                    Cursor.Current = Cursors.PanNE;
+                }
+                else if (position == 2)
+                {
+                    Cursor.Current = Cursors.PanSE;
+                }
+                else if (position == 3)
+                {
+                    Cursor.Current = Cursors.PanSW;
+                }
+                else if (position == 4)
+                {
+                    Cursor.Current = Cursors.PanWest;
+                }
+                else if (position == 5)
+                {
+                    Cursor.Current = Cursors.PanEast;
+                }
+                else if (position == 6)
+                {
+                    Cursor.Current = Cursors.PanNorth;
+                }
+                else if (position == 7)
+                {
+                    Cursor.Current = Cursors.PanSouth;
+                }
+                else
+                {
+                    Cursor.Current = Cursors.Default;
+                }
             }
             else
             {
-                Cursor.Current = Cursors.Default;
-            }
+                if (resizeNW)
+                {
+                    Cursor.Current = Cursors.PanNW;
+                    if (e.X * (1 / formSizeRatioX) < 0) { customizeValOneX = 0; }
+                    else if (e.X * (1 / formSizeRatioX) > customizeValTwoX) { customizeValOneX = customizeValTwoX - 10; }
+                    else { customizeValOneX = Convert.ToInt32(e.X * (1 / formSizeRatioX)); }
 
-            if (((e.X * (1 / formSizeRatioX)) - (customizeValOneX) < 10)
-                && ((e.X * (1 / formSizeRatioX)) - (customizeValOneX) > -10)
-                && ((e.Y * (1 / formSizeRatioY)) - (customizeValOneY) < 10)
-                && ((e.Y * (1 / formSizeRatioY)) - (customizeValOneY) > -10)
-                && draw)
-            {
-                Cursor.Current = Cursors.PanNW;
-                customizeValOneX = Convert.ToInt32(e.X * (1 / formSizeRatioX));
-                customizeValOneY = Convert.ToInt32(e.Y * (1 / formSizeRatioY));
-                pictureBox1.Refresh();
-            }
-            else if (draw)
-            {
-                if(e.X > screenX*formSizeRatioX)
-                    customizeValTwoX = Convert.ToInt32(currentImage.Width*(1/formSizeRatioX));
-                else
-                    customizeValTwoX = Convert.ToInt32(e.X * (1 / formSizeRatioX));
+                    if ((e.Y * (1 / formSizeRatioY) < 0)) { customizeValOneY = 0; }
+                    else if (e.Y * (1 / formSizeRatioY) > customizeValTwoY) { customizeValOneY = customizeValTwoY - 10; }
+                    else { customizeValOneY = Convert.ToInt32(e.Y * (1 / formSizeRatioY)); }
+                    pictureBox1.Refresh();
+                }
+                else if (resizeSW)
+                {
+                    Cursor.Current = Cursors.PanSW;
+                    if (e.X * (1 / formSizeRatioX) < 0) { customizeValOneX = 0; }
+                    else if (e.X * (1 / formSizeRatioX) > customizeValTwoX) { customizeValOneX = customizeValTwoX - 10; }
+                    else { customizeValOneX = Convert.ToInt32(e.X * (1 / formSizeRatioX)); }
 
-                if(e.Y > screenY*formSizeRatioY)
-                    customizeValTwoY = Convert.ToInt32(currentImage.Height * (1 / formSizeRatioY));
+                    if ((e.Y * (1 / formSizeRatioY) > screenY)) { customizeValTwoY = screenY; }
+                    else if (e.Y * (1 / formSizeRatioY) < customizeValOneY) { customizeValTwoY = customizeValOneY + 10; }
+                    else { customizeValTwoY = Convert.ToInt32(e.Y * (1 / formSizeRatioY)); }
+                    pictureBox1.Refresh();
+                }
+                else if (resizeSE)
+                {
+                    Cursor.Current = Cursors.PanSE;
+                    if (e.X * (1 / formSizeRatioX) > screenX) { customizeValTwoX = screenX; }
+                    else if (e.X * (1 / formSizeRatioX) < customizeValOneX) { customizeValTwoX = customizeValOneX + 10; }
+                    else { customizeValTwoX = Convert.ToInt32(e.X * (1 / formSizeRatioX)); }
+
+                    if ((e.Y * (1 / formSizeRatioY) > screenY)) { customizeValTwoY = screenY; }
+                    else if (e.Y * (1 / formSizeRatioY) < customizeValOneY) { customizeValTwoY = customizeValOneY + 10; }
+                    else { customizeValTwoY = Convert.ToInt32(e.Y * (1 / formSizeRatioY)); }
+                    pictureBox1.Refresh();
+                }
+                else if (resizeNE)
+                {
+                    Cursor.Current = Cursors.PanNE;
+                    if (e.X * (1 / formSizeRatioX) > screenX) { customizeValTwoX = screenX; }
+                    else if (e.X * (1 / formSizeRatioX) < customizeValOneX) { customizeValTwoX = customizeValOneX + 10; }
+                    else { customizeValTwoX = Convert.ToInt32(e.X * (1 / formSizeRatioX)); }
+
+                    if ((e.Y * (1 / formSizeRatioY) < 0)) { customizeValOneY = 0; }
+                    else if (e.Y * (1 / formSizeRatioY) > customizeValTwoY) { customizeValOneY = customizeValTwoY - 10; }
+                    else { customizeValOneY = Convert.ToInt32(e.Y * (1 / formSizeRatioY)); }
+                    pictureBox1.Refresh();
+                }
+                else if (resizeW)
+                {
+                    Cursor.Current = Cursors.PanWest;
+                    if (e.X * (1 / formSizeRatioX) < 0) { customizeValOneX = 0; }
+                    else if (e.X * (1 / formSizeRatioX) > customizeValTwoX) { customizeValOneX = customizeValTwoX - 10; }
+                    else { customizeValOneX = Convert.ToInt32(e.X * (1 / formSizeRatioX)); }
+                    
+                    //customizeValOneY = Convert.ToInt32(e.Y * (1 / formSizeRatioY));
+                    pictureBox1.Refresh();
+                }
+                else if (resizeE)
+                {
+                    Cursor.Current = Cursors.PanEast;
+                    if (e.X * (1 / formSizeRatioX) > screenX) { customizeValTwoX = screenX; }
+                    else if (e.X * (1 / formSizeRatioX) < customizeValOneX) { customizeValTwoX = customizeValOneX + 10; }
+                    else { customizeValTwoX = Convert.ToInt32(e.X * (1 / formSizeRatioX)); }
+                    //customizeValOneY = Convert.ToInt32(e.Y * (1 / formSizeRatioY));
+                    pictureBox1.Refresh();
+                }
+                else if (resizeN)
+                {
+                    Cursor.Current = Cursors.PanNorth;
+                    //customizeValOneX = Convert.ToInt32(e.X * (1 / formSizeRatioX));
+                    if ((e.Y * (1 / formSizeRatioY) < 0)) { customizeValOneY = 0; }
+                    else if(e.Y * (1 / formSizeRatioY) > customizeValTwoY) { customizeValOneY = customizeValTwoY - 10; }
+                    else { customizeValOneY = Convert.ToInt32(e.Y * (1 / formSizeRatioY)); }
+                    pictureBox1.Refresh();
+
+                }
+                else if (resizeS)
+                {
+                    Cursor.Current = Cursors.PanSouth;
+                    if ((e.Y * (1 / formSizeRatioY) > screenY)) { customizeValTwoY = screenY; }
+                    else if (e.Y * (1 / formSizeRatioY) < customizeValOneY) { customizeValTwoY = customizeValOneY + 10; }
+                    else { customizeValTwoY = Convert.ToInt32(e.Y * (1 / formSizeRatioY)); }
+                    pictureBox1.Refresh();
+
+                }
                 else
-                    customizeValTwoY = Convert.ToInt32(e.Y * (1 / formSizeRatioY));
-                pictureBox1.Refresh();
+                {
+                    if (e.X > screenX * formSizeRatioX)
+                        customizeValTwoX = Convert.ToInt32(currentImage.Width * (1 / formSizeRatioX));
+                    else
+                        customizeValTwoX = Convert.ToInt32(e.X * (1 / formSizeRatioX));
+
+                    if (e.Y > screenY * formSizeRatioY)
+                        customizeValTwoY = Convert.ToInt32(currentImage.Height * (1 / formSizeRatioY));
+                    else
+                        customizeValTwoY = Convert.ToInt32(e.Y * (1 / formSizeRatioY));
+                    pictureBox1.Refresh();
+                }
             }
 
 
@@ -296,28 +423,121 @@ namespace WindowsFormsApplication1
 
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
         {
-            if (((e.X * (1 / formSizeRatioX)) - (customizeValOneX) < 10)
-                && ((e.X * (1 / formSizeRatioX)) - (customizeValOneX) > -10)
-                && ((e.Y * (1 / formSizeRatioY)) - (customizeValOneY) < 10)
-                && ((e.Y * (1 / formSizeRatioY)) - (customizeValOneY) > -10))
+            int position = mousePosition(e.X, e.Y);
+            if (position == 0)
             {
                 Cursor.Current = Cursors.PanNW;
+                resizeNW = true;
+            }
+            else if(position == 1)
+            {
+                Cursor.Current = Cursors.PanNE;
+                resizeNE = true;
+            }
+            else if (position == 2)
+            {
+                Cursor.Current = Cursors.PanSE;
+                resizeSE = true;
+            }
+            else if (position == 3)
+            {
+                Cursor.Current = Cursors.PanSW;
+                resizeSW = true;
+            }
+            else if(position == 4)
+            {
+                Cursor.Current = Cursors.PanWest;
+                resizeW = true;
+            }
+            else if (position == 5)
+            {
+                Cursor.Current = Cursors.PanEast;
+                resizeE = true;
+            }
+            else if (position == 6)
+            {
+                Cursor.Current = Cursors.PanNorth;
+                resizeN = true;
+            }
+            else if (position == 7)
+            {
+                Cursor.Current = Cursors.PanSouth;
+                resizeS = true;
             }
             else
             {
                 Cursor.Current = Cursors.Default;
-            }
-
-
-            draw = true;
                 customizeValOneX = Convert.ToInt32(e.X * (1 / formSizeRatioX));
                 customizeValOneY = Convert.ToInt32(e.Y * (1 / formSizeRatioY));
                 if (customizeValOneX < 20)
                     customizeValOneX = 0;
                 if (customizeValOneY < 20)
                     customizeValOneY = 0;
-            
+            }
 
+
+            draw = true;
+        }
+
+        private int mousePosition(int x, int y)
+        {
+            if (((x * (1 / formSizeRatioX)) - (customizeValOneX) < 10)
+                && ((x * (1 / formSizeRatioX)) - (customizeValOneX) > -10)
+                && ((y * (1 / formSizeRatioY)) - (customizeValOneY) < 10)
+                && ((y * (1 / formSizeRatioY)) - (customizeValOneY) > -10))
+            {
+                return 0;
+            }
+            else if (((x * (1 / formSizeRatioX)) - (customizeValTwoX) < 10)
+               && ((x * (1 / formSizeRatioX)) - (customizeValTwoX) > -10)
+               && ((y * (1 / formSizeRatioY)) - (customizeValOneY) < 10)
+               && ((y * (1 / formSizeRatioY)) - (customizeValOneY) > -10))
+            {
+                return 1;
+            }
+            else if (((x * (1 / formSizeRatioX)) - (customizeValTwoX) < 10)
+               && ((x * (1 / formSizeRatioX)) - (customizeValTwoX) > -10)
+               && ((y * (1 / formSizeRatioY)) - (customizeValTwoY) < 10)
+               && ((y * (1 / formSizeRatioY)) - (customizeValTwoY) > -10))
+            {
+                return 2;
+            }
+            else if (((x * (1 / formSizeRatioX)) - (customizeValOneX) < 10)
+               && ((x * (1 / formSizeRatioX)) - (customizeValOneX) > -10)
+               && ((y * (1 / formSizeRatioY)) - (customizeValTwoY) < 10)
+               && ((y * (1 / formSizeRatioY)) - (customizeValTwoY) > -10))
+            {
+                return 3;
+            }
+            else if (((x * (1 / formSizeRatioX)) - (customizeValOneX) < 10)
+                && ((x * (1 / formSizeRatioX)) - (customizeValOneX) > -10)
+                && (y * (1/formSizeRatioY) > customizeValOneY)
+                && (y* (1/formSizeRatioY) < customizeValTwoY))
+            {
+                return 4;
+            }
+            else if (((x * (1 / formSizeRatioX)) - (customizeValTwoX) < 10)
+                && ((x * (1 / formSizeRatioX)) - (customizeValTwoX) > -10)
+                && (y * (1 / formSizeRatioY) > customizeValOneY)
+                && (y * (1 / formSizeRatioY) < customizeValTwoY))
+            {
+                return 5;
+            }
+            else if (((y * (1 / formSizeRatioY)) - (customizeValOneY) < 10)
+               && ((y * (1 / formSizeRatioY)) - (customizeValOneY) > -10)
+               && (x * (1 / formSizeRatioX) > customizeValOneX)
+                && (x * (1 / formSizeRatioX) < customizeValTwoX))
+            {
+                return 6;
+            }
+            else if (((y * (1 / formSizeRatioY)) - (customizeValTwoY) < 10)
+                && ((y * (1 / formSizeRatioY)) - (customizeValTwoY) > -10)
+                && (x * (1 / formSizeRatioX) > customizeValOneX)
+                && (x * (1 / formSizeRatioX) < customizeValTwoX))
+            {
+                return 7;
+            }
+            return -1;
         }
 
         
@@ -342,6 +562,7 @@ namespace WindowsFormsApplication1
                 {
                     if (templateArr[i].getId().Equals(args))
                     {
+
                         List<TemplateParse> selected = templateArr[i].getList();
                         for (int j = 0; j < selected.Count; j++)
                         {
@@ -413,9 +634,6 @@ namespace WindowsFormsApplication1
             String newLine = "helloworld" + randomNuber;
             if (result == DialogResult.Yes)
             {
-                //templateList.Items.Add(newLine);
-                //Debug.Print("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
-                //savedTemplate = new ConcreteTemplate(newLine, tempParseArr);
                 templateArr.Add(factTemp.makeTemplate(newLine, tempParseArr));
                 try
                 {

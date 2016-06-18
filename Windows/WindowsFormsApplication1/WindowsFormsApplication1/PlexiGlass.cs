@@ -40,11 +40,11 @@ namespace WindowsFormsApplication1
             //this.Show(tocover);
             //tocover.Focus();
             // Disable Aero transitions, the plexiglass gets too visible
-            if (Environment.OSVersion.Version.Major >= 6)
-            {
-                int value = 1;
-                //DwmSetWindowAttribute(tocover.Handle, DWMWA_TRANSITIONS_FORCEDISABLED, ref value, 4);
-            }
+            //if (Environment.OSVersion.Version.Major >= 6)
+            //{
+            //    int value = 1;
+            //    //DwmSetWindowAttribute(tocover.Handle, DWMWA_TRANSITIONS_FORCEDISABLED, ref value, 4);
+            //}
         }
         
         public void modifySize(int tx, int ty, int bx, int by)

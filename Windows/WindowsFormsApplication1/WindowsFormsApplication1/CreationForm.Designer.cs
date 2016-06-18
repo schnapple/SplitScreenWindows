@@ -180,6 +180,7 @@ namespace WindowsFormsApplication1
             this.Text = "SplitScreen";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Resize += new System.EventHandler(this.Form1_Resize);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_Closed);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -188,7 +189,10 @@ namespace WindowsFormsApplication1
 
         }
 
-
+        private void Form1_Closed(object sender, EventArgs e)
+        {
+            caller.reload();
+        }
 
         private void Form1_Resize(object sender, EventArgs e)
         {

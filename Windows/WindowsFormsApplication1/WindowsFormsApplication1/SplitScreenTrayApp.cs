@@ -1,13 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace WindowsFormsApplication1
@@ -51,7 +45,11 @@ namespace WindowsFormsApplication1
 
         public void reload()
         {
-
+            trayMenu.MenuItems.Clear();
+            trayMenu.MenuItems.Add("Exit", OnExit);
+            trayMenu.MenuItems.Add("Open Creation Form", openCreationForm);
+            loadTemplates(path);
+            
         }
 
         //private void reloadTemps(object sender, EventArgs e)
@@ -65,7 +63,7 @@ namespace WindowsFormsApplication1
             snapper.RemovePlexi();
             snapper.Halt();
             //Console.WriteLine("Help!!");
-            createForm = new CreationForm();// this);
+            createForm = new CreationForm(this);// this);
             createForm.addTemplatesToList(templateArr);
             createForm.Visible = true;
             //trayMenu.Dispose();
@@ -134,7 +132,10 @@ namespace WindowsFormsApplication1
                         firstVal = false;
                         name = line.Substring(0, lineAt);
                         //templateList.Items.Add(name);
+                        
                         trayMenu.MenuItems.Add(name, RunTemp);
+                        //trayMenu.MenuItems.Ke
+                        //Debug.Print(trayMenu.MenuItems.IndexOfKey("Exit").ToString());
                     }
                     else
                     {
